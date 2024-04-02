@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:reciperescue_client/authentication/auth.dart';
 
 class HomePage extends StatelessWidget {
-  final Auth auth = Auth();
+  final Authenticate auth = Authenticate();
+
+  HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
