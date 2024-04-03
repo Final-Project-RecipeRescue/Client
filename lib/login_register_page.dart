@@ -17,10 +17,12 @@ class _LoginPageState extends State<LoginPage> {
   bool isLogin = true;
   Authenticate auth = Authenticate();
 
-  final TextEditingController _controllerEmail = TextEditingController();
-  final TextEditingController _controllerPassword = TextEditingController();
+  Duration get loginTime => const Duration(milliseconds: 2250);
 
-  Future<String?>? signInWithEmailAndPassword(LoginData loginData) async {
+  // final TextEditingController _controllerEmail = TextEditingController();
+  // final TextEditingController _controllerPassword = TextEditingController();
+
+  Future<String?> signInWithEmailAndPassword(LoginData loginData) async {
     try {
       await auth.signInWithEmailAndPassword(
           email: loginData.name, password: loginData.password);
@@ -30,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<String?>? signInWithGoogle() async {
+  Future<String?> signInWithGoogle() async {
     try {
       await auth.signInWithGoogle();
       return null;
@@ -39,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<String?>? createUserWithEmailAndPassword(SignupData signupData) async {
+  Future<String?> createUserWithEmailAndPassword(SignupData signupData) async {
     try {
       await auth.createUserWithEmailAndPassword(
           email: signupData.name ?? '', password: signupData.password ?? '');
@@ -120,22 +122,41 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FlutterLogin(
-        title: 'RecipeRescue',
-        logo: const AssetImage('assets/images/logo.png'),
-        onLogin: signInWithEmailAndPassword,
-        onSignup: createUserWithEmailAndPassword,
-        onRecoverPassword: recoverPassword,
-        loginProviders: <LoginProvider>[
-          LoginProvider(
-              icon: FontAwesomeIcons.google,
-              label: 'Google',
-              callback: signInWithGoogle)
-        ],
-        onSubmitAnimationCompleted: () {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => HomePage(),
-          ));
-        });
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // Background Image
+        Positioned.fill(
+          child: Image.asset(
+            'assets/images/bg.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+
+        // Your Login UI
+        FlutterLogin(
+          theme: LoginTheme(primaryColor: Colors.transparent),
+          title: null,
+          logo: const AssetImage(
+            'assets/images/logo.png',
+          ),
+          onLogin: signInWithEmailAndPassword,
+          onSignup: createUserWithEmailAndPassword,
+          onRecoverPassword: recoverPassword,
+          logoTag: "Hero",
+          loginProviders: <LoginProvider>[
+            LoginProvider(
+                icon: FontAwesomeIcons.google,
+                label: 'Google',
+                callback: signInWithGoogle)
+          ],
+          onSubmitAnimationCompleted: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => HomePage(),
+            ));
+          },
+        ),
+      ],
+    );
   }
 }
