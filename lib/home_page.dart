@@ -1,11 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:reciperescue_client/authentication/auth.dart';
+import 'package:reciperescue_client/features/recipes/bloc/home_page_recipes_bloc.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  HomePage({Key? key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final Authenticate auth = Authenticate();
-
-  HomePage({super.key});
+  final RecipesBloc bloc = RecipesBloc();
+  @override
+  void initState() {
+    super.initState();
+    bloc.add(FetchInitialRecipes());
+  }
 
   @override
   Widget build(BuildContext context) {
