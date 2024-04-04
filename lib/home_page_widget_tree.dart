@@ -24,7 +24,8 @@ class _WidgetTreeState extends State<WidgetTree> {
               return const LoginPage();
             }
           } else {
-            return const LoginPage();
+            // return const LoginPage();
+            return HomePage();
           }
         });
   }

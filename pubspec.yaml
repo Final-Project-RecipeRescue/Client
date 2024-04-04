@@ -40,6 +40,12 @@ dependencies:
   flutter_signin_button: ^2.0.0
   firebase_app_check: ^0.2.1+18
 
+  #svg support
+  flutter_svg: ^2.0.10+1
+
+  #fonts
+  google_fonts: ^6.2.1
+
   # UI Login
   flutter_login: ^3.2.0
   font_awesome_flutter: ^9.2.0
