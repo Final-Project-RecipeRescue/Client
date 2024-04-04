@@ -20,7 +20,8 @@ class _WidgetTreeState extends State<WidgetTree> {
           if (snapshot.hasData) {
             return HomePage();
           } else {
-            return const LoginPage();
+            // return const LoginPage();
+            return HomePage();
           }
         });
   }
