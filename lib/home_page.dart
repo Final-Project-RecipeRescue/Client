@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/colors/colors.dart';
@@ -53,33 +55,64 @@ class _HomePageState extends State<HomePage> {
                         },
                         child: const Text('Sign Out'),
                       ),
-                      Row(
-                        children: [
-                          Text(
-                            'sort by',
-                            style: GoogleFonts.poppins(),
-                          ),
-                          const SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            'Alphabetical',
-                            style: GoogleFonts.poppins(
-                                textStyle: const TextStyle(color: primary)),
-                          ),
-                        ],
-                      ),
-                      Expanded(
-                        child: ListView(
-                          shrinkWrap: true,
-                          children: const [
-                            Recipe(),
-                            Recipe(),
-                            Recipe(),
-                            Recipe(),
-                            Recipe()
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          children: [
+                            Text(
+                              'sort by',
+                              style: GoogleFonts.poppins(),
+                            ),
+                            const SizedBox(
+                              width: 4,
+                            ),
+                            Text(
+                              'Alphabetical',
+                              style: GoogleFonts.poppins(
+                                  textStyle: const TextStyle(color: primary)),
+                            ),
+                            const Spacer(),
+                            SvgPicture.asset(
+                              'assets/images/sort_icon.svg',
+                              semanticsLabel: 'sort',
+                              height: 24,
+                              width: 24,
+                            )
                           ],
                         ),
+                      ),
+                      BlocConsumer<RecipesBloc, HomePageRecipesState>(
+                        bloc: bloc,
+                        listenWhen: (previous, current) =>
+                            current is RecipesActionState,
+                        buildWhen: (previous, current) =>
+                            current is! RecipesActionState,
+                        listener: (context, state) {
+                          // TODO: implement listener
+                        },
+                        builder: (context, state) {
+                          switch (state.runtimeType) {
+                            case const (RecipesSuccefulState):
+                              final successState =
+                                  state as RecipesSuccefulState;
+                              return Expanded(
+                                child: ListView.builder(
+                                  itemCount: successState.recipes.length,
+                                  itemBuilder: (context, index) => Column(
+                                    children: [
+                                      Recipe(
+                                        recipeModel:
+                                            successState.recipes[index],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            default:
+                              return const Center(
+                                  child: Text("Error fetching recipes"));
+                          }
+                        },
                       )
                     ],
                   ),
