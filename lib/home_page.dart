@@ -6,9 +6,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/authentication/auth.dart';
+import 'package:reciperescue_client/blocs/home_page/home_page_recipes_event.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/components/recipe_home_page.dart';
-import 'package:reciperescue_client/features/recipes/bloc/home_page_recipes_bloc.dart';
+import 'package:reciperescue_client/blocs/home_page/home_page_recipes_bloc.dart';
+import 'package:reciperescue_client/login_register_page.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -29,9 +31,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-      ),
       body: Center(
         child: StreamBuilder<User?>(
           stream: auth.authStateChanges,
@@ -40,7 +39,7 @@ class _HomePageState extends State<HomePage> {
               final currentUser = snapshot.data;
               if (currentUser != null) {
                 return Container(
-                  color: backgroundgray[100],
+                  color: myGrey[100],
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -56,7 +55,7 @@ class _HomePageState extends State<HomePage> {
                         child: const Text('Sign Out'),
                       ),
                       Container(
-                        margin: EdgeInsets.symmetric(horizontal: 8),
+                        margin: const EdgeInsets.symmetric(horizontal: 8),
                         child: Row(
                           children: [
                             Text(
@@ -88,7 +87,9 @@ class _HomePageState extends State<HomePage> {
                         buildWhen: (previous, current) =>
                             current is! RecipesActionState,
                         listener: (context, state) {
-                          // TODO: implement listener
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ));
                         },
                         builder: (context, state) {
                           switch (state.runtimeType) {
@@ -100,17 +101,31 @@ class _HomePageState extends State<HomePage> {
                                   itemCount: successState.recipes.length,
                                   itemBuilder: (context, index) => Column(
                                     children: [
-                                      Recipe(
-                                        recipeModel:
-                                            successState.recipes[index],
+                                      GestureDetector(
+                                        onTap: () =>
+                                            bloc.add(ShowRecipeDescription()),
+                                        child: Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 8),
+                                          child: Recipe(
+                                            recipeModel:
+                                                successState.recipes[index],
+                                          ),
+                                        ),
                                       )
                                     ],
                                   ),
                                 ),
                               );
-                            default:
+                            case const (RecipesLoadingState):
                               return const Center(
-                                  child: Text("Error fetching recipes"));
+                                  child: CircularProgressIndicator());
+                            case const (RecipesErrorState):
+                              return const Center(
+                                child: Text("Error fetching"),
+                              );
+                            default:
+                              return const Center(child: Text("Error"));
                           }
                         },
                       )
@@ -118,7 +133,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               } else {
-                return Text('User not signed in');
+                return const LoginPage();
               }
             } else {
               return CircularProgressIndicator();

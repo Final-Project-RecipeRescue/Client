@@ -7,7 +7,7 @@ class RecipesUiModel {
   final String title;
   // final String description;
   // final String preparationTime;
-  final String image;
+  final String image_url;
   final int? likes;
 
   RecipesUiModel(
@@ -15,14 +15,14 @@ class RecipesUiModel {
       required this.title,
       // required this.description,
       // required this.preparationTime,
-      required this.image,
+      required this.image_url,
       this.likes});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
       'title': title,
-      'image': image,
+      'image_url': image_url,
       'likes': likes,
     };
   }
@@ -31,7 +31,7 @@ class RecipesUiModel {
     RecipesUiModel recipe = RecipesUiModel(
       id: map['id'] as int,
       title: map['recipe_name'] as String,
-      image: map['image_url'] ?? 'https://picsum.photos/250?image=9',
+      image_url: map['image_url'] ?? 'https://picsum.photos/250?image=9',
       likes: map['likes'] as int? ?? 0,
     );
     return recipe;
@@ -44,6 +44,6 @@ class RecipesUiModel {
 
   @override
   String toString() {
-    return 'RecipesUiModel{id: $id, title: $title, image: $image, likes: $likes}';
+    return 'RecipesUiModel{id: $id, title: $title, image: $image_url, likes: $likes}';
   }
 }

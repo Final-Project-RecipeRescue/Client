@@ -23,7 +23,7 @@ const MaterialColor primaryAccent =
 });
 const int _primaryAccentValue = 0xFFFFFFFF;
 
-const MaterialColor backgroundgray =
+const MaterialColor myGrey =
     MaterialColor(_backgroundgrayPrimaryValue, <int, Color>{
   50: Color(0xFFF7F7F9),
   100: Color(0xFFEAECEF),

@@ -55,6 +55,10 @@ dependencies:
   http: ^1.2.1
   transparent_image: ^2.0.1
 
+  get: ^4.6.6
+
+  csc_picker: ^0.2.7
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/home_page.dart';
 import 'package:reciperescue_client/login_register_page.dart';
@@ -19,12 +20,14 @@ class _WidgetTreeState extends State<WidgetTree> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (mounted) {
+              // Get.to(HomePage());
               return HomePage();
             } else {
+              Get.to(const LoginPage());
               return const LoginPage();
             }
           } else {
-            // return const LoginPage();
+            // Get.to(HomePage());
             return HomePage();
           }
         });
