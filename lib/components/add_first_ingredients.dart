@@ -1,33 +1,45 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 
 import '../colors/colors.dart';
 import 'text_field.dart';
 
-class AddFirstIngredients extends StatelessWidget {
-  const AddFirstIngredients({super.key});
+class AddFirstIngredients extends StatefulWidget {
+  const AddFirstIngredients({Key? key}) : super(key: key);
+
+  @override
+  _AddFirstIngredientsState createState() => _AddFirstIngredientsState();
+}
+
+class _AddFirstIngredientsState extends State<AddFirstIngredients> {
+  late QuestionnaireController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    // Instantiate the controller when the widget is initialized
+    controller = Get.put(QuestionnaireController());
+    print(controller.countryValue.value);
+  }
 
   @override
   Widget build(BuildContext context) {
-    var controller = Get.find<QuestionnaireController>();
-
     return SizedBox(
       height: MediaQuery.of(context).size.height / 1.5,
       child: Column(
         children: [
-          Text(
-            "What's Already in ${controller.nameNewHousehold.value.text}'s Kitchen?",
-            style: GoogleFonts.poppins(
-              textStyle: TextStyle(color: myGrey[900]),
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          Obx(() => Text(
+                "What's Already in ${controller.newHouseholdName.value}'s Kitchen?",
+                style: GoogleFonts.poppins(
+                  textStyle: TextStyle(color: myGrey[900]),
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                ),
+              )),
           const SizedBox(
             height: 20,
           ),

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/components/app_bar.dart';
+import 'package:reciperescue_client/components/basic_questions.dart';
 import 'package:reciperescue_client/components/create_household.dart';
 import 'package:reciperescue_client/components/custom_button.dart';
 import 'package:reciperescue_client/components/search_household.dart';
@@ -33,11 +34,11 @@ class _FirstTimeState extends State<FirstTime> {
       body: Obx(() => Stepper(
             type: StepperType.horizontal,
             currentStep: controller.currentStep.value,
-            onStepContinue: () {
+            onStepContinue: () async {
               if (controller.currentStep.value < stepList().length - 1) {
                 controller.currentStep.value++;
               } else {
-                print("create user");
+                await controller.createUser();
               }
             },
             onStepCancel: () {
@@ -78,65 +79,64 @@ class _FirstTimeState extends State<FirstTime> {
       ];
 
   Widget buildBasicDetailsFormsWidget() {
-    String? email = Authenticate().currentUser?.email;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Let's start by getting to know you better 😊",
-          style: GoogleFonts.poppins(
-            textStyle: TextStyle(color: myGrey[900]),
-            fontSize: 26,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 40),
-        MyTextField(
-            controller: TextEditingController(), hintText: "First Name"),
-        const SizedBox(height: 20),
-        MyTextField(controller: TextEditingController(), hintText: "Last Name"),
-        const SizedBox(height: 20),
-        MyTextField(
-          hintText: "Email",
-          initialValue: email,
-          readOnly: true,
-        ),
-        const SizedBox(height: 40),
-        CSCPicker(
-          flagState: CountryFlag.SHOW_IN_DROP_DOWN_ONLY,
-          onCountryChanged: (value) {
-            setState(() {
-              countryValue = value;
-              stateValue = null;
-            });
-          },
-          onStateChanged: (value) {
-            setState(() {
-              stateValue = value;
-            });
-          },
-          onCityChanged: (value) {
-            setState(() {});
-          },
-          showStates: true,
-          showCities: false,
-          dropdownDecoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            color: Colors.white,
-            border: Border.all(
-              color: myGrey,
-              width: 1.0,
-            ),
-          ),
-        ),
-      ],
-    );
+    return const BasicQuestions();
+    // String? email = Authenticate().currentUser?.email;
+
+    // TextEditingController country = controller.countryCtrl;
+
+    // return Column(
+    //   crossAxisAlignment: CrossAxisAlignment.start,
+    //   children: [
+    //     Text(
+    //       "Let's start by getting to know you better 😊",
+    //       style: GoogleFonts.poppins(
+    //         textStyle: TextStyle(color: myGrey[900]),
+    //         fontSize: 26,
+    //         fontWeight: FontWeight.bold,
+    //       ),
+    //     ),
+    //     const SizedBox(height: 40),
+    //     MyTextField(controller: controller.firstName, hintText: "First Name"),
+    //     const SizedBox(height: 20),
+    //     MyTextField(controller: controller.lastName, hintText: "Last Name"),
+    //     const SizedBox(height: 20),
+    //     MyTextField(
+    //       hintText: "Email",
+    //       initialValue: email,
+    //       readOnly: true,
+    //     ),
+    //     const SizedBox(height: 40),
+    //     CSCPicker(
+    //       flagState: CountryFlag.SHOW_IN_DROP_DOWN_ONLY,
+    //       onCountryChanged: (value) {
+    //         setState(() {
+    //           controller.setCountry(value);
+    //         });
+    //       },
+    //       onStateChanged: (value) {
+    //         if (value != null) {
+    //           setState(() {
+    //             controller.setState(value);
+    //           });
+    //         }
+    //       },
+    //       onCityChanged: (value) {},
+    //       showStates: true,
+    //       showCities: false,
+    //       dropdownDecoration: BoxDecoration(
+    //         borderRadius: BorderRadius.circular(10.0),
+    //         color: Colors.white,
+    //         border: Border.all(
+    //           color: myGrey,
+    //           width: 1.0,
+    //         ),
+    //       ),
+    //     )
+    //   ],
+    // );
   }
 
   buildJoinCreateHousehold() {
-    bool hasHousehold =
-        false; // Assuming the user doesn't have a household initially
-
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
         "Do any of your friends or family members already have a household?",

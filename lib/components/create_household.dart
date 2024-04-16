@@ -13,7 +13,17 @@ class NewHousehold extends StatefulWidget {
 }
 
 class _NewHouseholdState extends State<NewHousehold> {
-  QuestionnaireController controller = Get.find<QuestionnaireController>();
+  final QuestionnaireController controller =
+      Get.find<QuestionnaireController>();
+  late TextEditingController _householdNameController;
+  @override
+  void initState() {
+    super.initState();
+    _householdNameController = controller.nameNewHousehold;
+    _householdNameController.addListener(() {
+      controller.updateHouseholdName(_householdNameController.text);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +40,7 @@ class _NewHouseholdState extends State<NewHousehold> {
         ),
         const SizedBox(height: 10),
         MyTextField(
-          controller: controller.nameNewHousehold,
+          controller: _householdNameController,
           hintText: "Household Name",
         ),
         const SizedBox(height: 10),

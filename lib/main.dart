@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/controllers/auth_controller.dart';
-import 'package:reciperescue_client/home_page_widget_tree.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:reciperescue_client/login_register_page.dart';
 

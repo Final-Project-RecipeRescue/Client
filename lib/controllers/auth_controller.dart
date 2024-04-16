@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:get/get.dart';
-import 'package:reciperescue_client/FirstTime.dart';
+import 'package:reciperescue_client/first_time.dart';
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/home_page.dart';
 import 'package:reciperescue_client/login_register_page.dart';
