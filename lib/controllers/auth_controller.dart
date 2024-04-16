@@ -28,7 +28,7 @@ class AuthController extends GetxController {
       Get.offAll(() => const LoginPage());
     } else {
       Map<String, dynamic> user = await AuthController.instance.getUser();
-      if (user['message'] == 'User not exist') {
+      if (user['detail'] == 'User does not exist') {
         Get.offAll(() => const FirstTime());
       } else {
         Get.offAll(() => HomePage());
@@ -73,8 +73,8 @@ class AuthController extends GetxController {
   Future<Map<String, dynamic>> getUser() async {
     final url = Uri.parse(
         'http://10.0.2.2:8000/users_household/get_user?user_email=${_user.value?.email.toString()}');
-    final response = await http.post(url);
-    print(response);
+    final response = await http.get(url);
+    print(response.body);
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {

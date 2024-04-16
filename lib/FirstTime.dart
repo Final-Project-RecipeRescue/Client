@@ -8,7 +8,11 @@ import 'package:reciperescue_client/components/app_bar.dart';
 import 'package:reciperescue_client/components/create_household.dart';
 import 'package:reciperescue_client/components/custom_button.dart';
 import 'package:reciperescue_client/components/search_household.dart';
+import 'package:reciperescue_client/components/text_field.dart';
 import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
+
+import 'components/add_first_ingredients.dart';
+import 'components/display_household.dart';
 
 class FirstTime extends StatefulWidget {
   const FirstTime({Key? key}) : super(key: key);
@@ -68,12 +72,13 @@ class _FirstTimeState extends State<FirstTime> {
               ? StepState.complete
               : StepState.indexed,
           title: const Text(''),
-          content: const Text('3'),
+          content: buildIngredientsOrHouseholdDisplay(),
           isActive: controller.currentStep.value >= 2,
         ),
       ];
 
   Widget buildBasicDetailsFormsWidget() {
+    String? email = Authenticate().currentUser?.email;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -85,30 +90,18 @@ class _FirstTimeState extends State<FirstTime> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        const SizedBox(height: 40),
+        MyTextField(
+            controller: TextEditingController(), hintText: "First Name"),
         const SizedBox(height: 20),
-        TextFormField(
-          decoration: const InputDecoration(
-            labelText: 'First Name',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        const SizedBox(height: 10),
-        TextFormField(
-          decoration: const InputDecoration(
-            labelText: 'Last Name',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        const SizedBox(height: 10),
-        TextFormField(
-          decoration: const InputDecoration(
-            labelText: 'Email',
-            border: OutlineInputBorder(),
-          ),
-          initialValue: Authenticate().currentUser?.email,
+        MyTextField(controller: TextEditingController(), hintText: "Last Name"),
+        const SizedBox(height: 20),
+        MyTextField(
+          hintText: "Email",
+          initialValue: email,
           readOnly: true,
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 40),
         CSCPicker(
           flagState: CountryFlag.SHOW_IN_DROP_DOWN_ONLY,
           onCountryChanged: (value) {
@@ -181,5 +174,13 @@ class _FirstTimeState extends State<FirstTime> {
             : const NewHousehold(),
       )
     ]);
+  }
+
+  buildIngredientsOrHouseholdDisplay() {
+    return Obx(
+      () => controller.isJoinExistingHousehold.value
+          ? const DisplayHousehold()
+          : const AddFirstIngredients(),
+    );
   }
 }

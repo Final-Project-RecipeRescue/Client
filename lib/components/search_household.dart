@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:reciperescue_client/components/text_field.dart';
 
 class SearchHousehold extends StatefulWidget {
   const SearchHousehold({super.key});
@@ -14,19 +16,17 @@ class _SearchHouseholdState extends State<SearchHousehold> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 20),
-        const Text(
+        Text(
           "Enter an existing household ID:",
-          style: TextStyle(
-            fontSize: 16,
+          style: GoogleFonts.poppins(
+            fontSize: 14,
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 10),
-        TextFormField(
-          decoration: const InputDecoration(
-            labelText: 'Search',
-            border: OutlineInputBorder(),
-          ),
+        MyTextField(
+          controller: TextEditingController(),
+          hintText: "Household Id",
         ),
         // Add search functionality as needed
       ],

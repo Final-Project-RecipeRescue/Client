@@ -17,6 +17,17 @@ Future<void> main() async {
     databaseURL:
         'https://reciperescue-6da9c-default-rtdb.europe-west1.firebasedatabase.app',
   );
+
+  const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCtia7NHayLLXpAkP6HBpyLVpTJ3jn5AxQ',
+    appId: '1:299913070782:web:333f5e74f576ff8118f6ef',
+    messagingSenderId: '299913070782',
+    projectId: 'hasbara23-13704',
+    authDomain: 'hasbara23-13704.firebaseapp.com',
+    databaseURL:
+        'https://hasbara23-13704-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'hasbara23-13704.appspot.com',
+  );
   await Firebase.initializeApp(options: android)
       .then((value) => Get.put(AuthController()));
   await FirebaseAppCheck.instance.activate(
