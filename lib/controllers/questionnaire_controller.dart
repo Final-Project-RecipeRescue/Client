@@ -1,12 +1,16 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/home_page.dart';
 import 'package:reciperescue_client/login_register_page.dart';
+
+import '../models/recipes_ui_model.dart';
+import '../models/user_model.dart';
 
 class QuestionnaireController extends GetxController {
   var currentStep = 0.obs;
@@ -16,12 +20,17 @@ class QuestionnaireController extends GetxController {
   var householdId = "".obs;
   var newHouseholdName = "".obs;
   final isJoinExistingHousehold = Rx(true);
+  final RxBool isLoading = RxBool(false);
+  final RxBool hasError = RxBool(false);
+  final Rx<List<RecipesUiModel>> recipes = Rx([]);
 
   TextEditingController firstName = TextEditingController();
   TextEditingController lastName = TextEditingController();
   TextEditingController existingHousehold = TextEditingController();
   TextEditingController nameNewHousehold = TextEditingController();
   TextEditingController firstIngredients = TextEditingController();
+
+  late UserModel userModel;
 
   var itemCount = 0.obs;
   Rx<List<String>> ingredients = Rx<List<String>>([]);
@@ -67,10 +76,16 @@ class QuestionnaireController extends GetxController {
         body: jsonBody,
       );
 
-      // Check if the request was successful (status code 200)
       if (response.statusCode == 200) {
         print(response.body);
-        Get.offAll(() => HomePage());
+        userModel = UserModel(
+            firstName: firstName.text,
+            lastName: lastName.text,
+            email: Authenticate().currentUser!.email,
+            country: countryValue.value,
+            state: stateValue.value,
+            ingredients: ingredients.value);
+        Get.to(() => HomePage());
       } else {
         Get.offAll(() => const LoginPage());
       }
