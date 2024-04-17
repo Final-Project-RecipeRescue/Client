@@ -4,13 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/blocs/home_page/home_page_recipes_event.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/components/recipe_home_page.dart';
 import 'package:reciperescue_client/blocs/home_page/home_page_recipes_bloc.dart';
+import 'package:reciperescue_client/controllers/homepage_controller.dart';
+import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 import 'package:reciperescue_client/login_register_page.dart';
+import 'package:reciperescue_client/models/user_model.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -22,11 +26,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final Authenticate auth = Authenticate();
   final RecipesBloc bloc = RecipesBloc();
-  @override
-  void initState() {
-    super.initState();
-    bloc.add(FetchInitialRecipes());
-  }
+
+  QuestionnaireController qController = Get.put(QuestionnaireController());
+  HomePageController hController = Get.put(HomePageController());
 
   @override
   Widget build(BuildContext context) {
@@ -80,55 +82,81 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                       ),
-                      BlocConsumer<RecipesBloc, HomePageRecipesState>(
-                        bloc: bloc,
-                        listenWhen: (previous, current) =>
-                            current is RecipesActionState,
-                        buildWhen: (previous, current) =>
-                            current is! RecipesActionState,
-                        listener: (context, state) {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const LoginPage(),
-                          ));
-                        },
-                        builder: (context, state) {
-                          switch (state.runtimeType) {
-                            case const (RecipesSuccefulState):
-                              final successState =
-                                  state as RecipesSuccefulState;
-                              return Expanded(
-                                child: ListView.builder(
-                                  itemCount: successState.recipes.length,
-                                  itemBuilder: (context, index) => Column(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () =>
-                                            bloc.add(ShowRecipeDescription()),
-                                        child: Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 8),
-                                          child: Recipe(
-                                            recipeModel:
-                                                successState.recipes[index],
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              );
-                            case const (RecipesLoadingState):
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            case const (RecipesErrorState):
-                              return const Center(
-                                child: Text("Error fetching"),
-                              );
-                            default:
-                              return const Center(child: Text("Error"));
-                          }
-                        },
+                      Obx(
+                        () => hController.isLoading.value
+                            ? const Center(child: CircularProgressIndicator())
+                            : hController.hasError.value
+                                ? const Text('Error fetching data')
+                                : SizedBox(
+                                    height: MediaQuery.of(context).size.height /
+                                        1.5,
+                                    child: ListView.builder(
+                                        itemCount:
+                                            hController.recipes.value.length,
+                                        itemBuilder: (context, index) =>
+                                            Column(children: [
+                                              GestureDetector(
+                                                child: Container(
+                                                  margin: const EdgeInsets
+                                                      .symmetric(vertical: 8),
+                                                  child: Recipe(
+                                                    recipeModel: hController
+                                                        .recipes.value[index],
+                                                  ),
+                                                ),
+                                              )
+                                            ]))),
                       )
+
+                      // BlocConsumer<RecipesBloc, HomePageRecipesState>(
+                      //   bloc: bloc,
+                      //   listenWhen: (previous, current) =>
+                      //       current is RecipesActionState,
+                      //   buildWhen: (previous, current) =>
+                      //       current is! RecipesActionState,
+                      //   listener: (context, state) {
+                      //     Navigator.of(context).push(MaterialPageRoute(
+                      //       builder: (context) => const LoginPage(),
+                      //     ));
+                      //   },
+                      //   builder: (context, state) {
+                      //     switch (state.runtimeType) {
+                      //       case const (RecipesSuccefulState):
+                      //         final successState =
+                      //             state as RecipesSuccefulState;
+                      //         return Expanded(
+                      //           child: ListView.builder(
+                      //             itemCount: successState.recipes.length,
+                      //             itemBuilder: (context, index) => Column(
+                      //               children: [
+                      //                 GestureDetector(
+                      //                   onTap: () =>
+                      //                       bloc.add(ShowRecipeDescription()),
+                      //                   child: Container(
+                      //                     margin: const EdgeInsets.symmetric(
+                      //                         vertical: 8),
+                      //                     child: Recipe(
+                      //                       recipeModel:
+                      //                           successState.recipes[index],
+                      //                     ),
+                      //                   ),
+                      //                 )
+                      //               ],
+                      //             ),
+                      //           ),
+                      //         );
+                      //       case const (RecipesLoadingState):
+                      //         return const Center(
+                      //             child: CircularProgressIndicator());
+                      //       case const (RecipesErrorState):
+                      //         return const Center(
+                      //           child: Text("Error fetching"),
+                      //         );
+                      //       default:
+                      //         return const Center(child: Text("Error"));
+                      //     }
+                      //   },
+                      // )
                     ],
                   ),
                 );
