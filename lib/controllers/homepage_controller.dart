@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 
+import '../constants/dotenv_constants.dart';
 import '../models/recipes_ui_model.dart';
 
 class HomePageController extends GetxController {
@@ -17,7 +18,7 @@ class HomePageController extends GetxController {
     String concatenatedIngredients = ingredients.value.join(',');
     print('here $concatenatedIngredients');
     var url = Uri.parse(
-        'http://10.0.2.2:8000/recipes/getRecipesByIngredients?ingredients=$concatenatedIngredients');
+        '${DotenvConstants.baseUrl}/recipes/getRecipesByIngredients?ingredients=$concatenatedIngredients');
     try {
       isLoading.value = true;
       hasError.value = false;

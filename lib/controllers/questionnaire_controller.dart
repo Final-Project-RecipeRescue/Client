@@ -9,6 +9,7 @@ import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/home_page.dart';
 import 'package:reciperescue_client/login_register_page.dart';
 
+import '../constants/dotenv_constants.dart';
 import '../models/recipes_ui_model.dart';
 import '../models/user_model.dart';
 
@@ -48,7 +49,7 @@ class QuestionnaireController extends GetxController {
 
   Future<void> createUser() async {
     // Define the URL to which you want to send the POST request
-    const String url = 'http://10.0.2.2:8000/users_household/add_user';
+    late String url = '${DotenvConstants.baseUrl}/users_household/add_user';
     print("first_name: ${firstName.value.text}");
     print("last_name: ${lastName.value.text}");
     print("email: ${Authenticate().currentUser!.email}");
