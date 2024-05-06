@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:reciperescue_client/constants/dotenv_constants.dart';
 import 'package:reciperescue_client/models/recipes_ui_model.dart';
 
 class RecipesRepo {
   static Future<List<RecipesUiModel>> fetchHouseholdRecipes() async {
     var url = Uri.parse(
-        'http://10.0.2.2:8000/recipes/getRecipesByIngredients?ingredients=banana');
+        '${DotenvConstants.baseUrl}/recipes/getRecipesByIngredients?ingredients=banana');
     var response = await http.get(url);
     List<dynamic> dataRecipes = jsonDecode(response.body);
     List<RecipesUiModel> recipes = [];
