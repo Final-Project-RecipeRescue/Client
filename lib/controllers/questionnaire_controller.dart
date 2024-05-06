@@ -47,7 +47,7 @@ class QuestionnaireController extends GetxController {
     itemCount.value = ingredients.value.length;
   }
 
-  Future<void> createUser() async {
+  Future<bool> createUser() async {
     // Define the URL to which you want to send the POST request
     late String url = '${DotenvConstants.baseUrl}/users_household/add_user';
     print("first_name: ${firstName.value.text}");
@@ -86,14 +86,38 @@ class QuestionnaireController extends GetxController {
             country: countryValue.value,
             state: stateValue.value,
             ingredients: ingredients.value);
-        Get.to(() => HomePage());
+        return true;
       } else {
-        Get.offAll(() => const LoginPage());
+        return false;
       }
     } catch (error) {
       print('Error making POST request: $error');
     }
     return json.decode('Error');
+  }
+
+  Future<bool> createHousehold() async {
+    try {
+      final Uri url = Uri.parse(
+          '${DotenvConstants.baseUrl}/users_household/createNewHousehold?user_mail=${Authenticate().currentUser!.email}&household_name=${nameNewHousehold.value.text}');
+
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print(response.body);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      print('Error making POST request: $error');
+      return false;
+    }
   }
 
   @override
@@ -118,5 +142,13 @@ class QuestionnaireController extends GetxController {
   void setState(String value) {
     stateValue.value = value;
     update();
+  }
+
+  void initNewUserAndHousehold() async {
+    if (await createUser() && await createHousehold()) {
+      Get.to(() => HomePage());
+    } else {
+      Get.offAll(() => const LoginPage());
+    }
   }
 }

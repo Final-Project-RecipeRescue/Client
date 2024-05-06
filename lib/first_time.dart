@@ -23,7 +23,7 @@ class FirstTime extends StatefulWidget {
 }
 
 class _FirstTimeState extends State<FirstTime> {
-  final QuestionnaireController controller = Get.put(QuestionnaireController());
+  QuestionnaireController controller = Get.put(QuestionnaireController());
   String? countryValue = "";
   String? stateValue = "";
 
@@ -38,7 +38,7 @@ class _FirstTimeState extends State<FirstTime> {
               if (controller.currentStep.value < stepList().length - 1) {
                 controller.currentStep.value++;
               } else {
-                await controller.createUser();
+                controller.initNewUserAndHousehold();
               }
             },
             onStepCancel: () {

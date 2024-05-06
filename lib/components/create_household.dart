@@ -13,8 +13,7 @@ class NewHousehold extends StatefulWidget {
 }
 
 class _NewHouseholdState extends State<NewHousehold> {
-  final QuestionnaireController controller =
-      Get.find<QuestionnaireController>();
+  final QuestionnaireController controller = Get.put(QuestionnaireController());
   late TextEditingController _householdNameController;
   @override
   void initState() {
