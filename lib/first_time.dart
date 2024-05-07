@@ -6,7 +6,8 @@ import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/components/app_bar.dart';
 import 'package:reciperescue_client/components/basic_questions.dart';
-import 'package:reciperescue_client/components/create_household.dart';
+import 'package:reciperescue_client/components/create_or_join_household.dart';
+import 'package:reciperescue_client/components/new_household.dart';
 import 'package:reciperescue_client/components/custom_button.dart';
 import 'package:reciperescue_client/components/search_household.dart';
 import 'package:reciperescue_client/components/text_field.dart';
@@ -14,6 +15,7 @@ import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 
 import 'components/add_first_ingredients.dart';
 import 'components/display_household.dart';
+import 'controllers/household_controller.dart';
 
 class FirstTime extends StatefulWidget {
   const FirstTime({Key? key}) : super(key: key);
@@ -137,48 +139,49 @@ class _FirstTimeState extends State<FirstTime> {
   }
 
   buildJoinCreateHousehold() {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(
-        "Do any of your friends or family members already have a household?",
-        style: GoogleFonts.poppins(
-          textStyle: TextStyle(color: myGrey[900]),
-          fontSize: 26,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      const SizedBox(height: 20),
-      Row(
-        children: [
-          MyButton(
-            text: 'yes',
-            onPressed: () {
-              setState(() {
-                controller.isJoinExistingHousehold.value = true;
-              });
-            },
-          ),
-          const Spacer(),
-          MyButton(
-            text: 'no',
-            onPressed: () {
-              setState(() {
-                controller.isJoinExistingHousehold.value = false;
-              });
-            },
-          )
-        ],
-      ),
-      Obx(
-        () => controller.isJoinExistingHousehold.value
-            ? const SearchHousehold()
-            : const NewHousehold(),
-      )
-    ]);
+    // return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    //   Text(
+    //     "Do any of your friends or family members already have a household?",
+    //     style: GoogleFonts.poppins(
+    //       textStyle: TextStyle(color: myGrey[900]),
+    //       fontSize: 26,
+    //       fontWeight: FontWeight.bold,
+    //     ),
+    //   ),
+    //   const SizedBox(height: 20),
+    //   Row(
+    //     children: [
+    //       MyButton(
+    //         text: 'yes',
+    //         onPressed: () {
+    //           setState(() {
+    //             controller.isJoinExistingHousehold.value = true;
+    //           });
+    //         },
+    //       ),
+    //       const Spacer(),
+    //       MyButton(
+    //         text: 'no',
+    //         onPressed: () {
+    //           setState(() {
+    //             controller.isJoinExistingHousehold.value = false;
+    //           });
+    //         },
+    //       )
+    //     ],
+    //   ),
+    //   Obx(
+    //     () => controller.isJoinExistingHousehold.value
+    //         ? const SearchHousehold()
+    //         : const NewHousehold(),
+    //   )
+    // ]);
+    return JoinOrCreateHousehold();
   }
 
   buildIngredientsOrHouseholdDisplay() {
     return Obx(
-      () => controller.isJoinExistingHousehold.value
+      () => Get.find<HouseholdController>().isJoinExistingHousehold.value
           ? const DisplayHousehold()
           : const AddFirstIngredients(),
     );

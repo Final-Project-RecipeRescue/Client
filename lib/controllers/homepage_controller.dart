@@ -3,9 +3,11 @@ import 'dart:ffi';
 
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:reciperescue_client/components/new_household.dart';
 import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 
 import '../constants/dotenv_constants.dart';
+import '../create_household.dart';
 import '../models/recipes_ui_model.dart';
 
 class HomePageController extends GetxController {
@@ -23,11 +25,12 @@ class HomePageController extends GetxController {
       isLoading.value = true;
       hasError.value = false;
       var response = await http.get(url);
+      print(response.body);
       List<dynamic> dataRecipes = jsonDecode(response.body);
       print(dataRecipes.length);
       if (response.statusCode == 200) {
         for (int i = 0; i < dataRecipes.length; i++) {
-          print(dataRecipes[i]['image_url']);
+          print("data ${dataRecipes[i]['image_url']}");
           RecipesUiModel r = RecipesUiModel.fromMap(dataRecipes[i]);
           recipes.value.add(r);
         }
@@ -54,4 +57,8 @@ class HomePageController extends GetxController {
     ingredients.value = value;
     update();
   }
+
+  // void openHouseholdSettings() {
+  //   Get.to(() => const CreateHousehold());
+  // }
 }

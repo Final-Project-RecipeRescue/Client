@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:reciperescue_client/authentication/auth.dart';
+import 'package:reciperescue_client/controllers/household_controller.dart';
 import 'package:reciperescue_client/home_page.dart';
 import 'package:reciperescue_client/login_register_page.dart';
 
@@ -96,30 +97,6 @@ class QuestionnaireController extends GetxController {
     return json.decode('Error');
   }
 
-  Future<bool> createHousehold() async {
-    try {
-      final Uri url = Uri.parse(
-          '${DotenvConstants.baseUrl}/users_household/createNewHousehold?user_mail=${Authenticate().currentUser!.email}&household_name=${nameNewHousehold.value.text}');
-
-      final response = await http.post(
-        url,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        print(response.body);
-        return true;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      print('Error making POST request: $error');
-      return false;
-    }
-  }
-
   @override
   void onClose() {
     super.onClose();
@@ -145,8 +122,9 @@ class QuestionnaireController extends GetxController {
   }
 
   void initNewUserAndHousehold() async {
-    if (await createUser() && await createHousehold()) {
-      Get.to(() => HomePage());
+    if (await createUser() &&
+        await Get.find<HouseholdController>().createHousehold()) {
+      Get.to(() => const HomePage());
     } else {
       Get.offAll(() => const LoginPage());
     }
