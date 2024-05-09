@@ -46,12 +46,6 @@ class _AddFirstIngredientsState extends State<AddFirstIngredients> {
           const SizedBox(
             height: 20,
           ),
-          MyTextField(
-            controller: qController.firstIngredients,
-            hintText: "Enter Ingredients",
-            onEditingComplete: () =>
-                qController.addIngredients(qController.firstIngredients.text),
-          ),
           const TextfieldAutocomplete(),
           const SizedBox(
             height: 40,
@@ -69,7 +63,8 @@ class _AddFirstIngredientsState extends State<AddFirstIngredients> {
                           verticalOffset: 50.0,
                           child: FadeInAnimation(
                             child: ListTile(
-                              title: Text(qController.ingredients.value[index]),
+                              title: Text(
+                                  qController.ingredients.value[index].name),
                               trailing: GestureDetector(
                                 child: const Icon(
                                   Icons.delete,

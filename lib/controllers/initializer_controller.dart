@@ -8,7 +8,6 @@ import '../constants/dotenv_constants.dart';
 
 class InitializerController extends GetxController {
   RxList<Ingredient> systemIngredients = <Ingredient>[].obs;
-  RxList<String> systemIngredientsNames = <String>[].obs;
 
   Future<void> fetchSystemIngredients() async {
     var url = Uri.parse(
@@ -20,8 +19,6 @@ class InitializerController extends GetxController {
     for (int i = 0; i < dataIngredients.length; i++) {
       Ingredient r = Ingredient.fromJson(dataIngredients[i]);
       systemIngredients.add(r);
-      systemIngredientsNames.add(r.name);
     }
-    print(systemIngredients.length);
   }
 }

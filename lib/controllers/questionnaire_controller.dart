@@ -7,8 +7,10 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/controllers/household_controller.dart';
+import 'package:reciperescue_client/controllers/initializer_controller.dart';
 import 'package:reciperescue_client/home_page.dart';
 import 'package:reciperescue_client/login_register_page.dart';
+import 'package:reciperescue_client/models/ingredient_model.dart';
 
 import '../constants/dotenv_constants.dart';
 import '../models/recipes_ui_model.dart';
@@ -30,17 +32,21 @@ class QuestionnaireController extends GetxController {
   TextEditingController lastName = TextEditingController();
   TextEditingController existingHousehold = TextEditingController();
   TextEditingController nameNewHousehold = TextEditingController();
-  TextEditingController firstIngredients = TextEditingController();
+  // TextEditingController firstIngredients = TextEditingController();
 
   late UserModel userModel;
 
   var itemCount = 0.obs;
-  Rx<List<String>> ingredients = Rx<List<String>>([]);
+  Rx<List<Ingredient>> ingredients = Rx<List<Ingredient>>([]);
 
   void addIngredients(String ingredient) {
-    ingredients.value.add(ingredient);
+    List<Ingredient> systemIngredients =
+        Get.find<InitializerController>().systemIngredients;
+    Ingredient? ingredientObj =
+        systemIngredients.firstWhere((obj) => obj.name == ingredient);
+    ingredients.value.add(ingredientObj);
     itemCount.value = ingredients.value.length;
-    firstIngredients.clear();
+    // firstIngredients.clear();
   }
 
   void removeIngredient(int index) {
@@ -85,8 +91,7 @@ class QuestionnaireController extends GetxController {
             lastName: lastName.text,
             email: Authenticate().currentUser!.email,
             country: countryValue.value,
-            state: stateValue.value,
-            ingredients: ingredients.value);
+            state: stateValue.value);
         return true;
       } else {
         return false;
@@ -104,7 +109,7 @@ class QuestionnaireController extends GetxController {
     lastName.dispose();
     existingHousehold.dispose();
     nameNewHousehold.dispose();
-    firstIngredients.dispose();
+    // firstIngredients.dispose();
   }
 
   void updateHouseholdName(String text) {

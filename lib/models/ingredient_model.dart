@@ -1,12 +1,9 @@
 class Ingredient {
-  final String ingredientId;
+  final int ingredientId;
   final String name;
-  final double?
-      amount; // Making amount nullable since it's provided as null in the JSON
-  final String?
-      unit; // Making unit nullable since it's provided as null in the JSON
-  final String?
-      purchaseDate; // Making purchaseDate nullable since it's provided as null in the JSON
+  final double? amount;
+  final String? unit;
+  final String? purchaseDate;
 
   Ingredient({
     required this.ingredientId,
@@ -24,5 +21,20 @@ class Ingredient {
       unit: json['unit'],
       purchaseDate: json['purchase_date'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'ingredient_id': ingredientId,
+      'name': name,
+      'amount': amount,
+      'unit': unit,
+      'purchase_date': purchaseDate,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'Ingredient{ingredientId: $ingredientId, name: $name, amount: $amount, unit: $unit, purchaseDate: $purchaseDate}';
   }
 }
