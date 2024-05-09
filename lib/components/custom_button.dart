@@ -15,36 +15,68 @@ class MyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: const Offset(0, 3), // changes position of shadow
-            ),
-          ],
-        ),
-        child: ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: primary,
-            padding: const EdgeInsets.symmetric(vertical: 15),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+    // return Expanded(
+    //   child: Container(
+    //     width: double.infinity,
+    //     decoration: BoxDecoration(
+    //       borderRadius: BorderRadius.circular(10),
+    //       boxShadow: [
+    //         BoxShadow(
+    //           color: Colors.black.withOpacity(0.2),
+    //           spreadRadius: 2,
+    //           blurRadius: 5,
+    //           offset: const Offset(0, 3), // changes position of shadow
+    //         ),
+    //       ],
+    //     ),
+    //     child: ElevatedButton(
+    //       onPressed: onPressed,
+    //       style: ElevatedButton.styleFrom(
+    //         backgroundColor: primary,
+    //         padding: const EdgeInsets.symmetric(vertical: 15),
+    //         shape: RoundedRectangleBorder(
+    //           borderRadius: BorderRadius.circular(10),
+    //         ),
+    //       ),
+    //       child: Text(
+    //         text,
+    //         style: GoogleFonts.poppins(
+    //           fontSize: 16,
+    //           fontWeight: FontWeight.bold,
+    //           color: Colors.white,
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
+    return Container(
+      width: 100,
+      height: 50, // Specify a fixed height for the button
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3), // changes position of shadow
           ),
-          child: Text(
-            text,
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+        ],
+      ),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        child: Text(
+          text,
+          style: GoogleFonts.poppins(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
       ),

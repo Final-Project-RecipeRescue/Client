@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 
+import '../create_household.dart';
 import 'text_field.dart';
 
 class NewHousehold extends StatefulWidget {
@@ -13,8 +14,7 @@ class NewHousehold extends StatefulWidget {
 }
 
 class _NewHouseholdState extends State<NewHousehold> {
-  final QuestionnaireController controller =
-      Get.find<QuestionnaireController>();
+  final QuestionnaireController controller = Get.put(QuestionnaireController());
   late TextEditingController _householdNameController;
   @override
   void initState() {
@@ -27,25 +27,6 @@ class _NewHouseholdState extends State<NewHousehold> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 20),
-        Text(
-          "Create a new household:",
-          style: GoogleFonts.poppins(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 10),
-        MyTextField(
-          controller: _householdNameController,
-          hintText: "Household Name",
-        ),
-        const SizedBox(height: 10),
-        // Add more fields as needed for creating a new household
-      ],
-    );
+    return CreateHousehold();
   }
 }

@@ -20,7 +20,7 @@ class RecipesUiModel {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'id': id,
+      'recipe_id': id,
       'title': title,
       'image_url': image_url,
       'likes': likes,
@@ -29,7 +29,7 @@ class RecipesUiModel {
 
   factory RecipesUiModel.fromMap(Map<String, dynamic> map) {
     RecipesUiModel recipe = RecipesUiModel(
-      id: map['id'] as int,
+      id: map['recipe_id'] as int,
       title: map['recipe_name'] as String,
       image_url: map['image_url'] ?? 'https://picsum.photos/250?image=9',
       likes: map['likes'] as int? ?? 0,

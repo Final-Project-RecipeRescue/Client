@@ -3,6 +3,8 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reciperescue_client/components/autocomplete_textfield.dart';
+import 'package:reciperescue_client/controllers/household_controller.dart';
 import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 
 import '../colors/colors.dart';
@@ -16,14 +18,15 @@ class AddFirstIngredients extends StatefulWidget {
 }
 
 class _AddFirstIngredientsState extends State<AddFirstIngredients> {
-  late QuestionnaireController controller;
+  late QuestionnaireController qController;
+  HouseholdController hController = Get.find<HouseholdController>();
 
   @override
   void initState() {
     super.initState();
     // Instantiate the controller when the widget is initialized
-    controller = Get.put(QuestionnaireController());
-    print(controller.countryValue.value);
+    qController = Get.put(QuestionnaireController());
+    print(qController.countryValue.value);
   }
 
   @override
@@ -33,7 +36,7 @@ class _AddFirstIngredientsState extends State<AddFirstIngredients> {
       child: Column(
         children: [
           Obx(() => Text(
-                "What's Already in ${controller.newHouseholdName.value}'s Kitchen?",
+                "What's Already in ${hController.newHouseholdName.value}'s Kitchen?",
                 style: GoogleFonts.poppins(
                   textStyle: TextStyle(color: myGrey[900]),
                   fontSize: 26,
@@ -43,12 +46,7 @@ class _AddFirstIngredientsState extends State<AddFirstIngredients> {
           const SizedBox(
             height: 20,
           ),
-          MyTextField(
-            controller: controller.firstIngredients,
-            hintText: "Enter Ingredients",
-            onEditingComplete: () =>
-                controller.addIngredients(controller.firstIngredients.text),
-          ),
+          const TextfieldAutocomplete(),
           const SizedBox(
             height: 40,
           ),
@@ -56,7 +54,7 @@ class _AddFirstIngredientsState extends State<AddFirstIngredients> {
             height: MediaQuery.of(context).size.height / 3,
             child: Obx(() => AnimationLimiter(
                   child: ListView.builder(
-                    itemCount: controller.itemCount.value,
+                    itemCount: qController.itemCount.value,
                     itemBuilder: ((context, index) {
                       return AnimationConfiguration.staggeredList(
                         position: index,
@@ -65,14 +63,15 @@ class _AddFirstIngredientsState extends State<AddFirstIngredients> {
                           verticalOffset: 50.0,
                           child: FadeInAnimation(
                             child: ListTile(
-                              title: Text(controller.ingredients.value[index]),
+                              title: Text(
+                                  qController.ingredients.value[index].name),
                               trailing: GestureDetector(
                                 child: const Icon(
                                   Icons.delete,
                                   color: Colors.red,
                                 ),
                                 onTap: () {
-                                  controller.removeIngredient(index);
+                                  qController.removeIngredient(index);
                                 },
                               ),
                             ),

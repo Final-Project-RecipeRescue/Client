@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reciperescue_client/components/autocomplete_textfield.dart';
 
 class MyTextField extends StatelessWidget {
   final TextEditingController? controller;
@@ -26,7 +27,7 @@ class MyTextField extends StatelessWidget {
             color: Colors.grey.withOpacity(0.5),
             spreadRadius: 2,
             blurRadius: 5,
-            offset: const Offset(0, 3), // changes position of shadow
+            offset: const Offset(0, 3),
           ),
         ],
       ),

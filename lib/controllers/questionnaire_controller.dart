@@ -6,8 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:reciperescue_client/authentication/auth.dart';
+import 'package:reciperescue_client/controllers/household_controller.dart';
+import 'package:reciperescue_client/controllers/initializer_controller.dart';
 import 'package:reciperescue_client/home_page.dart';
 import 'package:reciperescue_client/login_register_page.dart';
+import 'package:reciperescue_client/models/ingredient_model.dart';
 
 import '../constants/dotenv_constants.dart';
 import '../models/recipes_ui_model.dart';
@@ -29,17 +32,21 @@ class QuestionnaireController extends GetxController {
   TextEditingController lastName = TextEditingController();
   TextEditingController existingHousehold = TextEditingController();
   TextEditingController nameNewHousehold = TextEditingController();
-  TextEditingController firstIngredients = TextEditingController();
+  // TextEditingController firstIngredients = TextEditingController();
 
   late UserModel userModel;
 
   var itemCount = 0.obs;
-  Rx<List<String>> ingredients = Rx<List<String>>([]);
+  Rx<List<Ingredient>> ingredients = Rx<List<Ingredient>>([]);
 
   void addIngredients(String ingredient) {
-    ingredients.value.add(ingredient);
+    List<Ingredient> systemIngredients =
+        Get.find<InitializerController>().systemIngredients;
+    Ingredient? ingredientObj =
+        systemIngredients.firstWhere((obj) => obj.name == ingredient);
+    ingredients.value.add(ingredientObj);
     itemCount.value = ingredients.value.length;
-    firstIngredients.clear();
+    // firstIngredients.clear();
   }
 
   void removeIngredient(int index) {
@@ -47,7 +54,7 @@ class QuestionnaireController extends GetxController {
     itemCount.value = ingredients.value.length;
   }
 
-  Future<void> createUser() async {
+  Future<bool> createUser() async {
     // Define the URL to which you want to send the POST request
     late String url = '${DotenvConstants.baseUrl}/users_household/add_user';
     print("first_name: ${firstName.value.text}");
@@ -84,11 +91,10 @@ class QuestionnaireController extends GetxController {
             lastName: lastName.text,
             email: Authenticate().currentUser!.email,
             country: countryValue.value,
-            state: stateValue.value,
-            ingredients: ingredients.value);
-        Get.to(() => HomePage());
+            state: stateValue.value);
+        return true;
       } else {
-        Get.offAll(() => const LoginPage());
+        return false;
       }
     } catch (error) {
       print('Error making POST request: $error');
@@ -103,7 +109,7 @@ class QuestionnaireController extends GetxController {
     lastName.dispose();
     existingHousehold.dispose();
     nameNewHousehold.dispose();
-    firstIngredients.dispose();
+    // firstIngredients.dispose();
   }
 
   void updateHouseholdName(String text) {
@@ -118,5 +124,14 @@ class QuestionnaireController extends GetxController {
   void setState(String value) {
     stateValue.value = value;
     update();
+  }
+
+  void initNewUserAndHousehold() async {
+    if (await createUser() &&
+        await Get.find<HouseholdController>().createHousehold()) {
+      Get.to(() => const HomePage());
+    } else {
+      Get.offAll(() => const LoginPage());
+    }
   }
 }
