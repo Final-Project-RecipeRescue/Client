@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:csc_picker/csc_picker.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:reciperescue_client/authentication/auth.dart';
-import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/components/app_bar.dart';
 import 'package:reciperescue_client/components/basic_questions.dart';
 import 'package:reciperescue_client/components/create_or_join_household.dart';
-import 'package:reciperescue_client/components/new_household.dart';
-import 'package:reciperescue_client/components/custom_button.dart';
-import 'package:reciperescue_client/components/search_household.dart';
-import 'package:reciperescue_client/components/text_field.dart';
 import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 
 import 'components/add_first_ingredients.dart';

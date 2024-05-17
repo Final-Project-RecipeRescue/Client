@@ -1,5 +1,5 @@
 class Ingredient {
-  final int ingredientId;
+  final String ingredientId;
   final String name;
   final double? amount;
   final String? unit;
@@ -15,7 +15,7 @@ class Ingredient {
 
   factory Ingredient.fromJson(Map<String, dynamic> json) {
     return Ingredient(
-      ingredientId: json['ingredient_id'],
+      ingredientId: json['ingredient_id'] as String,
       name: json['name'],
       amount: json['amount']?.toDouble(),
       unit: json['unit'],
@@ -32,6 +32,16 @@ class Ingredient {
       'purchase_date': purchaseDate,
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Ingredient && other.ingredientId == ingredientId;
+  }
+
+  @override
+  int get hashCode => ingredientId.hashCode;
 
   @override
   String toString() {

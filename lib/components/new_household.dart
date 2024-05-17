@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
-
 import '../create_household.dart';
-import 'text_field.dart';
 
 class NewHousehold extends StatefulWidget {
   const NewHousehold({super.key});

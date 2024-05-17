@@ -8,11 +8,11 @@ import 'package:http/http.dart' as http;
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/controllers/household_controller.dart';
 import 'package:reciperescue_client/controllers/initializer_controller.dart';
-import 'package:reciperescue_client/home_page.dart';
 import 'package:reciperescue_client/login_register_page.dart';
 import 'package:reciperescue_client/models/ingredient_model.dart';
 
 import '../constants/dotenv_constants.dart';
+import '../home_page.dart';
 import '../models/recipes_ui_model.dart';
 import '../models/user_model.dart';
 
@@ -129,7 +129,7 @@ class QuestionnaireController extends GetxController {
   void initNewUserAndHousehold() async {
     if (await createUser() &&
         await Get.find<HouseholdController>().createHousehold()) {
-      Get.to(() => const HomePage());
+      Get.to(() => HomePage);
     } else {
       Get.offAll(() => const LoginPage());
     }

@@ -6,6 +6,7 @@ import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/controllers/auth_controller.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:reciperescue_client/controllers/initializer_controller.dart';
+import 'package:reciperescue_client/dashboard_binding.dart';
 import 'package:reciperescue_client/login_register_page.dart';
 
 import 'constants/dotenv_constants.dart';
@@ -58,8 +59,9 @@ class MyApp extends StatelessWidget {
               ),
             ),
             initialRoute: Routes.getHomeRoute(),
+            // getPages: Routes.routes,
             getPages: Routes.routes,
-            home: const LoginPage(),
+            // home: const LoginPage(),
           );
         });
   }
