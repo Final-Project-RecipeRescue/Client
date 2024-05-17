@@ -27,7 +27,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final Authenticate auth = Authenticate();
-
   QuestionnaireController qController = Get.put(QuestionnaireController());
   HomePageController hController = Get.put(HomePageController());
 
@@ -57,18 +56,18 @@ class _HomePageState extends State<HomePage> {
                         },
                         child: const Text('Sign Out'),
                       ),
-                      // DropdownButton(
-                      //   items: hController.user.households
-                      //       .map<DropdownMenuItem<String>>((String value) {
-                      //     return DropdownMenuItem<String>(
-                      //       value: value,
-                      //       child: Text(value),
-                      //     );
-                      //   }).toList(),
-                      //   onChanged: (value) {
-                      //     hController.fetchHouseholdsIngredients(value!);
-                      //   },
-                      // ),
+                      DropdownButton(
+                        items: hController.user!.households
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          hController.fetchHouseholdsIngredients(value!);
+                        },
+                      ),
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 8),
                         child: Row(

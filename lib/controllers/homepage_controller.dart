@@ -13,7 +13,7 @@ class HomePageController extends GetxController {
   final RxBool hasError = RxBool(false);
   final Rx<List<RecipesUiModel>> recipes = Rx([]);
   final Rx<List<Ingredient>> ingredients = Rx([]);
-  late UserModel user;
+  UserModel? user;
 
   Future<void> fetchHouseholdRecipes() async {
     String concatenatedIngredients =
@@ -82,7 +82,7 @@ class HomePageController extends GetxController {
   //Currently the function takes the first household in the user's list. Waiting for nissan to create a new endpoint
   Future<void> fetchHouseholdsIngredients(String householdId) async {
     final Uri url = Uri.parse(
-        '${DotenvConstants.baseUrl}/users_household/get_all_ingredients_in_household?user_email=${user.email}&household_id=$householdId');
+        '${DotenvConstants.baseUrl}/users_household/get_all_ingredients_in_household?user_email=${user!.email}&household_id=$householdId');
 
     try {
       final response = await http.get(url);
