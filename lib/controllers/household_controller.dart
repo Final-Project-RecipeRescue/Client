@@ -20,19 +20,22 @@ class HouseholdController extends GetxController {
     newHouseholdName.value = nameNewHousehold.text;
   }
 
-  Future<bool> createHousehold() async {
+  Future<bool> createHousehold(
+      QuestionnaireController questionnaireController) async {
     try {
       final Uri url = Uri.parse(
           '${DotenvConstants.baseUrl}/users_household/createNewHousehold?user_mail=${Authenticate().currentUser!.email}&household_name=${nameNewHousehold.value.text}');
 
-      List<Ingredient> ingredients =
-          Get.find<QuestionnaireController>().ingredients.value;
-      print("ingredients here: $ingredients");
+      List<Ingredient> ingredients = questionnaireController.ingredients.value;
+
+      print("in createHousehold: $ingredients");
       List<Map<String, dynamic>> householdIngredients =
           ingredients.map((ingredient) {
         return {
-          'IngredientName': ingredient.name,
-          'IngredientAmount': ingredient.amount ?? 1,
+          'ingredient_id': ingredient.ingredientId,
+          'name': ingredient.name,
+          'amount': ingredient.amount ?? 1,
+          'unit': ''
         };
       }).toList();
 
@@ -49,7 +52,7 @@ class HouseholdController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        print(response.body);
+        print("in createHousehold: ${response.body}");
         return true;
       } else {
         return false;

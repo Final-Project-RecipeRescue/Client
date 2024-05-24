@@ -1,5 +1,7 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/controllers/homepage_controller.dart';
 import 'package:reciperescue_client/models/recipes_ui_model.dart';
 
@@ -13,45 +15,50 @@ class RecipeDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print("dialog ${controller.ingredients.toString()}");
-    return AlertDialog(
-      title: Text(recipeModel.title),
-      content: SizedBox(
-        height: MediaQuery.of(context).size.height / 3,
+    return Column(children: [
+      Center(
+        child: Text(
+          recipeModel.title,
+          style: GoogleFonts.poppins(
+              textStyle: TextStyle(color: myGrey[1000]),
+              fontSize: 18,
+              fontWeight: FontWeight.w500),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      SizedBox(
+        height: MediaQuery.of(context).size.height / 2,
         width: double.maxFinite,
         child: ListView.builder(
           itemCount: recipeModel.ingredients.length,
           itemBuilder: (context, index) {
-            print("dialog ${recipeModel.ingredients[index]}");
             Color? colorTitle = controller.ingredients.value.contains(
                     Ingredient.fromJson(recipeModel.ingredients[index]))
                 ? myGrey[800]
                 : primary[800];
+            Widget? icon = controller.ingredients.value.contains(
+                    Ingredient.fromJson(recipeModel.ingredients[index]))
+                ? const Icon(Icons.done)
+                : const SizedBox();
             return ListTile(
-              title: Text(
-                "${recipeModel.ingredients[index]['amount']} ${recipeModel.ingredients[index]['unit']} ${recipeModel.ingredients[index]['name']}",
-                style: TextStyle(color: colorTitle),
-              ),
+              title: Row(children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Text(
+                      textAlign: TextAlign.start,
+                      "${recipeModel.ingredients[index]['amount']} ${recipeModel.ingredients[index]['unit']} ${recipeModel.ingredients[index]['name']}",
+                      style:
+                          GoogleFonts.poppins(fontSize: 14, color: colorTitle),
+                    ),
+                  ),
+                ),
+                icon
+              ]),
             );
           },
         ),
       ),
-      actions: <Widget>[
-        TextButton(
-          child: Text('Close'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        TextButton(
-          child: Text('Use this recipe'),
-          onPressed: () {
-            Navigator.of(context).pop();
-            // controller.substractRecipeIngredients(
-            //     recipeModel.ingredients.map((e) => ), recipeModel.id
-            //     );
-          },
-        ),
-      ],
-    );
+    ]);
   }
 }

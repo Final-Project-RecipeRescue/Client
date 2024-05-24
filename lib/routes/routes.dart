@@ -9,6 +9,7 @@ import 'package:reciperescue_client/dashboard.dart';
 import 'package:reciperescue_client/dashboard_binding.dart';
 import 'package:reciperescue_client/home_page.dart';
 import 'package:reciperescue_client/login_register_page.dart';
+import 'package:reciperescue_client/manage_ingredients_page.dart';
 
 class Routes {
   static String home = "/";
@@ -25,9 +26,9 @@ class Routes {
   static String getSearchRecipes() => searchRecipes;
   static String getAnalytics() => analytics;
 
-  static Widget getHomePage() => HomePage();
+  static Widget getHomePage() => const HomePage();
   static Widget getProfilePage() => const Text("profile");
-  static Widget getManageIngredientsPage() => const Text("manage ingredients");
+  static Widget getManageIngredientsPage() => const ManageIngredientsPage();
   static Widget getAnalyticsPage() => const Text("analytics");
   static Widget getSearchRecipesPage() => const Text("search recipes");
   static Widget getJoinOrCreateHouseholdPage() =>

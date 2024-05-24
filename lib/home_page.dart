@@ -1,22 +1,18 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/authentication/auth.dart';
-import 'package:reciperescue_client/blocs/home_page/home_page_recipes_event.dart';
 import 'package:reciperescue_client/colors/colors.dart';
+import 'package:reciperescue_client/components/MyDropdown.dart';
 import 'package:reciperescue_client/components/recipe_home_page.dart';
-import 'package:reciperescue_client/blocs/home_page/home_page_recipes_bloc.dart';
+import 'package:reciperescue_client/components/show_recipe_details.dart';
 import 'package:reciperescue_client/controllers/homepage_controller.dart';
 import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 import 'package:reciperescue_client/login_register_page.dart';
-import 'package:reciperescue_client/models/user_model.dart';
-
-import 'routes/routes.dart';
+import 'package:lottie/lottie.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -43,7 +39,7 @@ class _HomePageState extends State<HomePage> {
                 return Container(
                   color: myGrey[100],
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
                         'Welcome, ${currentUser.email}',
@@ -56,18 +52,18 @@ class _HomePageState extends State<HomePage> {
                         },
                         child: const Text('Sign Out'),
                       ),
-                      DropdownButton(
-                        items: hController.user!.households
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          hController.fetchHouseholdsIngredients(value!);
-                        },
-                      ),
+                      Obx(() => MyDropdown(
+                            selectedValue: hController.selectedHousehold.value,
+                            items: hController.user.value.households,
+                            onChanged: (value) async {
+                              if (value !=
+                                  hController.selectedHousehold.value) {
+                                await hController
+                                    .fetchHouseholdsIngredients(value!);
+                                await hController.fetchHouseholdRecipes();
+                              }
+                            },
+                          )),
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 8),
                         child: Row(
@@ -96,7 +92,9 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Obx(
                         () => hController.isLoading.value
-                            ? const Center(child: CircularProgressIndicator())
+                            ? Center(
+                                child: Lottie.asset(
+                                    'assets/images/loading_animation.json'))
                             : hController.hasError.value
                                 ? const Text('Error fetching data')
                                 : SizedBox(
@@ -108,15 +106,16 @@ class _HomePageState extends State<HomePage> {
                                         itemBuilder: (context, index) =>
                                             Column(children: [
                                               GestureDetector(
-                                                child: Container(
-                                                  margin: const EdgeInsets
-                                                      .symmetric(vertical: 8),
-                                                  child: Recipe(
-                                                    recipeModel: hController
-                                                        .recipes.value[index],
+                                                  child: Container(
+                                                    margin: const EdgeInsets
+                                                        .symmetric(vertical: 8),
+                                                    child: Recipe(
+                                                      recipeModel: hController
+                                                          .recipes.value[index],
+                                                    ),
                                                   ),
-                                                ),
-                                              )
+                                                  onTap: () =>
+                                                      _buildDialog(index))
                                             ]))),
                       )
                     ],
@@ -126,11 +125,27 @@ class _HomePageState extends State<HomePage> {
                 return const LoginPage();
               }
             } else {
-              return const CircularProgressIndicator();
+              return Lottie.asset('assets/images/loading_animation.json');
             }
           },
         ),
       ),
     );
+  }
+
+  Future<void> _buildDialog(int index) {
+    return AwesomeDialog(
+            context: context,
+            animType: AnimType.scale,
+            dialogType: DialogType.noHeader,
+            body: RecipeDetail(recipeModel: hController.recipes.value[index]),
+            title: 'This is Ignored',
+            desc: 'This is also Ignored',
+            btnOkOnPress: () {},
+            btnCancelOnPress: () {
+              Navigator.of(context).pop();
+            },
+            btnCancelColor: Colors.amber)
+        .show();
   }
 }

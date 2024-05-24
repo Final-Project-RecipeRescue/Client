@@ -54,6 +54,9 @@ dependencies:
   csc_picker: ^0.2.7
   flutter_fadein: ^2.0.0
   flutter_staggered_animations: ^1.1.1
+  awesome_dialog: ^3.2.1
+  item_count_number_button: ^1.0.0
+  lottie: ^3.1.0
 
   #bloc
   flutter_bloc: ^8.1.5

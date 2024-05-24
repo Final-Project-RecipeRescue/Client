@@ -1,14 +1,14 @@
 class Ingredient {
   final String ingredientId;
   final String name;
-  final double? amount;
+  late double? amount;
   final String? unit;
   final String? purchaseDate;
 
   Ingredient({
     required this.ingredientId,
     required this.name,
-    this.amount,
+    required this.amount,
     this.unit,
     this.purchaseDate,
   });

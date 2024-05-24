@@ -128,8 +128,8 @@ class QuestionnaireController extends GetxController {
 
   void initNewUserAndHousehold() async {
     if (await createUser() &&
-        await Get.find<HouseholdController>().createHousehold()) {
-      Get.to(() => HomePage);
+        await Get.find<HouseholdController>().createHousehold(this)) {
+      Get.to(() => const HomePage());
     } else {
       Get.offAll(() => const LoginPage());
     }

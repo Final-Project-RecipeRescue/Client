@@ -12,13 +12,19 @@ class InitializerController extends GetxController {
   Future<void> fetchSystemIngredients() async {
     var url = Uri.parse(
         '${DotenvConstants.baseUrl}/ingredients/getAllSystemIngredients');
-
+    List<Ingredient> fetchedIngredients = [];
     var response = await http.get(url);
-    print(response.body);
     List<dynamic> dataIngredients = jsonDecode(response.body);
     for (int i = 0; i < dataIngredients.length; i++) {
       Ingredient r = Ingredient.fromJson(dataIngredients[i]);
-      systemIngredients.add(r);
+      fetchedIngredients.add(r);
     }
+    systemIngredients(fetchedIngredients);
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchSystemIngredients();
   }
 }
