@@ -1,15 +1,14 @@
 import 'dart:convert';
-import 'dart:ffi';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/controllers/household_controller.dart';
 import 'package:reciperescue_client/controllers/initializer_controller.dart';
+import 'package:reciperescue_client/dashboard.dart';
 import 'package:reciperescue_client/login_register_page.dart';
 import 'package:reciperescue_client/models/ingredient_model.dart';
+import 'package:reciperescue_client/routes/routes.dart';
 
 import '../constants/dotenv_constants.dart';
 import '../home_page.dart';
@@ -39,14 +38,14 @@ class QuestionnaireController extends GetxController {
   var itemCount = 0.obs;
   Rx<List<Ingredient>> ingredients = Rx<List<Ingredient>>([]);
 
-  void addIngredients(String ingredient) {
+  void addIngredient(String id, String name, double? amount, String? unit) {
     List<Ingredient> systemIngredients =
         Get.find<InitializerController>().systemIngredients;
-    Ingredient? ingredientObj =
-        systemIngredients.firstWhere((obj) => obj.name == ingredient);
+    Ingredient ingredientObj =
+        Ingredient(ingredientId: id, name: name, amount: amount, unit: unit);
     ingredients.value.add(ingredientObj);
     itemCount.value = ingredients.value.length;
-    // firstIngredients.clear();
+    update();
   }
 
   void removeIngredient(int index) {
@@ -129,7 +128,7 @@ class QuestionnaireController extends GetxController {
   void initNewUserAndHousehold() async {
     if (await createUser() &&
         await Get.find<HouseholdController>().createHousehold(this)) {
-      Get.to(() => const HomePage());
+      Get.to(() => const Dashboard());
     } else {
       Get.offAll(() => const LoginPage());
     }

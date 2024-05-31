@@ -49,6 +49,11 @@ class _DashboardState extends State<Dashboard> {
           selectedItemColor: Colors.amber[800],
           onTap: (index) {
             controller.setTabIndex(index);
+            if (index == 2) {
+              controller.fetchRecipesOnHomePage();
+            } else if (index == 1) {
+              controller.fetchHouseholdIngredients();
+            }
           },
         ),
       );

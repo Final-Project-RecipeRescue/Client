@@ -16,6 +16,22 @@ class HomePageController extends GetxController {
   var itemCount = 0.obs;
   late Rx<UserModel> user = Rx(UserModel());
   final selectedHousehold = ''.obs;
+  int _selectedIngredientsIndex = 0;
+  String _recipesFetchErrorMsg = '';
+
+  int get selectedIngredientsIndex => _selectedIngredientsIndex;
+
+  set selectedIngredientsIndex(int index) {
+    _selectedIngredientsIndex = index;
+    update();
+  }
+
+  String get recipesFetchErrorMsg => _recipesFetchErrorMsg;
+
+  set recipesFetchErrorMsg(String errorMsg) {
+    _recipesFetchErrorMsg = errorMsg;
+    update();
+  }
 
   Future<void> fetchHouseholdRecipes() async {
     String concatenatedIngredients =
@@ -41,8 +57,10 @@ class HomePageController extends GetxController {
       } else {
         hasError.value = true;
       }
+      update();
     } catch (error) {
       print("Error fetching data: $error");
+      recipesFetchErrorMsg = error.toString();
       hasError.value = true;
     } finally {
       isLoading.value = false;
@@ -52,7 +70,6 @@ class HomePageController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-
     await fetchUserInfo();
     await fetchHouseholdsIngredients(user.value.households[0]);
     print("on init $user");
@@ -120,49 +137,34 @@ class HomePageController extends GetxController {
     }
   }
 
-  Future<void> substractRecipeIngredients(
-      List<Ingredient> ingredients, int recipeId) async {
+  Future<void> substractRecipeIngredients(int recipeId) async {
+    // /users_household/use_recipe_by_recipe_id?user_email=example%40example.example&household_id=2f249d7a-bca5-4ae1-87e3-cf3cba2b02b3&meal=Lunch&dishes_num=1&recipe_id=634435
+    double dishesNum = 1.0;
     final Uri url = Uri.parse(
-        '${DotenvConstants.baseUrl}/users_household/use_recipe_by_recipe_id?user_email=${user.value.email}&household_id=${user.value.households[0]}');
+        '${DotenvConstants.baseUrl}/users_household/use_recipe_by_recipe_id?user_email=${Authenticate().currentUser!.email}'
+        '&household_id=$selectedHousehold&meal=Lunch&dishes_num=1&dishes_num=$dishesNum&recipe_id=$recipeId');
 
-    List<Map<String, dynamic>> recipeIngredients =
-        ingredients.map((ingredient) {
-      return {
-        'IngredientName': ingredient.name,
-        'IngredientAmount': ingredient.amount ?? 1,
-      };
-    }).toList();
+    try {
+      final response = await http.post(url);
 
-    final Map<String, dynamic> requestBody = {
-      'recipe_id': recipeId,
-      'meal_type': "Lunch",
-      'dishes_num': 1,
-      'ingredients': recipeIngredients,
-    };
+      print('In home page: ${response.body}');
+      if (response.statusCode == 200) {
+        // final Map<String, dynamic> responseData = jsonDecode(response.body);
 
-    print(requestBody);
-
-    final http.Response response = await http.post(
-      url,
-      headers: {
-        'accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode(requestBody),
-    );
-
-    if (response.statusCode == 200) {
-      // Request was successful
-      print('Request successful: ${response.body}');
-    } else {
-      // Request failed
-      print('Request failed with status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+        //TODO Remove the ingredients from the household
+        update();
+      }
+    } catch (e) {
+      hasError(true);
+      print('Error: $e');
+    } finally {
+      isLoading(false);
     }
   }
 
-  Future<void> removeIngredient(int index) async {
-    Ingredient ingredientToRemove = ingredients.value[index];
+  Future<void> removeIngredient(Ingredient ingredient) async {
+    // Ingredient ingredientToRemove = ingredients.value[index];
+    Ingredient ingredientToRemove = ingredient;
     final Uri url = Uri.parse(
         '${DotenvConstants.baseUrl}/users_household/remove_ingredient_from_household?user_email=${user.value.email}&household_id=$selectedHousehold');
 
@@ -187,8 +189,51 @@ class HomePageController extends GetxController {
     if (response.statusCode == 200) {
       // Request was successful
       print('Request successful: ${response.body}');
-      ingredients.value.removeAt(index);
+      // ingredients.value.removeAt(index);
+      ingredients.value.remove(ingredientToRemove);
       itemCount(ingredients.value.length);
+      update();
+    } else {
+      // Request failed
+      print('Request failed with status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  }
+
+  void addIngredient(String id, String name, double? amount, String? unit) {
+    Ingredient ing =
+        Ingredient(ingredientId: id, name: name, amount: amount, unit: unit);
+    ingredients.value.add(ing);
+    print('in homepage controller the ingredients are : ${ingredients.value}');
+    addIngredientToDB(ing);
+    update();
+  }
+
+  Future<void> addIngredientToDB(Ingredient ingredient) async {
+    final Uri url = Uri.parse(
+        '${DotenvConstants.baseUrl}/users_household/add_ingredient_to_household_by_ingredient_name?user_email=${user.value.email}&household_id=$selectedHousehold');
+
+    // final Map<String, dynamic> requestBody = {
+    //   'ingredient_id': recipeId,
+    //   'name': "Lunch",
+    //   'amount': 1,
+    //   'unit': recipeIngredients,
+    // };
+
+    // print(requestBody);
+
+    final http.Response response = await http.post(
+      url,
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode(ingredient.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      // Request was successful
+      print('Request successful: ${response.body}');
     } else {
       // Request failed
       print('Request failed with status: ${response.statusCode}');

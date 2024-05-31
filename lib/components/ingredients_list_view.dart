@@ -1,6 +1,8 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/components/ingredient_details.dart';
 import 'package:reciperescue_client/components/show_recipe_details.dart';
@@ -11,14 +13,14 @@ class IngredientListView extends StatelessWidget {
   final int itemCount;
   final List<Ingredient> ingredients;
   final bool isDeleteLogo;
-  final ValueChanged<int> onDelete;
+  final ValueChanged<int> onClick;
 
   const IngredientListView(
       {super.key,
       required this.itemCount,
       required this.ingredients,
-      required this.onDelete,
-      required this.isDeleteLogo});
+      required this.isDeleteLogo,
+      required this.onClick});
 
   @override
   Widget build(BuildContext context) {
@@ -39,18 +41,19 @@ class IngredientListView extends StatelessWidget {
                           title: Row(
                             children: [
                               Expanded(
-                                child: Text(ingredients[index].name),
-                              ),
+                                  // child: SingleChildScrollView(
+                                  child: Text(ingredients[index].name)),
+                              // ),
                               // Add ItemCount widget if necessary
                             ],
                           ),
-                          // trailing: isDeleteLogo
-                          //     ?
-                          //     : null,
+                          trailing: Text(
+                              '${ingredients[index].amount} ${ingredients[index].unit}'),
                           onTap: () {
-                            showIngredientDialog(context, index, () {
-                              onDelete(index);
-                            });
+                            //   showIngredientDialog(context, index, () {
+                            //     onDelete(index);
+                            //   });
+                            onClick(index);
                           },
                         ),
                       ),
@@ -63,26 +66,26 @@ class IngredientListView extends StatelessWidget {
         : const Text('No items in this list');
   }
 
-  Future<void> showIngredientDialog(
-      context, int index, void Function() onDelete) {
-    return AwesomeDialog(
-            context: context,
-            animType: AnimType.scale,
-            dialogType: DialogType.noHeader,
-            body: IngredientDetails(
-              ingredient: ingredients[index],
-              onDelete: () {
-                onDelete();
-                Navigator.pop(context);
-              },
-            ),
-            title: 'This is Ignored',
-            desc: 'This is also Ignored',
-            btnOkOnPress: () {},
-            btnCancelOnPress: onDelete,
-            btnCancelText: 'Delete',
-            btnCancelColor: primary[900],
-            btnCancelIcon: Icons.delete)
-        .show();
-  }
+  // Future<void> showIngredientDialog(
+  //     context, int index, void Function() onDelete) {
+  //   return AwesomeDialog(
+  //           context: context,
+  //           animType: AnimType.scale,
+  //           dialogType: DialogType.noHeader,
+  //           body: IngredientDetails(
+  //             ingredient: ingredients[index],
+  //             onDelete: () {
+  //               onDelete();
+  //               Navigator.pop(context);
+  //             },
+  //           ),
+  //           title: 'This is Ignored',
+  //           desc: 'This is also Ignored',
+  //           btnOkOnPress: () {},
+  //           btnCancelOnPress: onDelete,
+  //           btnCancelText: 'Delete',
+  //           btnCancelColor: primary[900],
+  //           btnCancelIcon: Icons.delete)
+  //       .show();
+  // }
 }

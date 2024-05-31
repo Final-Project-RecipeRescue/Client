@@ -14,7 +14,6 @@ class RecipeDetail extends StatelessWidget {
   RecipeDetail({required this.recipeModel});
   @override
   Widget build(BuildContext context) {
-    print("dialog ${controller.ingredients.toString()}");
     return Column(children: [
       Center(
         child: Text(

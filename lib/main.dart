@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -6,11 +7,7 @@ import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/controllers/auth_controller.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:reciperescue_client/controllers/initializer_controller.dart';
-import 'package:reciperescue_client/dashboard_binding.dart';
-import 'package:reciperescue_client/login_register_page.dart';
-
 import 'constants/dotenv_constants.dart';
-import 'models/ingredient_model.dart';
 import 'routes/routes.dart';
 
 Future<void> main() async {
@@ -24,7 +21,24 @@ Future<void> main() async {
     databaseURL: DotenvConstants.databaseUrl,
   );
 
-  await Firebase.initializeApp(options: androidFirebaseOptions)
+  FirebaseOptions options = androidFirebaseOptions;
+
+  if (kIsWeb) {
+    print(kIsWeb);
+    FirebaseOptions webFirebaseOptions = const FirebaseOptions(
+        apiKey: "AIzaSyAbC68ON76diTqdgj4xwqZxCrB4wYKB4Kw",
+        authDomain: "reciperescue-6da9c.firebaseapp.com",
+        databaseURL:
+            "https://reciperescue-6da9c-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "reciperescue-6da9c",
+        storageBucket: "reciperescue-6da9c.appspot.com",
+        messagingSenderId: "515262454466",
+        appId: "1:515262454466:web:ddda1a88f0cbafc0c5b95b",
+        measurementId: "G-ZE7J47PV08");
+    options = webFirebaseOptions;
+  }
+
+  await Firebase.initializeApp(options: options)
       .then((value) => Get.put(AuthController()));
   await FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.debug,

@@ -1,15 +1,20 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reciperescue_client/models/ingredient_model.dart';
 
 class IngredientDetails extends StatelessWidget {
-  Ingredient ingredient;
-  void Function() onDelete;
-  final TextEditingController amountController = TextEditingController();
-  final TextEditingController unitController = TextEditingController();
+  final Ingredient ingredient;
+  final void Function() onDelete;
+  final TextEditingController amountController;
+  final TextEditingController unitController;
 
-  IngredientDetails(
-      {super.key, required this.ingredient, required this.onDelete});
+  IngredientDetails({
+    Key? key,
+    required this.ingredient,
+    required this.onDelete,
+  })  : amountController =
+            TextEditingController(text: ingredient.amount?.toString() ?? ''),
+        unitController = TextEditingController(text: ingredient.unit ?? ''),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +35,9 @@ class IngredientDetails extends StatelessWidget {
               border: OutlineInputBorder(),
             ),
             keyboardType: TextInputType.number,
+            onChanged: (value) {
+              ingredient.amount = double.tryParse(value);
+            },
           ),
           const SizedBox(height: 8),
           TextField(
@@ -38,6 +46,9 @@ class IngredientDetails extends StatelessWidget {
               labelText: 'Unit',
               border: OutlineInputBorder(),
             ),
+            onChanged: (value) {
+              ingredient.unit = value;
+            },
           ),
           const SizedBox(height: 16),
           // Center(

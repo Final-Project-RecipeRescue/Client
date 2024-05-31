@@ -8,6 +8,14 @@ import '../constants/dotenv_constants.dart';
 
 class InitializerController extends GetxController {
   RxList<Ingredient> systemIngredients = <Ingredient>[].obs;
+  int _selectedIngredientsIndex = 0;
+
+  int get selectedIngredientsIndex => _selectedIngredientsIndex;
+
+  set selectedIngredientsIndex(int index) {
+    _selectedIngredientsIndex = index;
+    update();
+  }
 
   Future<void> fetchSystemIngredients() async {
     var url = Uri.parse(

@@ -2,7 +2,7 @@ class Ingredient {
   final String ingredientId;
   final String name;
   late double? amount;
-  final String? unit;
+  late String? unit;
   final String? purchaseDate;
 
   Ingredient({
@@ -37,7 +37,9 @@ class Ingredient {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Ingredient && other.ingredientId == ingredientId;
+    return (other is Ingredient &&
+            other.name.toLowerCase() == name.toLowerCase()) ||
+        (other is Ingredient && other.ingredientId == ingredientId);
   }
 
   @override

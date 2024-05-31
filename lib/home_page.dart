@@ -96,7 +96,7 @@ class _HomePageState extends State<HomePage> {
                                 child: Lottie.asset(
                                     'assets/images/loading_animation.json'))
                             : hController.hasError.value
-                                ? const Text('Error fetching data')
+                                ? Text(hController.recipesFetchErrorMsg)
                                 : SizedBox(
                                     height: MediaQuery.of(context).size.height /
                                         1.5,
@@ -114,8 +114,8 @@ class _HomePageState extends State<HomePage> {
                                                           .recipes.value[index],
                                                     ),
                                                   ),
-                                                  onTap: () =>
-                                                      _buildDialog(index))
+                                                  onTap: () => _buildDialog(
+                                                      context, index))
                                             ]))),
                       )
                     ],
@@ -133,7 +133,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<void> _buildDialog(int index) {
+  Future<void> _buildDialog(context, int index) {
+    print(hController.recipes.value[index].toString());
     return AwesomeDialog(
             context: context,
             animType: AnimType.scale,
@@ -141,10 +142,10 @@ class _HomePageState extends State<HomePage> {
             body: RecipeDetail(recipeModel: hController.recipes.value[index]),
             title: 'This is Ignored',
             desc: 'This is also Ignored',
-            btnOkOnPress: () {},
-            btnCancelOnPress: () {
-              Navigator.of(context).pop();
-            },
+            btnOkOnPress: () => hController.substractRecipeIngredients(
+                hController.recipes.value[index].id),
+            btnOkText: 'Cook it!',
+            btnCancelOnPress: () {},
             btnCancelColor: Colors.amber)
         .show();
   }
