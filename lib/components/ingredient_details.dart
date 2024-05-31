@@ -7,17 +7,17 @@ class IngredientDetails extends StatelessWidget {
   final TextEditingController amountController;
   final TextEditingController unitController;
 
-  IngredientDetails({
-    Key? key,
-    required this.ingredient,
-    required this.onDelete,
-  })  : amountController =
-            TextEditingController(text: ingredient.amount?.toString() ?? ''),
-        unitController = TextEditingController(text: ingredient.unit ?? ''),
-        super(key: key);
+  IngredientDetails(
+      {Key? key,
+      required this.ingredient,
+      required this.onDelete,
+      required this.amountController,
+      required this.unitController})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    print('hereeee ${ingredient.amount.toString()}');
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -28,7 +28,7 @@ class IngredientDetails extends StatelessWidget {
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          TextField(
+          TextFormField(
             controller: amountController,
             decoration: const InputDecoration(
               labelText: 'Amount',
@@ -40,7 +40,8 @@ class IngredientDetails extends StatelessWidget {
             },
           ),
           const SizedBox(height: 8),
-          TextField(
+          TextFormField(
+            // initialValue: ingredient.unit ?? '',
             controller: unitController,
             decoration: const InputDecoration(
               labelText: 'Unit',

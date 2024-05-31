@@ -47,7 +47,10 @@ class _AddFirstIngredientsState extends State<AddFirstIngredients> {
                   .systemIngredients
                   .map((e) => e.name),
               onSubmitted: (Ingredient ingredient) {
-                showIngredientDialog(context, ingredient, () {});
+                showIngredientDialog(context, ingredient, () {}, () {
+                  qController.addIngredient(ingredient.ingredientId,
+                      ingredient.name, ingredient.amount, ingredient.unit);
+                });
               },
             ),
             const SizedBox(
@@ -67,7 +70,8 @@ class _AddFirstIngredientsState extends State<AddFirstIngredients> {
                     showIngredientDialog(
                         context,
                         controller.ingredients.value[index],
-                        () => controller.removeIngredient(index));
+                        () => controller.removeIngredient(index),
+                        () => controller.modifyIngredient(index));
                     // qController.update();
                     // });
                   },
@@ -79,8 +83,8 @@ class _AddFirstIngredientsState extends State<AddFirstIngredients> {
     );
   }
 
-  Future<void> showIngredientDialog(
-      context, Ingredient ingredient, void Function() onDelete) {
+  Future<void> showIngredientDialog(context, Ingredient ingredient,
+      void Function() onDelete, void Function() onAccept) {
     return AwesomeDialog(
             context: context,
             animType: AnimType.scale,
@@ -88,16 +92,14 @@ class _AddFirstIngredientsState extends State<AddFirstIngredients> {
             body: IngredientDetails(
               ingredient: ingredient,
               onDelete: () {
-                // onDelete();
                 Navigator.pop(context);
               },
+              amountController: qController.ingredientAmountController,
+              unitController: qController.ingredientUnitController,
             ),
             title: 'This is Ignored',
             desc: 'This is also Ignored',
-            btnOkOnPress: () {
-              qController.addIngredient(ingredient.ingredientId,
-                  ingredient.name, ingredient.amount, ingredient.unit);
-            },
+            btnOkOnPress: onAccept,
             btnCancelOnPress: onDelete,
             btnCancelText: 'Delete',
             btnCancelColor: primary[900],

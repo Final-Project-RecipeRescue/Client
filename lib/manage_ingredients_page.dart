@@ -76,6 +76,8 @@ class _ManageIngredientsPageState extends State<ManageIngredientsPage> {
 
   Future<void> showIngredientDialog(
       context, Ingredient ingredient, void Function() onDelete) {
+    hController.ingredientAmountController.text = ingredient.amount.toString();
+    hController.ingredientUnitController.text = ingredient.unit ?? '';
     return AwesomeDialog(
             context: context,
             animType: AnimType.scale,
@@ -86,6 +88,8 @@ class _ManageIngredientsPageState extends State<ManageIngredientsPage> {
                 // onDelete();
                 Navigator.pop(context);
               },
+              amountController: hController.ingredientAmountController,
+              unitController: hController.ingredientUnitController,
             ),
             title: 'This is Ignored',
             desc: 'This is also Ignored',

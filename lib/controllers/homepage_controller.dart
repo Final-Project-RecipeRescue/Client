@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:reciperescue_client/authentication/auth.dart';
@@ -18,6 +19,9 @@ class HomePageController extends GetxController {
   final selectedHousehold = ''.obs;
   int _selectedIngredientsIndex = 0;
   String _recipesFetchErrorMsg = '';
+
+  TextEditingController ingredientUnitController = TextEditingController();
+  TextEditingController ingredientAmountController = TextEditingController();
 
   int get selectedIngredientsIndex => _selectedIngredientsIndex;
 

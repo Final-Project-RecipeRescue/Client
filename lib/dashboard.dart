@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:reciperescue_client/controllers/dashboard_controller.dart';
+import 'package:reciperescue_client/controllers/homepage_controller.dart';
 import 'colors/colors.dart';
 import 'routes/routes.dart';
 
@@ -12,13 +13,16 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  DashboardController controller = Get.put(DashboardController());
+  HomePageController hController = Get.put(HomePageController());
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DashboardController>(builder: (controller) {
       return Scaffold(
         body: SafeArea(
             child: IndexedStack(
-          index: controller.tabIndex,
+          index: controller.tabIndex.value,
           children: Routes.dashboardPages,
         )),
         bottomNavigationBar: BottomNavigationBar(
@@ -45,7 +49,7 @@ class _DashboardState extends State<Dashboard> {
               label: 'Analytics',
             ),
           ],
-          currentIndex: controller.tabIndex,
+          currentIndex: controller.tabIndex.value,
           selectedItemColor: Colors.amber[800],
           onTap: (index) {
             controller.setTabIndex(index);

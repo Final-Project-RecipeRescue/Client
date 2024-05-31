@@ -31,6 +31,9 @@ class QuestionnaireController extends GetxController {
   TextEditingController lastName = TextEditingController();
   TextEditingController existingHousehold = TextEditingController();
   TextEditingController nameNewHousehold = TextEditingController();
+  TextEditingController ingredientUnitController = TextEditingController();
+  TextEditingController ingredientAmountController = TextEditingController();
+
   // TextEditingController firstIngredients = TextEditingController();
 
   late UserModel userModel;
@@ -128,9 +131,13 @@ class QuestionnaireController extends GetxController {
   void initNewUserAndHousehold() async {
     if (await createUser() &&
         await Get.find<HouseholdController>().createHousehold(this)) {
-      Get.to(() => const Dashboard());
+      Get.offAll(() => const Dashboard());
     } else {
       Get.offAll(() => const LoginPage());
     }
+  }
+
+  modifyIngredient(int index) {
+    Ingredient ingredientToModify = ingredients.value[index];
   }
 }
