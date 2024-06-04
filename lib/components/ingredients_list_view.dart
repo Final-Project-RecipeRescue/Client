@@ -11,7 +11,7 @@ import '../models/ingredient_model.dart';
 
 class IngredientListView extends StatelessWidget {
   final int itemCount;
-  final List<Ingredient> ingredients;
+  final List<IngredientHousehold> ingredients;
   final bool isDeleteLogo;
   final ValueChanged<int> onClick;
 
@@ -28,38 +28,41 @@ class IngredientListView extends StatelessWidget {
         ? SizedBox(
             height: MediaQuery.of(context).size.height / 3,
             child: AnimationLimiter(
-              child: ListView.builder(
-                itemCount: itemCount,
-                itemBuilder: (context, index) {
-                  return AnimationConfiguration.staggeredList(
-                    position: index,
-                    duration: const Duration(milliseconds: 375),
-                    child: SlideAnimation(
-                      verticalOffset: 50.0,
-                      child: FadeInAnimation(
-                        child: ListTile(
-                          title: Row(
-                            children: [
-                              Expanded(
-                                  // child: SingleChildScrollView(
-                                  child: Text(ingredients[index].name)),
-                              // ),
-                              // Add ItemCount widget if necessary
-                            ],
+              child: SizedBox(
+                height: 100,
+                child: ListView.builder(
+                  itemCount: itemCount,
+                  itemBuilder: (context, index) {
+                    return AnimationConfiguration.staggeredList(
+                      position: index,
+                      duration: const Duration(milliseconds: 375),
+                      child: SlideAnimation(
+                        verticalOffset: 50.0,
+                        child: FadeInAnimation(
+                          child: ListTile(
+                            title: Row(
+                              children: [
+                                Expanded(
+                                    // child: SingleChildScrollView(
+                                    child: Text(ingredients[index].name)),
+                                // ),
+                                // Add ItemCount widget if necessary
+                              ],
+                            ),
+                            trailing: Text(
+                                '${ingredients[index].amount} ${ingredients[index].unit}'),
+                            onTap: () {
+                              //   showIngredientDialog(context, index, () {
+                              //     onDelete(index);
+                              //   });
+                              onClick(index);
+                            },
                           ),
-                          trailing: Text(
-                              '${ingredients[index].amount} ${ingredients[index].unit}'),
-                          onTap: () {
-                            //   showIngredientDialog(context, index, () {
-                            //     onDelete(index);
-                            //   });
-                            onClick(index);
-                          },
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           )

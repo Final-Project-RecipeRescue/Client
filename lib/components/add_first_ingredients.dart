@@ -27,64 +27,128 @@ class _AddFirstIngredientsState extends State<AddFirstIngredients> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height / 1.5,
-      child: GetBuilder<QuestionnaireController>(builder: (controller) {
-        return Column(
-          children: [
-            Obx(() => Text(
-                  "What's Already in ${hController.newHouseholdName.value}'s Kitchen?",
-                  style: GoogleFonts.poppins(
-                    textStyle: TextStyle(color: myGrey[900]),
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )),
+        height: MediaQuery.of(context).size.height / 1.5,
+        child: GetBuilder<QuestionnaireController>(builder: (controller) {
+          return Column(children: [
+            Text(
+              "What's Already in ${hController.newHouseholdName.value}'s Kitchen?",
+              style: GoogleFonts.poppins(
+                textStyle: TextStyle(color: myGrey[900]),
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(
               height: 20,
             ),
+            // GetBuilder<InitializerController>(builder: (controller) {
+            //   return
             TextfieldAutocomplete<Ingredient>(
-              items: Get.find<InitializerController>()
-                  .systemIngredients
-                  .map((e) => e.name),
-              onSubmitted: (Ingredient ingredient) {
-                showIngredientDialog(context, ingredient, () {}, () {
-                  qController.addIngredient(ingredient.ingredientId,
-                      ingredient.name, ingredient.amount, ingredient.unit);
-                });
-              },
-            ),
+                items: Get.find<InitializerController>().systemIngredients,
+                onSubmitted: (Ingredient ingredient) {
+                  IngredientHousehold ingredientHousehold = IngredientHousehold(
+                      ingredientId: ingredient.ingredientId,
+                      name: ingredient.name,
+                      amount: 1.0,
+                      unit: 'g');
+                  showIngredientDialog(context, ingredientHousehold, () {}, () {
+                    if (qController.ingredients.value.contains(ingredient)) {
+                      print('object');
+                      qController.modifyIngredientValues(
+                          ingredientHousehold, false);
+                    } else {
+                      qController.addIngredient(
+                          ingredientHousehold.ingredientId,
+                          ingredientHousehold.name,
+                          ingredientHousehold.amount,
+                          ingredientHousehold.unit);
+                    }
+                  });
+                  // },
+                  // );
+                }),
             const SizedBox(
               height: 40,
             ),
-            Obx(() => IngredientListView(
-                  itemCount: controller.itemCount.value,
-                  ingredients: controller.ingredients.value,
-                  // onDelete: (index) {
-                  //   setState(() {
-                  //     ingredient_index = index;
-                  //     qController.removeIngredient(index);
-                  //   });
-                  // },
-                  onClick: (index) {
-                    // setState(() {
-                    showIngredientDialog(
-                        context,
-                        controller.ingredients.value[index],
-                        () => controller.removeIngredient(index),
-                        () => controller.modifyIngredient(index));
-                    // qController.update();
-                    // });
-                  },
-                  isDeleteLogo: false,
-                )),
-          ],
-        );
-      }),
-    );
+            Obx(() {
+              return IngredientListView(
+                itemCount: qController.ingredients.value.length,
+                ingredients: qController.ingredients.value,
+                onClick: (index) {
+                  print(qController.ingredients.value);
+                  showIngredientDialog(
+                    context,
+                    qController.ingredients.value[index],
+                    () => qController.removeIngredient(index),
+                    () => qController.modifyIngredient(index),
+                  );
+                },
+                isDeleteLogo: false,
+              );
+            })
+          ]);
+        }));
+    // );
+    //           IngredientListView(
+    //             itemCount: qController.itemCount.value,
+    //             ingredients: qController.ingredients.value,
+    //             onClick: (index) {
+    //               // setState(() {
+    //               showIngredientDialog(
+    //                   context,
+    //                   qController.ingredients.value[index],
+    //                   () => qController.removeIngredient(index),
+    //                   () => qController.modifyIngredient(index));
+    //             },
+    //             isDeleteLogo: false,
+    //           ),
+    //         ],
+    //       )),
+    // );
+    // return Scaffold(
+    //   body: Column(
+    //     children: [
+    // GetBuilder<InitializerController>(builder: (controller) {
+    //   return TextfieldAutocomplete<Ingredient>(
+    //     items: controller.systemIngredients,
+    //     onSubmitted: (Ingredient ingredient) {
+    //       IngredientHousehold ingredientHousehold = IngredientHousehold(
+    //         ingredientId: ingredient.ingredientId,
+    //         name: ingredient.name,
+    //         amount: 1.0,
+    //         unit: 'g',
+    //       );
+    //       showIngredientDialog(context, ingredientHousehold, () {}, () {
+    //         if (qController.ingredients.value.contains(ingredient)) {
+    //           qController.modifyIngredientValues(
+    //             ingredientHousehold,
+    //             false,
+    //           );
+    //         } else {
+    //           qController.addIngredient(
+    //             ingredientHousehold.ingredientId,
+    //             ingredientHousehold.name,
+    //             ingredientHousehold.amount,
+    //             ingredientHousehold.unit,
+    //           );
+    //         }
+    //       });
+    //     },
+    //   );
+    // }),
+    // Expanded(
+    //   child: GetBuilder<QuestionnaireController>(builder: (controller) {
+    //     return
+
+    // );
+    //   }),
+    // ),
   }
 
-  Future<void> showIngredientDialog(context, Ingredient ingredient,
+  Future<void> showIngredientDialog(context, IngredientHousehold ingredient,
       void Function() onDelete, void Function() onAccept) {
+    qController.ingredientAmountController.text = ingredient.amount.toString();
+    qController.ingredientUnitController.text = ingredient.unit ?? '';
     return AwesomeDialog(
             context: context,
             animType: AnimType.scale,
@@ -102,6 +166,7 @@ class _AddFirstIngredientsState extends State<AddFirstIngredients> {
             btnOkOnPress: onAccept,
             btnCancelOnPress: onDelete,
             btnCancelText: 'Delete',
+            btnOkText: 'Add',
             btnCancelColor: primary[900],
             btnCancelIcon: Icons.delete)
         .show();

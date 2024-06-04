@@ -6,8 +6,8 @@ import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 import 'package:reciperescue_client/models/ingredient_model.dart';
 
 class TextfieldAutocomplete<T> extends StatefulWidget {
-  final Iterable<String> items;
-  final void Function(T) onSubmitted;
+  final Iterable<Ingredient> items;
+  final void Function(Ingredient) onSubmitted;
   const TextfieldAutocomplete(
       {super.key, required this.items, required this.onSubmitted});
 
@@ -34,12 +34,15 @@ class _TextfieldAutocompleteState<T> extends State<TextfieldAutocomplete<T>> {
       ),
       child: Autocomplete<String>(
         optionsBuilder: (TextEditingValue textInput) {
-          if (textInput == "") {
+          if (textInput.text.isEmpty) {
             return const Iterable.empty();
           }
-          return widget.items.where((String item) {
+          List<String> filteredItems =
+              widget.items.map((e) => e.name).where((String item) {
             return item.toLowerCase().contains(textInput.text.toLowerCase());
-          });
+          }).toList();
+          filteredItems.sort((a, b) => a.length.compareTo(b.length));
+          return filteredItems;
         },
         fieldViewBuilder: (BuildContext context,
             TextEditingController textEditingController,
@@ -48,18 +51,11 @@ class _TextfieldAutocompleteState<T> extends State<TextfieldAutocomplete<T>> {
           return TextField(
             controller: textEditingController,
             onSubmitted: (value) {
-              if (widget.items.contains(value)) {
-                // Get.find<QuestionnaireController>().addIngredients(value);
-                if (T == String) {
-                  widget.onSubmitted(value as T);
-                } else if (T == Ingredient) {
-                  Ingredient ing = Ingredient(
-                      ingredientId: '',
-                      amount: 1,
-                      name: value,
-                      purchaseDate: null,
-                      unit: null);
-                  widget.onSubmitted(ing as T);
+              Ingredient ing =
+                  widget.items.firstWhere((element) => element.name == value);
+              if (widget.items.contains(ing)) {
+                if (T == Ingredient) {
+                  widget.onSubmitted(ing);
                 }
                 textEditingController.clear();
               }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reciperescue_client/models/ingredient_model.dart';
 
 class IngredientDetails extends StatelessWidget {
-  final Ingredient ingredient;
+  final IngredientHousehold ingredient;
   final void Function() onDelete;
   final TextEditingController amountController;
   final TextEditingController unitController;
@@ -17,7 +17,6 @@ class IngredientDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('hereeee ${ingredient.amount.toString()}');
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -36,7 +35,7 @@ class IngredientDetails extends StatelessWidget {
             ),
             keyboardType: TextInputType.number,
             onChanged: (value) {
-              ingredient.amount = double.tryParse(value);
+              ingredient.amount = double.tryParse(value)!;
             },
           ),
           const SizedBox(height: 8),

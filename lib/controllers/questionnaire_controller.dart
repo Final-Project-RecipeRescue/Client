@@ -39,13 +39,12 @@ class QuestionnaireController extends GetxController {
   late UserModel userModel;
 
   var itemCount = 0.obs;
-  Rx<List<Ingredient>> ingredients = Rx<List<Ingredient>>([]);
+  final Rx<List<IngredientHousehold>> ingredients =
+      Rx<List<IngredientHousehold>>([]);
 
-  void addIngredient(String id, String name, double? amount, String? unit) {
-    List<Ingredient> systemIngredients =
-        Get.find<InitializerController>().systemIngredients;
-    Ingredient ingredientObj =
-        Ingredient(ingredientId: id, name: name, amount: amount, unit: unit);
+  void addIngredient(String id, String name, double amount, String? unit) {
+    IngredientHousehold ingredientObj = IngredientHousehold(
+        ingredientId: id, name: name, amount: amount, unit: unit);
     ingredients.value.add(ingredientObj);
     itemCount.value = ingredients.value.length;
     update();
@@ -54,6 +53,7 @@ class QuestionnaireController extends GetxController {
   void removeIngredient(int index) {
     ingredients.value.removeAt(index);
     itemCount.value = ingredients.value.length;
+    update();
   }
 
   Future<bool> createUser() async {
@@ -139,5 +139,20 @@ class QuestionnaireController extends GetxController {
 
   modifyIngredient(int index) {
     Ingredient ingredientToModify = ingredients.value[index];
+    update();
+  }
+
+  void modifyIngredientValues(
+      IngredientHousehold ingredientHousehold, bool isNewValue) {
+    int index = ingredients.value
+        .indexWhere((element) => element == ingredientHousehold);
+    if (isNewValue) {
+      ingredients.value[index].amount = ingredientHousehold.amount;
+    } else {
+      ingredients.value[index].amount =
+          ingredients.value[index].amount + ingredientHousehold.amount;
+    }
+    // TODO Update also the firebase
+    update();
   }
 }

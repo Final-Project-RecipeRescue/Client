@@ -31,12 +31,13 @@ class RecipeDetail extends StatelessWidget {
         child: ListView.builder(
           itemCount: recipeModel.ingredients.length,
           itemBuilder: (context, index) {
-            Color? colorTitle = controller.ingredients.value.contains(
-                    Ingredient.fromJson(recipeModel.ingredients[index]))
+            Ingredient ing =
+                IngredientHousehold.fromJson(recipeModel.ingredients[index]);
+            print('here!! $ing  ${controller.ingredients.value.contains(ing)}');
+            Color? colorTitle = controller.ingredients.value.contains(ing)
                 ? myGrey[800]
                 : primary[800];
-            Widget? icon = controller.ingredients.value.contains(
-                    Ingredient.fromJson(recipeModel.ingredients[index]))
+            Widget? icon = controller.ingredients.value.contains(ing)
                 ? const Icon(Icons.done)
                 : const SizedBox();
             return ListTile(

@@ -39,11 +39,25 @@ class _ManageIngredientsPageState extends State<ManageIngredientsPage> {
               }),
           GetBuilder<InitializerController>(builder: (controller) {
             return TextfieldAutocomplete<Ingredient>(
-              items: controller.systemIngredients.map((e) => e.name),
+              items: controller.systemIngredients,
               onSubmitted: (Ingredient ingredient) {
-                // hController.addIngredient(ingredient.ingredientId,
-                //     ingredient.name, ingredient.amount, ingredient.unit);
-                showIngredientDialog(context, ingredient, () {});
+                IngredientHousehold ingredientHousehold = IngredientHousehold(
+                    ingredientId: ingredient.ingredientId,
+                    name: ingredient.name,
+                    amount: 1.0,
+                    unit: 'g');
+                showIngredientDialog(context, ingredientHousehold, () {}, () {
+                  if (hController.ingredients.value.contains(ingredient)) {
+                    hController.modifyIngredientValues(
+                        ingredientHousehold, false);
+                  } else {
+                    hController.addIngredient(
+                        ingredientHousehold.ingredientId,
+                        ingredientHousehold.name,
+                        ingredientHousehold.amount,
+                        ingredientHousehold.unit);
+                  }
+                });
               },
             );
           }),
@@ -58,11 +72,22 @@ class _ManageIngredientsPageState extends State<ManageIngredientsPage> {
                 // },
                 onClick: (index) {
                   hController.selectedIngredientsIndex = index;
-                  Ingredient focusedIngredient =
+                  IngredientHousehold focusedIngredient =
                       hController.ingredients.value[index];
-                  print('focused ${focusedIngredient.toString()}');
                   showIngredientDialog(context, focusedIngredient, () {
                     hController.removeIngredient(focusedIngredient);
+                  }, () {
+                    if (hController.ingredients.value
+                        .contains(focusedIngredient)) {
+                      hController.modifyIngredientValues(
+                          focusedIngredient, true);
+                    } else {
+                      hController.addIngredient(
+                          focusedIngredient.ingredientId,
+                          focusedIngredient.name,
+                          focusedIngredient.amount,
+                          focusedIngredient.unit);
+                    }
                   });
                 },
                 isDeleteLogo: false,
@@ -74,8 +99,8 @@ class _ManageIngredientsPageState extends State<ManageIngredientsPage> {
     ));
   }
 
-  Future<void> showIngredientDialog(
-      context, Ingredient ingredient, void Function() onDelete) {
+  Future<void> showIngredientDialog(context, IngredientHousehold ingredient,
+      void Function() onDelete, void Function() onAccept) {
     hController.ingredientAmountController.text = ingredient.amount.toString();
     hController.ingredientUnitController.text = ingredient.unit ?? '';
     return AwesomeDialog(
@@ -93,11 +118,7 @@ class _ManageIngredientsPageState extends State<ManageIngredientsPage> {
             ),
             title: 'This is Ignored',
             desc: 'This is also Ignored',
-            btnOkOnPress: () => hController.addIngredient(
-                ingredient.ingredientId,
-                ingredient.name,
-                ingredient.amount,
-                ingredient.unit),
+            btnOkOnPress: onAccept,
             btnCancelOnPress: onDelete,
             btnCancelText: 'Delete',
             btnCancelColor: primary[900],

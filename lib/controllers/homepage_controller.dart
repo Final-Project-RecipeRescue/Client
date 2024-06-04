@@ -13,7 +13,7 @@ class HomePageController extends GetxController {
   final RxBool isLoading = RxBool(false);
   final RxBool hasError = RxBool(false);
   final Rx<List<RecipesUiModel>> recipes = Rx([]);
-  final Rx<List<Ingredient>> ingredients = Rx([]);
+  final Rx<List<IngredientHousehold>> ingredients = Rx([]);
   var itemCount = 0.obs;
   late Rx<UserModel> user = Rx(UserModel());
   final selectedHousehold = ''.obs;
@@ -83,7 +83,7 @@ class HomePageController extends GetxController {
 
   List<Ingredient> getIngredients() => ingredients.value;
 
-  void setIngredients(List<Ingredient> value) {
+  void setIngredients(List<IngredientHousehold> value) {
     ingredients.value = value;
     update();
   }
@@ -108,7 +108,6 @@ class HomePageController extends GetxController {
     }
   }
 
-  //Currently the function takes the first household in the user's list. Waiting for nissan to create a new endpoint
   Future<void> fetchHouseholdsIngredients(String householdId) async {
     isLoading(true);
     hasError(false);
@@ -123,10 +122,10 @@ class HomePageController extends GetxController {
         //TODO handle '_Map<String, dynamic>' is not a subtype of type 'List<dynamic>'
         print('In home page: ${response.body}');
         final Map<String, dynamic> responseData = jsonDecode(response.body);
-        List<Ingredient> allIngredients = [];
+        List<IngredientHousehold> allIngredients = [];
         responseData.forEach((ingredientName, ingredientList) {
           ingredientList.forEach((ingredientData) {
-            allIngredients.add(Ingredient.fromJson(ingredientData));
+            allIngredients.add(IngredientHousehold.fromJson(ingredientData));
           });
         });
 
@@ -166,9 +165,9 @@ class HomePageController extends GetxController {
     }
   }
 
-  Future<void> removeIngredient(Ingredient ingredient) async {
+  Future<void> removeIngredient(IngredientHousehold ingredient) async {
     // Ingredient ingredientToRemove = ingredients.value[index];
-    Ingredient ingredientToRemove = ingredient;
+    IngredientHousehold ingredientToRemove = ingredient;
     final Uri url = Uri.parse(
         '${DotenvConstants.baseUrl}/users_household/remove_ingredient_from_household?user_email=${user.value.email}&household_id=$selectedHousehold');
 
@@ -178,8 +177,6 @@ class HomePageController extends GetxController {
       "amount": ingredientToRemove.amount,
       "unit": ingredientToRemove.unit
     };
-
-    print('here!! $requestBody');
 
     final http.Response response = await http.delete(
       url,
@@ -204,9 +201,9 @@ class HomePageController extends GetxController {
     }
   }
 
-  void addIngredient(String id, String name, double? amount, String? unit) {
-    Ingredient ing =
-        Ingredient(ingredientId: id, name: name, amount: amount, unit: unit);
+  void addIngredient(String id, String name, double amount, String? unit) {
+    IngredientHousehold ing = IngredientHousehold(
+        ingredientId: id, name: name, amount: amount, unit: unit);
     ingredients.value.add(ing);
     print('in homepage controller the ingredients are : ${ingredients.value}');
     addIngredientToDB(ing);
@@ -243,5 +240,18 @@ class HomePageController extends GetxController {
       print('Request failed with status: ${response.statusCode}');
       print('Response body: ${response.body}');
     }
+  }
+
+  void modifyIngredientValues(IngredientHousehold ingredient, bool isNewValue) {
+    int index =
+        ingredients.value.indexWhere((element) => element == ingredient);
+    if (isNewValue) {
+      ingredients.value[index].amount = ingredient.amount;
+    } else {
+      ingredients.value[index].amount =
+          ingredients.value[index].amount + ingredient.amount;
+    }
+    // TODO Update also the firebase
+    update();
   }
 }

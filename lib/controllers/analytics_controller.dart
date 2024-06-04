@@ -25,7 +25,7 @@ class HouseholdController extends GetxController {
       final Uri url = Uri.parse(
           '${DotenvConstants.baseUrl}/users_household/createNewHousehold?user_mail=${Authenticate().currentUser!.email}&household_name=${nameNewHousehold.value.text}');
 
-      List<Ingredient> ingredients =
+      List<IngredientHousehold> ingredients =
           Get.find<QuestionnaireController>().ingredients.value;
       print("ingredients here: $ingredients");
       List<Map<String, dynamic>> householdIngredients =
