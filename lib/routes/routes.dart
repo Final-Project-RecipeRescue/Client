@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:reciperescue_client/components/create_or_join_household.dart';
 import 'package:reciperescue_client/components/custom_button.dart';
-import 'package:reciperescue_client/components/new_household.dart';
+import 'package:reciperescue_client/components/recipe_instruction.dart';
 import 'package:reciperescue_client/controllers/dashboard_controller.dart';
-import 'package:reciperescue_client/create_household.dart';
-import 'package:reciperescue_client/dashboard.dart';
 import 'package:reciperescue_client/dashboard_binding.dart';
 import 'package:reciperescue_client/home_page.dart';
 import 'package:reciperescue_client/login_register_page.dart';
 import 'package:reciperescue_client/manage_ingredients_page.dart';
+import 'package:reciperescue_client/models/recipes_ui_model.dart';
 
 class Routes {
   static String home = "/";
@@ -18,6 +17,7 @@ class Routes {
   static String manageIngredients = "/manageIngredients";
   static String searchRecipes = "/searchRecipes";
   static String analytics = "/analytics";
+  static String recipeInstructions = "/recipeInstructions";
 
   static String getHomeRoute() => home;
   static String getNewHousehold() => newHousehold;
@@ -31,6 +31,8 @@ class Routes {
   static Widget getManageIngredientsPage() => const ManageIngredientsPage();
   static Widget getAnalyticsPage() => const Text("analytics");
   static Widget getSearchRecipesPage() => const Text("search recipes");
+  static Widget getRecipeInstructionsPage(RecipesUiModel value) =>
+      RecipeInstructions(value);
   static Widget getJoinOrCreateHouseholdPage() =>
       GetBuilder<DashboardController>(builder: (context) {
         return Scaffold(
@@ -52,7 +54,7 @@ class Routes {
     GetPage(
         name: newHousehold,
         page: () => getJoinOrCreateHouseholdPage(),
-        binding: DashboardBinding())
+        binding: DashboardBinding()),
   ];
 
   static List<Widget> dashboardPages = [
@@ -61,6 +63,6 @@ class Routes {
     getHomePage(),
     getSearchRecipesPage(),
     getAnalyticsPage(),
-    getJoinOrCreateHouseholdPage()
+    getJoinOrCreateHouseholdPage(),
   ];
 }

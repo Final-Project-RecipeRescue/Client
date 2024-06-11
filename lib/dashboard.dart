@@ -50,7 +50,7 @@ class _DashboardState extends State<Dashboard> {
             ),
           ],
           currentIndex: controller.tabIndex.value,
-          selectedItemColor: Colors.amber[800],
+          selectedItemColor: primary,
           onTap: (index) {
             controller.setTabIndex(index);
             if (index == 2) {

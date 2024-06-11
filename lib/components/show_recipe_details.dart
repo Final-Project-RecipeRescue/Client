@@ -33,7 +33,6 @@ class RecipeDetail extends StatelessWidget {
           itemBuilder: (context, index) {
             Ingredient ing =
                 IngredientHousehold.fromJson(recipeModel.ingredients[index]);
-            print('here!! $ing  ${controller.ingredients.value.contains(ing)}');
             Color? colorTitle = controller.ingredients.value.contains(ing)
                 ? myGrey[800]
                 : primary[800];

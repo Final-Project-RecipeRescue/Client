@@ -8,11 +8,13 @@ import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/components/MyDropdown.dart';
 import 'package:reciperescue_client/components/recipe_home_page.dart';
+import 'package:reciperescue_client/components/recipe_instruction.dart';
 import 'package:reciperescue_client/components/show_recipe_details.dart';
 import 'package:reciperescue_client/controllers/homepage_controller.dart';
 import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 import 'package:reciperescue_client/login_register_page.dart';
 import 'package:lottie/lottie.dart';
+import 'package:reciperescue_client/routes/routes.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -142,8 +144,11 @@ class _HomePageState extends State<HomePage> {
             body: RecipeDetail(recipeModel: hController.recipes.value[index]),
             title: 'This is Ignored',
             desc: 'This is also Ignored',
-            btnOkOnPress: () => hController.substractRecipeIngredients(
-                hController.recipes.value[index].id),
+            btnOkOnPress: () =>
+                // hController.substractRecipeIngredients(
+                //     hController.recipes.value[index].id),
+                Get.to(() => Routes.getRecipeInstructionsPage(
+                    hController.recipes.value[index])),
             btnOkText: 'Cook it!',
             btnCancelOnPress: () {},
             btnCancelColor: Colors.amber)
