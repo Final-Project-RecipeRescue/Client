@@ -40,9 +40,9 @@ Future<void> main() async {
 
   await Firebase.initializeApp(options: options)
       .then((value) => Get.put(AuthController()));
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: AndroidProvider.debug,
-  );
+  // await FirebaseAppCheck.instance.activate(
+  //   androidProvider: AndroidProvider.debug,
+  // );
   //c1adce95-a9cc-4ef9-8db0-8dc7400b60c3
   runApp(MyApp());
 }
