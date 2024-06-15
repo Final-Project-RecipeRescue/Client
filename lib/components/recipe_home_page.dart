@@ -27,7 +27,7 @@ class Recipe extends StatelessWidget {
                   topLeft: Radius.circular(15), topRight: Radius.circular(15)),
               child: FadeInImage.assetNetwork(
                 placeholder: 'assets/images/food_placeholder.png',
-                image: recipeModel.image_url,
+                image: recipeModel.imageUrl,
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height / 4,
                 fit: BoxFit.fill,

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:reciperescue_client/colors/colors.dart';
+import 'package:reciperescue_client/controllers/recipe_instructions_controller.dart';
 import 'package:reciperescue_client/models/user_model.dart';
 
 class UserEgg extends StatefulWidget {
   final UserModel user;
-  final VoidCallback onTap;
 
   const UserEgg({
     Key? key,
     required this.user,
-    required this.onTap,
   }) : super(key: key);
 
   @override
@@ -24,9 +24,15 @@ class _UserEggState extends State<UserEgg> {
     return GestureDetector(
       onTap: () {
         setState(() {
+          RecipeInstructionsController controller = Get.find();
           _isSelected = !_isSelected;
+          if (_isSelected) {
+            controller.incrementNumOfDishes();
+          } else {
+            controller.decrementNumOfDishes();
+          }
+          print(controller.numOfDishes.value.toString());
         });
-        widget.onTap(); // Call the provided onTap callback
       },
       child: AnimatedContainer(
         margin: EdgeInsets.all(4.0),

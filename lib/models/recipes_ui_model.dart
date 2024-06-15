@@ -1,15 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'dart:developer';
-
-import 'package:reciperescue_client/models/ingredient_model.dart';
 
 class RecipesUiModel {
   final int id;
   final String title;
   // final String description;
   // final String preparationTime;
-  final String image_url;
+  final String imageUrl;
   final int? likes;
   final List<dynamic> ingredients;
 
@@ -19,14 +16,14 @@ class RecipesUiModel {
       // required this.description,
       // required this.preparationTime,
       required this.ingredients,
-      required this.image_url,
+      required this.imageUrl,
       this.likes});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'recipe_id': id,
       'title': title,
-      'image_url': image_url,
+      'image_url': imageUrl,
       'likes': likes,
       'ingredients': ingredients
     };
@@ -36,7 +33,7 @@ class RecipesUiModel {
     RecipesUiModel recipe = RecipesUiModel(
         id: map['recipe_id'] as int,
         title: map['recipe_name'] as String,
-        image_url: map['image_url'] ?? 'https://picsum.photos/250?image=9',
+        imageUrl: map['image_url'] ?? 'https://picsum.photos/250?image=9',
         likes: map['likes'] as int? ?? 0,
         ingredients: map['ingredients'] as List<dynamic>);
     return recipe;
@@ -49,6 +46,6 @@ class RecipesUiModel {
 
   @override
   String toString() {
-    return 'RecipesUiModel{id: $id, title: $title, image: $image_url, likes: $likes}, ingredients: $ingredients';
+    return 'RecipesUiModel{id: $id, title: $title, image: $imageUrl, likes: $likes}, ingredients: $ingredients';
   }
 }

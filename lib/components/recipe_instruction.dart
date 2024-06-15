@@ -25,8 +25,16 @@ class RecipeInstructions extends StatefulWidget {
 }
 
 class _RecipeInstructionsState extends State<RecipeInstructions> {
+  final dishCount = 0.obs;
+
+  void _incrementDishes() {
+    dishCount.value++;
+  }
+
   @override
   Widget build(BuildContext context) {
+    RecipeInstructionsController controller = Get.find();
+
     return Scaffold(
       body: Obx(
         () => SafeArea(
@@ -35,7 +43,7 @@ class _RecipeInstructionsState extends State<RecipeInstructions> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                RecipeImage(imageUrl: widget.value.image_url),
+                RecipeImage(imageUrl: widget.value.imageUrl),
                 const SizedBox(height: 10),
                 Text(
                   widget.value.title,
@@ -58,9 +66,7 @@ class _RecipeInstructionsState extends State<RecipeInstructions> {
                       margin: const EdgeInsets.symmetric(vertical: 8.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
-                        color: index.isEven
-                            ? myGrey[50]
-                            : primary[50], // Alternate background colors
+                        color: index.isEven ? myGrey[50] : primary[50],
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(
@@ -93,20 +99,27 @@ class _RecipeInstructionsState extends State<RecipeInstructions> {
                   width: MediaQuery.sizeOf(context).width,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: 1,
-                    itemBuilder: (context, index) => SizedBox(
-                      height: 20,
-                      width: 80,
-                      child: UserEgg(
-                        user: UserModel(firstName: 'a', lastName: 'b'),
-                        onTap: () {},
-                      ),
-                    ),
+                    itemCount: controller.household.participants.length,
+                    itemBuilder: (context, index) {
+                      List<String> participants =
+                          controller.household.participants;
+                      return SizedBox(
+                        height: 20,
+                        width: 80,
+                        child: UserEgg(
+                          user: UserModel(
+                              firstName: participants[index], lastName: 'b'),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () => Get.find<HomePageController>()
-                      .substractRecipeIngredients(widget.value.id),
+                  onPressed: () {
+                    controller.substractRecipeIngredients(
+                        widget.value.id, dishCount.value.toDouble());
+                    print(dishCount.value);
+                  },
                   child: const Text('Let`s Cook!'),
                 ),
               ],

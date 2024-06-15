@@ -7,6 +7,7 @@ import 'package:reciperescue_client/models/ingredient_model.dart';
 import 'package:reciperescue_client/models/user_model.dart';
 
 import '../constants/dotenv_constants.dart';
+import '../models/household_model.dart';
 import '../models/recipes_ui_model.dart';
 
 class HomePageController extends GetxController {
@@ -19,7 +20,7 @@ class HomePageController extends GetxController {
   final selectedHousehold = ''.obs;
   int _selectedIngredientsIndex = 0;
   String _recipesFetchErrorMsg = '';
-
+  late Household currentHousehold;
   TextEditingController ingredientUnitController = TextEditingController();
   TextEditingController ingredientAmountController = TextEditingController();
 
@@ -75,6 +76,7 @@ class HomePageController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     await fetchUserInfo();
+    await fetchHousehold(user.value.email, user.value.households[0]);
     await fetchHouseholdsIngredients(user.value.households[0]);
     print("on init $user");
     print("on init $ingredients");
@@ -86,6 +88,29 @@ class HomePageController extends GetxController {
   void setIngredients(List<IngredientHousehold> value) {
     ingredients.value = value;
     update();
+  }
+
+  Future<Household?> fetchHousehold(
+      String? userEmail, String householdId) async {
+    final url = Uri.parse(
+        '${DotenvConstants.baseUrl}/users_household/get_household_user_by_id?user_email=$userEmail&household_id=$householdId');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+
+        currentHousehold = Household.fromJson(data);
+        update();
+      } else {
+        print('Failed to load household: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching household: $e');
+      return null;
+    }
   }
 
   Future<void> fetchUserInfo() async {
@@ -102,7 +127,6 @@ class HomePageController extends GetxController {
       final Map<String, dynamic> data = jsonDecode(response.body);
       user.value = UserModel.fromJson(data);
       update();
-      await fetchHouseholdsIngredients(user.value.households[0]);
     } catch (e) {
       print('Error: $e');
     }
@@ -130,31 +154,6 @@ class HomePageController extends GetxController {
         });
 
         ingredients.value = allIngredients;
-        update();
-      }
-    } catch (e) {
-      hasError(true);
-      print('Error: $e');
-    } finally {
-      isLoading(false);
-    }
-  }
-
-  Future<void> substractRecipeIngredients(int recipeId) async {
-    // /users_household/use_recipe_by_recipe_id?user_email=example%40example.example&household_id=2f249d7a-bca5-4ae1-87e3-cf3cba2b02b3&meal=Lunch&dishes_num=1&recipe_id=634435
-    double dishesNum = 1.0;
-    final Uri url = Uri.parse(
-        '${DotenvConstants.baseUrl}/users_household/use_recipe_by_recipe_id?user_email=${Authenticate().currentUser!.email}'
-        '&household_id=$selectedHousehold&meal=Lunch&dishes_num=1&dishes_num=$dishesNum&recipe_id=$recipeId');
-
-    try {
-      final response = await http.post(url);
-
-      print('In home page: ${response.body}');
-      if (response.statusCode == 200) {
-        // final Map<String, dynamic> responseData = jsonDecode(response.body);
-
-        //TODO Remove the ingredients from the household
         update();
       }
     } catch (e) {
