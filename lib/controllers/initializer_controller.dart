@@ -7,18 +7,34 @@ import 'package:reciperescue_client/models/ingredient_model.dart';
 import '../constants/dotenv_constants.dart';
 
 class InitializerController extends GetxController {
-  RxList<Ingredient> systemIngredients = <Ingredient>[].obs;
+  RxList<IngredientSystem> systemIngredients = <IngredientSystem>[].obs;
+  int _selectedIngredientsIndex = 0;
+
+  int get selectedIngredientsIndex => _selectedIngredientsIndex;
+
+  set selectedIngredientsIndex(int index) {
+    _selectedIngredientsIndex = index;
+    update();
+  }
 
   Future<void> fetchSystemIngredients() async {
     var url = Uri.parse(
         '${DotenvConstants.baseUrl}/ingredients/getAllSystemIngredients');
-
+    List<IngredientSystem> fetchedIngredients = [];
     var response = await http.get(url);
-    print(response.body);
+    print('System ingredients are : ${response.body}');
     List<dynamic> dataIngredients = jsonDecode(response.body);
     for (int i = 0; i < dataIngredients.length; i++) {
-      Ingredient r = Ingredient.fromJson(dataIngredients[i]);
-      systemIngredients.add(r);
+      IngredientSystem r = IngredientSystem.fromJson(dataIngredients[i]);
+      fetchedIngredients.add(r);
     }
+    systemIngredients(fetchedIngredients);
+    print(systemIngredients);
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchSystemIngredients();
   }
 }

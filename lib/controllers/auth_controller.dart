@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:get/get.dart';
+import 'package:reciperescue_client/dashboard.dart';
 import 'package:reciperescue_client/first_time.dart';
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/home_page.dart';
@@ -33,7 +34,7 @@ class AuthController extends GetxController {
       if (user['detail'] == 'User does not exist') {
         Get.offAll(() => const FirstTime());
       } else {
-        Get.offAll(() => HomePage());
+        Get.offAll(() => const Dashboard());
       }
     }
   }

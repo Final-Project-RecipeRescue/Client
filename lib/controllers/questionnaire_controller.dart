@@ -1,18 +1,17 @@
 import 'dart:convert';
-import 'dart:ffi';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/controllers/household_controller.dart';
 import 'package:reciperescue_client/controllers/initializer_controller.dart';
-import 'package:reciperescue_client/home_page.dart';
+import 'package:reciperescue_client/dashboard.dart';
 import 'package:reciperescue_client/login_register_page.dart';
 import 'package:reciperescue_client/models/ingredient_model.dart';
+import 'package:reciperescue_client/routes/routes.dart';
 
 import '../constants/dotenv_constants.dart';
+import '../home_page.dart';
 import '../models/recipes_ui_model.dart';
 import '../models/user_model.dart';
 
@@ -32,26 +31,29 @@ class QuestionnaireController extends GetxController {
   TextEditingController lastName = TextEditingController();
   TextEditingController existingHousehold = TextEditingController();
   TextEditingController nameNewHousehold = TextEditingController();
+  TextEditingController ingredientUnitController = TextEditingController();
+  TextEditingController ingredientAmountController = TextEditingController();
+
   // TextEditingController firstIngredients = TextEditingController();
 
   late UserModel userModel;
 
   var itemCount = 0.obs;
-  Rx<List<Ingredient>> ingredients = Rx<List<Ingredient>>([]);
+  final Rx<List<IngredientHousehold>> ingredients =
+      Rx<List<IngredientHousehold>>([]);
 
-  void addIngredients(String ingredient) {
-    List<Ingredient> systemIngredients =
-        Get.find<InitializerController>().systemIngredients;
-    Ingredient? ingredientObj =
-        systemIngredients.firstWhere((obj) => obj.name == ingredient);
+  void addIngredient(String id, String name, double amount, String? unit) {
+    IngredientHousehold ingredientObj = IngredientHousehold(
+        ingredientId: id, name: name, amount: amount, unit: unit);
     ingredients.value.add(ingredientObj);
     itemCount.value = ingredients.value.length;
-    // firstIngredients.clear();
+    update();
   }
 
   void removeIngredient(int index) {
     ingredients.value.removeAt(index);
     itemCount.value = ingredients.value.length;
+    update();
   }
 
   Future<bool> createUser() async {
@@ -128,10 +130,29 @@ class QuestionnaireController extends GetxController {
 
   void initNewUserAndHousehold() async {
     if (await createUser() &&
-        await Get.find<HouseholdController>().createHousehold()) {
-      Get.to(() => const HomePage());
+        await Get.find<HouseholdController>().createHousehold(this)) {
+      Get.offAll(() => const Dashboard());
     } else {
       Get.offAll(() => const LoginPage());
     }
+  }
+
+  modifyIngredient(int index) {
+    Ingredient ingredientToModify = ingredients.value[index];
+    update();
+  }
+
+  void modifyIngredientValues(
+      IngredientHousehold ingredientHousehold, bool isNewValue) {
+    int index = ingredients.value
+        .indexWhere((element) => element == ingredientHousehold);
+    if (isNewValue) {
+      ingredients.value[index].amount = ingredientHousehold.amount;
+    } else {
+      ingredients.value[index].amount =
+          ingredients.value[index].amount + ingredientHousehold.amount;
+    }
+    // TODO Update also the firebase
+    update();
   }
 }
