@@ -31,6 +31,10 @@ class _RecipeInstructionsState extends State<RecipeInstructions> {
     dishCount.value++;
   }
 
+  void _decrementDishes() {
+    dishCount.value--;
+  }
+
   @override
   Widget build(BuildContext context) {
     RecipeInstructionsController controller = Get.find();
@@ -109,6 +113,8 @@ class _RecipeInstructionsState extends State<RecipeInstructions> {
                         child: UserEgg(
                           user: UserModel(
                               firstName: participants[index], lastName: 'b'),
+                          onSelect: _incrementDishes,
+                          onDeselect: _decrementDishes,
                         ),
                       );
                     },
@@ -118,7 +124,6 @@ class _RecipeInstructionsState extends State<RecipeInstructions> {
                   onPressed: () {
                     controller.substractRecipeIngredients(
                         widget.value.id, dishCount.value.toDouble());
-                    print(dishCount.value);
                   },
                   child: const Text('Let`s Cook!'),
                 ),
