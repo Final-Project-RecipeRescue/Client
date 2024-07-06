@@ -6,11 +6,14 @@ import 'package:reciperescue_client/models/user_model.dart';
 
 class UserEgg extends StatefulWidget {
   final UserModel user;
-
-  const UserEgg({
-    Key? key,
-    required this.user,
-  }) : super(key: key);
+  final void Function() onSelect;
+  final void Function() onDeselect;
+  const UserEgg(
+      {Key? key,
+      required this.user,
+      required this.onSelect,
+      required this.onDeselect})
+      : super(key: key);
 
   @override
   State<UserEgg> createState() => _UserEggState();
@@ -24,14 +27,14 @@ class _UserEggState extends State<UserEgg> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          RecipeInstructionsController controller = Get.find();
+          // RecipeInstructionsController controller = Get.find();
           _isSelected = !_isSelected;
           if (_isSelected) {
-            controller.incrementNumOfDishes();
+            widget.onSelect();
           } else {
-            controller.decrementNumOfDishes();
+            widget.onDeselect();
           }
-          print(controller.numOfDishes.value.toString());
+          // print(controller.numOfDishes.value.toString());
         });
       },
       child: AnimatedContainer(

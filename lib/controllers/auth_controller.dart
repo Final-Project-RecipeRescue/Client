@@ -78,7 +78,7 @@ class AuthController extends GetxController {
         '${DotenvConstants.baseUrl}/users_household/get_user?user_email=${_user.value?.email.toString()}');
     final response = await http.get(url);
     print(response.body);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 404) {
       return json.decode(response.body);
     } else {
       throw Exception('Failed to get user');
