@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:get/get.dart';
+import 'package:reciperescue_client/dashboard.dart';
 import 'package:reciperescue_client/first_time.dart';
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/home_page.dart';
 import 'package:reciperescue_client/login_register_page.dart';
 import 'package:http/http.dart' as http;
+
+import '../constants/dotenv_constants.dart';
 
 class AuthController extends GetxController {
   static AuthController instance = Get.find();
@@ -31,7 +34,7 @@ class AuthController extends GetxController {
       if (user['detail'] == 'User does not exist') {
         Get.offAll(() => const FirstTime());
       } else {
-        Get.offAll(() => HomePage());
+        Get.offAll(() => const Dashboard());
       }
     }
   }
@@ -72,10 +75,10 @@ class AuthController extends GetxController {
 
   Future<Map<String, dynamic>> getUser() async {
     final url = Uri.parse(
-        'http://10.0.2.2:8000/users_household/get_user?user_email=${_user.value?.email.toString()}');
+        '${DotenvConstants.baseUrl}/users_household/get_user?user_email=${_user.value?.email.toString()}');
     final response = await http.get(url);
     print(response.body);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 404) {
       return json.decode(response.body);
     } else {
       throw Exception('Failed to get user');
