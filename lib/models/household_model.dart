@@ -6,7 +6,7 @@ class Household {
   final String householdName;
   final String? householdImage;
   final List<String> participants;
-  final Map<String, List<Ingredient>> ingredients;
+  final Map<String, List<IngredientHousehold>> ingredients;
   final Map<DateTime, Map<String, Map<String, List<Meal>>>> meals;
 
   Household({
@@ -25,17 +25,30 @@ class Household {
           value.map((item) => IngredientHousehold.fromJson(item)));
     });
 
+    // Map<DateTime, Map<String, Map<String, List<Meal>>>> meals = {};
+    // json['meals'].forEach((date, mealTypes) {
+    //   Map<String, Map<String, List<Meal>>> mealMap = {};
+    //   mealTypes.forEach((mealType, dishes) {
+    //     mealMap[mealType] = {};
+    //     dishes.forEach((dishId, mealDetails) {
+    //       mealMap[mealType]?[dishId] =
+    //           List<Meal>.from(mealDetails.map((item) => Meal.fromJson(item)));
+    //     });
+    //   });
+    //   meals[DateTime.parse(date)] = mealMap;
+    // });
+
     Map<DateTime, Map<String, Map<String, List<Meal>>>> meals = {};
     json['meals'].forEach((date, mealTypes) {
-      Map<String, Map<String, List<Meal>>> mealMap = {};
+      var mealsDate = DateTime.parse(date);
+      meals[mealsDate] = {};
       mealTypes.forEach((mealType, dishes) {
-        mealMap[mealType] = {};
+        meals[mealsDate]?[mealType] = {};
         dishes.forEach((dishId, mealDetails) {
-          mealMap[mealType]![dishId] =
+          meals[mealsDate]?[mealType]?[dishId] =
               List<Meal>.from(mealDetails.map((item) => Meal.fromJson(item)));
         });
       });
-      meals[DateTime.parse(date)] = mealMap;
     });
 
     return Household(

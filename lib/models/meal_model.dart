@@ -10,7 +10,7 @@ class Meal {
   factory Meal.fromJson(Map<String, dynamic> json) {
     return Meal(
       users: List<String>.from(json['users']),
-      numberOfDishes: json['number_of_dishes'],
+      numberOfDishes: json['number_of_dishes']?.toDouble() ?? 0.0,
     );
   }
 

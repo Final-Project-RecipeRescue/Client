@@ -44,20 +44,40 @@ class HomePageController extends GetxController {
     print(concatenatedIngredients);
     List<RecipesUiModel> tempRecipes = [];
 
-    var url = Uri.parse(
+    var urlWithoutMissedIngredients = Uri.parse(
+        '${DotenvConstants.baseUrl}/users_household/get_all_recipes_that_household_can_make?user_email=${Authenticate().currentUser!.email}&household_id=${currentHousehold.householdId}');
+    var urlWithMissedIngredients = Uri.parse(
         '${DotenvConstants.baseUrl}/recipes/getRecipesByIngredients?ingredients=$concatenatedIngredients');
+
+    await _fetchData(urlWithoutMissedIngredients, tempRecipes);
+    if (tempRecipes.isEmpty && !hasError.value) {
+      await _fetchData(urlWithMissedIngredients, tempRecipes);
+    }
+  }
+
+  Future<void> _fetchData(Uri url, List<RecipesUiModel> tempRecipes) async {
     try {
       isLoading.value = true;
       hasError.value = false;
       var response = await http.get(url);
-
-      List<dynamic> dataRecipes = jsonDecode(response.body);
+      List<dynamic> dataRecipes = [];
+      var decodedResponse = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        for (int i = 0; i < dataRecipes.length; i++) {
-          RecipesUiModel r = RecipesUiModel.fromMap(dataRecipes[i]);
-          tempRecipes.add(r);
+        if (decodedResponse is List<dynamic>) {
+          dataRecipes = decodedResponse;
+        } else if (decodedResponse is Map<String, dynamic>) {
+          if (decodedResponse['detail'] ==
+              'from this ingredients list there is no recipes') {
+            return;
+          }
         }
+
+        for (var recipeData in dataRecipes) {
+          RecipesUiModel recipe = RecipesUiModel.fromMap(recipeData);
+          tempRecipes.add(recipe);
+        }
+
         recipes.value = tempRecipes;
       } else {
         hasError.value = true;
@@ -76,11 +96,13 @@ class HomePageController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     await fetchUserInfo();
+    print("on init ${user.value.toString()}");
     await fetchHousehold(user.value.email, user.value.households[0]);
+    print("on init $currentHousehold");
     await fetchHouseholdsIngredients(user.value.households[0]);
-    print("on init $user");
-    print("on init $ingredients");
+    print("on init ${ingredients.value.toString()}");
     await fetchHouseholdRecipes();
+    print("on init ${recipes.value.toString()}");
   }
 
   List<Ingredient> getIngredients() => ingredients.value;
@@ -90,8 +112,7 @@ class HomePageController extends GetxController {
     update();
   }
 
-  Future<Household?> fetchHousehold(
-      String? userEmail, String householdId) async {
+  Future<void> fetchHousehold(String? userEmail, String householdId) async {
     final url = Uri.parse(
         '${DotenvConstants.baseUrl}/users_household/get_household_user_by_id?user_email=$userEmail&household_id=$householdId');
 
@@ -102,14 +123,13 @@ class HomePageController extends GetxController {
         final Map<String, dynamic> data = json.decode(response.body);
 
         currentHousehold = Household.fromJson(data);
+
         update();
       } else {
         print('Failed to load household: ${response.statusCode}');
-        return null;
       }
     } catch (e) {
       print('Error fetching household: $e');
-      return null;
     }
   }
 
@@ -140,8 +160,9 @@ class HomePageController extends GetxController {
         '${DotenvConstants.baseUrl}/users_household/get_all_ingredients_in_household?user_email=${user.value!.email}&household_id=$selectedHousehold');
 
     try {
+      print('object1');
       final response = await http.get(url);
-
+      print('object2');
       if (response.statusCode == 200) {
         //TODO handle '_Map<String, dynamic>' is not a subtype of type 'List<dynamic>'
         print('In home page: ${response.body}');
