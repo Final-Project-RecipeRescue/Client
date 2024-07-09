@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/components/MyDropdown.dart';
-import 'package:reciperescue_client/components/MySlider.dart';
+import 'package:reciperescue_client/components/mySlider.dart';
 import 'package:reciperescue_client/components/recipe_home_page.dart';
 import 'package:reciperescue_client/components/recipe_instruction.dart';
 import 'package:reciperescue_client/components/show_recipe_details.dart';
@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Text(
                         'Welcome, ${currentUser.email}',
-                        style: const TextStyle(fontSize: 18),
+                        style: GoogleFonts.poppins(fontSize: 18),
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
@@ -70,8 +70,11 @@ class _HomePageState extends State<HomePage> {
                               }
                             },
                           )),
-                      Expanded(
-                        child: MySlider(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 8.0),
+                        child: const MySlider(
+                            startValue: "Pollution", endValue: "Date\nExpired"),
                       ),
                       Obx(
                         () => hController.isLoading.value
@@ -80,32 +83,28 @@ class _HomePageState extends State<HomePage> {
                                     'assets/images/loading_animation.json'))
                             : hController.hasError.value
                                 ? Text(hController.recipesFetchErrorMsg)
-                                : SizedBox(
-                                    height: MediaQuery.of(context).size.height /
-                                        1.5,
+                                : Expanded(
                                     child: RefreshIndicator(
-                                      onRefresh: Get.find<DashboardController>()
-                                          .fetchRecipesOnHomePage,
-                                      child: ListView.builder(
-                                          itemCount:
-                                              hController.recipes.value.length,
-                                          itemBuilder: (context, index) =>
-                                              Column(children: [
-                                                GestureDetector(
-                                                    child: Container(
-                                                      margin: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 8),
-                                                      child: Recipe(
-                                                        recipeModel: hController
-                                                            .recipes
-                                                            .value[index],
-                                                      ),
+                                    onRefresh: Get.find<DashboardController>()
+                                        .fetchRecipesOnHomePage,
+                                    child: ListView.builder(
+                                        itemCount:
+                                            hController.recipes.value.length,
+                                        itemBuilder: (context, index) =>
+                                            Column(children: [
+                                              GestureDetector(
+                                                  child: Container(
+                                                    margin: const EdgeInsets
+                                                        .symmetric(vertical: 8),
+                                                    child: Recipe(
+                                                      recipeModel: hController
+                                                          .recipes.value[index],
                                                     ),
-                                                    onTap: () => _buildDialog(
-                                                        context, index))
-                                              ])),
-                                    )),
+                                                  ),
+                                                  onTap: () => _buildDialog(
+                                                      context, index))
+                                            ])),
+                                  )),
                       )
                     ],
                   ),
