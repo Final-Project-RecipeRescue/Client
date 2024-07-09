@@ -10,6 +10,7 @@ import 'package:reciperescue_client/components/MyDropdown.dart';
 import 'package:reciperescue_client/components/recipe_home_page.dart';
 import 'package:reciperescue_client/components/recipe_instruction.dart';
 import 'package:reciperescue_client/components/show_recipe_details.dart';
+import 'package:reciperescue_client/controllers/dashboard_controller.dart';
 import 'package:reciperescue_client/controllers/homepage_controller.dart';
 import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 import 'package:reciperescue_client/login_register_page.dart';
@@ -102,23 +103,29 @@ class _HomePageState extends State<HomePage> {
                                 : SizedBox(
                                     height: MediaQuery.of(context).size.height /
                                         1.5,
-                                    child: ListView.builder(
-                                        itemCount:
-                                            hController.recipes.value.length,
-                                        itemBuilder: (context, index) =>
-                                            Column(children: [
-                                              GestureDetector(
-                                                  child: Container(
-                                                    margin: const EdgeInsets
-                                                        .symmetric(vertical: 8),
-                                                    child: Recipe(
-                                                      recipeModel: hController
-                                                          .recipes.value[index],
+                                    child: RefreshIndicator(
+                                      onRefresh: Get.find<DashboardController>()
+                                          .fetchRecipesOnHomePage,
+                                      child: ListView.builder(
+                                          itemCount:
+                                              hController.recipes.value.length,
+                                          itemBuilder: (context, index) =>
+                                              Column(children: [
+                                                GestureDetector(
+                                                    child: Container(
+                                                      margin: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 8),
+                                                      child: Recipe(
+                                                        recipeModel: hController
+                                                            .recipes
+                                                            .value[index],
+                                                      ),
                                                     ),
-                                                  ),
-                                                  onTap: () => _buildDialog(
-                                                      context, index))
-                                            ]))),
+                                                    onTap: () => _buildDialog(
+                                                        context, index))
+                                              ])),
+                                    )),
                       )
                     ],
                   ),
