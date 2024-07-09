@@ -39,7 +39,10 @@ class _MySliderState extends State<MySlider> {
         Text(
           widget.startValue,
           textAlign: TextAlign.center,
-          style: GoogleFonts.poppins(fontSize: 8),
+          style: GoogleFonts.poppins(fontSize: 8, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width / 40,
         ),
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
@@ -60,14 +63,19 @@ class _MySliderState extends State<MySlider> {
                   _currentValue = value;
                 });
               },
-              onChangeEnd: (double value) {},
+              onChangeEnd: (double value) {
+                // TODO send requests to the server for the recipes sorting
+              },
             ),
           ),
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width / 40,
         ),
         Text(
           widget.endValue,
           textAlign: TextAlign.center,
-          style: GoogleFonts.poppins(fontSize: 8),
+          style: GoogleFonts.poppins(fontSize: 8, fontWeight: FontWeight.bold),
         ),
       ],
     );
