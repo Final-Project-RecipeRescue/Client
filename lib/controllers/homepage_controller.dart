@@ -41,7 +41,6 @@ class HomePageController extends GetxController {
   Future<void> fetchHouseholdRecipes() async {
     String concatenatedIngredients =
         ingredients.value.map((e) => e.name).join(',');
-    print(concatenatedIngredients);
     List<RecipesUiModel> tempRecipes = [];
 
     var urlWithoutMissedIngredients = Uri.parse(
@@ -136,7 +135,7 @@ class HomePageController extends GetxController {
 
         currentHousehold = Household.fromJson(data);
 
-        update();
+        refresh();
       } else {
         print('Failed to load household: ${response.statusCode}');
       }
@@ -168,14 +167,14 @@ class HomePageController extends GetxController {
     isLoading(true);
     hasError(false);
     selectedHousehold(householdId);
+
     final Uri url = Uri.parse(
-        '${DotenvConstants.baseUrl}/users_household/get_all_ingredients_in_household?user_email=${user.value!.email}&household_id=$selectedHousehold');
+        '${DotenvConstants.baseUrl}/users_household/get_all_ingredients_in_household?user_email=${user.value.email}&household_id=$selectedHousehold');
 
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
         //TODO handle '_Map<String, dynamic>' is not a subtype of type 'List<dynamic>'
-        print('In home page: ${response.body}');
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         List<IngredientHousehold> allIngredients = [];
         responseData.forEach((ingredientName, ingredientList) {
@@ -243,15 +242,6 @@ class HomePageController extends GetxController {
   Future<void> addIngredientToDB(Ingredient ingredient) async {
     final Uri url = Uri.parse(
         '${DotenvConstants.baseUrl}/users_household/add_ingredient_to_household_by_ingredient_name?user_email=${user.value.email}&household_id=$selectedHousehold');
-
-    // final Map<String, dynamic> requestBody = {
-    //   'ingredient_id': recipeId,
-    //   'name': "Lunch",
-    //   'amount': 1,
-    //   'unit': recipeIngredients,
-    // };
-
-    // print(requestBody);
 
     final http.Response response = await http.post(
       url,
