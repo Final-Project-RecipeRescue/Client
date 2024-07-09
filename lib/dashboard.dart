@@ -53,9 +53,7 @@ class _DashboardState extends State<Dashboard> {
           selectedItemColor: primary,
           onTap: (index) {
             controller.setTabIndex(index);
-            if (index == 2) {
-              controller.fetchRecipesOnHomePage();
-            } else if (index == 1) {
+            if (index == 1) {
               controller.fetchHouseholdIngredients();
             }
           },

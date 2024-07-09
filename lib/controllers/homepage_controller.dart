@@ -95,14 +95,26 @@ class HomePageController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
+    var now = DateTime.now();
+
     await fetchUserInfo();
-    print("on init ${user.value.toString()}");
+    var elapsedUserInfo = DateTime.now().difference(now).inMilliseconds;
+    print("on init fetchUserInfo in ${elapsedUserInfo}ms");
+
+    now = DateTime.now();
     await fetchHousehold(user.value.email, user.value.households[0]);
-    print("on init $currentHousehold");
+    var elapsedHousehold = DateTime.now().difference(now).inMilliseconds;
+    print("on init fetchHousehold in ${elapsedHousehold}ms");
+
+    now = DateTime.now();
     await fetchHouseholdsIngredients(user.value.households[0]);
-    print("on init ${ingredients.value.toString()}");
+    var elapsedIngredients = DateTime.now().difference(now).inMilliseconds;
+    print("on init fetchHouseholdsIngredients in ${elapsedIngredients}ms");
+
+    now = DateTime.now();
     await fetchHouseholdRecipes();
-    print("on init ${recipes.value.toString()}");
+    var elapsedRecipes = DateTime.now().difference(now).inMilliseconds;
+    print("on init fetchHouseholdRecipes in ${elapsedRecipes}ms");
   }
 
   List<Ingredient> getIngredients() => ingredients.value;
@@ -160,9 +172,7 @@ class HomePageController extends GetxController {
         '${DotenvConstants.baseUrl}/users_household/get_all_ingredients_in_household?user_email=${user.value!.email}&household_id=$selectedHousehold');
 
     try {
-      print('object1');
       final response = await http.get(url);
-      print('object2');
       if (response.statusCode == 200) {
         //TODO handle '_Map<String, dynamic>' is not a subtype of type 'List<dynamic>'
         print('In home page: ${response.body}');
