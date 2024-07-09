@@ -61,6 +61,8 @@ class _HomePageState extends State<HomePage> {
                             onChanged: (value) async {
                               if (value !=
                                   hController.selectedHousehold.value) {
+                                await hController.fetchHousehold(
+                                    Authenticate().currentUser?.email, value!);
                                 await hController
                                     .fetchHouseholdsIngredients(value!);
                                 await hController.fetchHouseholdRecipes();
