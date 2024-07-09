@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/components/MyDropdown.dart';
+import 'package:reciperescue_client/components/MySlider.dart';
 import 'package:reciperescue_client/components/recipe_home_page.dart';
 import 'package:reciperescue_client/components/recipe_instruction.dart';
 import 'package:reciperescue_client/components/show_recipe_details.dart';
@@ -69,31 +70,8 @@ class _HomePageState extends State<HomePage> {
                               }
                             },
                           )),
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Row(
-                          children: [
-                            Text(
-                              'sort by',
-                              style: GoogleFonts.poppins(),
-                            ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              'Alphabetical',
-                              style: GoogleFonts.poppins(
-                                  textStyle: const TextStyle(color: primary)),
-                            ),
-                            const Spacer(),
-                            SvgPicture.asset(
-                              'assets/images/sort_icon.svg',
-                              semanticsLabel: 'sort',
-                              height: 24,
-                              width: 24,
-                            )
-                          ],
-                        ),
+                      Expanded(
+                        child: MySlider(),
                       ),
                       Obx(
                         () => hController.isLoading.value
