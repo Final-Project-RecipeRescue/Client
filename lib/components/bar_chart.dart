@@ -73,6 +73,8 @@ class _BarChart extends StatelessWidget {
     String text = '';
     final DateTime today = DateTime.now();
     if (dataType == FilterDate.lastWeek) {
+      print(value.toString());
+      // today.add(const Duration(days: 2));
       DateTime labelDate = today.subtract(Duration(days: 6 - value.toInt()));
       final List<String> dayNames = [
         'Sun',
@@ -84,32 +86,6 @@ class _BarChart extends StatelessWidget {
         'Sat'
       ];
       text = dayNames[labelDate.weekday % 7];
-      // switch (value.toInt()) {
-      //   case 0:
-      //     text = 'Mn';
-      //     break;
-      //   case 1:
-      //     text = 'Te';
-      //     break;
-      //   case 2:
-      //     text = 'Wd';
-      //     break;
-      //   case 3:
-      //     text = 'Tu';
-      //     break;
-      //   case 4:
-      //     text = 'Fr';
-      //     break;
-      //   case 5:
-      //     text = 'St';
-      //     break;
-      //   case 6:
-      //     text = 'Sn';
-      //     break;
-      //   default:
-      //     text = '';
-      //     break;
-      // }
     } else if (dataType == FilterDate.lastSixMonths) {
       final List<String> monthNames = [
         'Jan',

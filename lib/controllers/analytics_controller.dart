@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/constants/dotenv_constants.dart';
-import 'package:reciperescue_client/controllers/homepage_controller.dart';
+
+import 'homepage_controller.dart';
 
 enum FilterDate {
   lastSixMonths('Last 6 Months'),
@@ -23,9 +24,29 @@ enum FilterDate {
   }
 }
 
+enum FilterDataDomain {
+  personal('Personal'),
+  household('Household');
+
+  final String description;
+
+  const FilterDataDomain(this.description);
+
+  static FilterDataDomain fromDescription(String description) {
+    for (FilterDataDomain filter in FilterDataDomain.values) {
+      if (filter.description == description) {
+        return filter;
+      }
+    }
+    throw Exception('Invalid description for enum FilterDataType');
+  }
+}
+
 class AnalyticsController extends GetxController {
   RxList<double> co2Values = <double>[].obs;
-  Rx<FilterDate> _selectedFilter = FilterDate.lastWeek.obs;
+  final Rx<FilterDate> _selectedFilter = FilterDate.lastWeek.obs;
+  final Rx<FilterDataDomain> _selectedFilterDataDomain =
+      FilterDataDomain.personal.obs;
   final RxBool isLoading = RxBool(false);
 
   FilterDate get selectedFilter => _selectedFilter.value;
@@ -35,14 +56,30 @@ class AnalyticsController extends GetxController {
     update();
   }
 
+  FilterDataDomain get selectedFilterDataDomain =>
+      _selectedFilterDataDomain.value;
+
+  set selectedFilterDataDomain(FilterDataDomain newValue) {
+    _selectedFilterDataDomain.value = newValue;
+    update();
+  }
+
+  @override
+  void onInit() async {
+    super.onInit();
+    fetchData(FilterDate.lastWeek);
+    ever(_selectedFilterDataDomain, (_) => fetchData(_selectedFilter.value));
+  }
+
   Future<List<double>> fetchData(FilterDate filterDate) async {
+    print('${_selectedFilter}   ${_selectedFilterDataDomain}');
     isLoading.value = true;
     _selectedFilter.value = filterDate;
     co2Values.clear();
     final DateTime today = DateTime.now();
     DateTime startDate;
-    DateTime endDate =
-        today.add(Duration(days: 1)); // End date is exclusive, so add one day
+    DateTime endDate = today
+        .add(const Duration(days: 1)); // End date is exclusive, so add one day
 
     switch (filterDate) {
       case FilterDate.lastSixMonths:
@@ -52,7 +89,7 @@ class AnalyticsController extends GetxController {
       //   startDate = DateTime(today.year, today.month - 1, today.day);
       // break;
       case FilterDate.lastWeek:
-        startDate = today.subtract(Duration(days: 6));
+        startDate = today.subtract(const Duration(days: 6));
         break;
     }
 
@@ -103,14 +140,15 @@ class AnalyticsController extends GetxController {
   }
 
   Future<void> _fetchByDays(DateTime startDate, DateTime endDate) async {
-    for (DateTime date = startDate;
-        date.isBefore(endDate);
-        date = date.add(Duration(days: 1))) {
+    DateTime newEndDate = endDate.add(const Duration(days: 1));
+    for (DateTime date = startDate.add(const Duration(days: 1));
+        date.isBefore(newEndDate);
+        date = date.add(const Duration(days: 1))) {
       final body = {
         "startDate": {"year": date.year, "mount": date.month, "day": date.day},
         "endDate": {"year": date.year, "mount": date.month, "day": date.day + 1}
       };
-
+      print(body);
       http.Response response = await _doPostGasPollution(body);
 
       if (response.statusCode == 200) {
@@ -118,21 +156,24 @@ class AnalyticsController extends GetxController {
         num co2Value = 0.0;
         if (data["CO2"] != null) {
           co2Value = data["CO2"];
-          print(co2Value);
           co2Value = co2Value.toDouble();
           co2Value.round();
         }
+        print(co2Value);
         co2Values.add(co2Value as double);
       } else {
         throw Exception('Failed to fetch data for date: $date');
       }
     }
+    print(co2Values);
   }
 
   Future<http.Response> _doPostGasPollution(
       Map<String, Map<String, int>> body) async {
-    var url =
-        '${DotenvConstants.baseUrl}/users_household/get_gas_pollution_of_user_in_range_dates?user_email=${Authenticate().currentUser?.email}';
+    String url;
+    url = _selectedFilterDataDomain.value == FilterDataDomain.personal
+        ? '${DotenvConstants.baseUrl}/users_household/get_gas_pollution_of_user_in_range_dates?user_email=${Authenticate().currentUser?.email}'
+        : '${DotenvConstants.baseUrl}/users_household/get_gas_pollution_of_household_in_range_dates?user_email=${Authenticate().currentUser?.email}&household_id=${Get.find<HomePageController>().currentHousehold.householdId}';
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},

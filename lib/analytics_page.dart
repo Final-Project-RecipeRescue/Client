@@ -5,18 +5,21 @@ import 'package:reciperescue_client/components/bar_chart.dart';
 import 'package:reciperescue_client/components/MyDropdown.dart';
 import 'package:reciperescue_client/controllers/analytics_controller.dart';
 
+import 'components/toggle_buttons.dart';
+
 class AnalyticsPage extends StatelessWidget {
   AnalyticsPage({super.key});
-  final AnalyticsController controller = Get.put(AnalyticsController());
 
   @override
   Widget build(BuildContext context) {
-    print(controller.co2Values);
+    final AnalyticsController controller = Get.put(AnalyticsController());
     return Scaffold(
       body: SafeArea(
         child: Obx(() {
           return Column(
             children: [
+              MyToggleButtons(
+                  () => controller.fetchData(controller.selectedFilter)),
               MyDropdown(
                 selectedValue: controller.selectedFilter.description,
                 items: FilterDate.values.map((e) => e.description).toList(),
