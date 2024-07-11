@@ -64,6 +64,7 @@ dependencies:
   #GetX
   get: ^4.6.6
   flutter_dotenv: ^5.1.0
+  fl_chart: ^0.68.0
 
 dev_dependencies:
   flutter_test:

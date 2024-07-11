@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -25,20 +24,23 @@ class RecipeInstructions extends StatefulWidget {
 }
 
 class _RecipeInstructionsState extends State<RecipeInstructions> {
-  final dishCount = 0.obs;
+  int dishCount = 0;
+  Set<String> selectedParticipants = {};
 
   void _incrementDishes() {
-    dishCount.value++;
+    setState(() {
+      dishCount++;
+    });
   }
 
   void _decrementDishes() {
-    dishCount.value--;
+    setState(() {
+      dishCount--;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    RecipeInstructionsController controller = Get.find();
-
     return Scaffold(
       body: Obx(
         () => SafeArea(
@@ -103,27 +105,59 @@ class _RecipeInstructionsState extends State<RecipeInstructions> {
                   width: MediaQuery.sizeOf(context).width,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: controller.household.participants.length,
+                    itemCount: widget.controller.household.participants.length,
                     itemBuilder: (context, index) {
                       List<String> participants =
-                          controller.household.participants;
+                          widget.controller.household.participants;
                       return SizedBox(
                         height: 20,
                         width: 80,
                         child: UserEgg(
                           user: UserModel(
                               firstName: participants[index], lastName: 'b'),
-                          onSelect: _incrementDishes,
-                          onDeselect: _decrementDishes,
+                          onSelect: () {
+                            addParticipant(participants[index]);
+                            _incrementDishes();
+                            print(selectedParticipants);
+                          },
+                          onDeselect: () {
+                            removePaticipant(participants[index]);
+                            _decrementDishes;
+                            print(selectedParticipants);
+                          },
                         ),
                       );
                     },
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    controller.substractRecipeIngredients(
-                        widget.value.id, dishCount.value.toDouble());
+                  onPressed: () async {
+                    if (await widget.controller.substractRecipeIngredients(
+                        widget.value.id,
+                        selectedParticipants.length.toDouble(),
+                        selectedParticipants.toList())) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Bon Apetit!'),
+                          backgroundColor: primary[300],
+                          duration: const Duration(
+                              seconds:
+                                  5), // Duration the Snackbar will be shown
+                        ),
+                      );
+                      Navigator.pop(context);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content:
+                              const Text('You need at least one participant!'),
+                          backgroundColor: primary[900],
+                          duration: const Duration(
+                              seconds:
+                                  5), // Duration the Snackbar will be shown
+                        ),
+                      );
+                    }
                   },
                   child: const Text('Let`s Cook!'),
                 ),
@@ -133,5 +167,13 @@ class _RecipeInstructionsState extends State<RecipeInstructions> {
         ),
       ),
     );
+  }
+
+  void addParticipant(String participant) {
+    selectedParticipants.add(participant);
+  }
+
+  void removePaticipant(String participant) {
+    selectedParticipants.remove(participant);
   }
 }

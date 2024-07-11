@@ -207,6 +207,8 @@ class HomePageController extends GetxController {
       "unit": ingredientToRemove.unit
     };
 
+    print(requestBody.toString());
+
     final http.Response response = await http.delete(
       url,
       headers: {
