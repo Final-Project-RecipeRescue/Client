@@ -51,6 +51,7 @@ class _MySliderState extends State<MySlider> {
                 thumbLabel: _getLabel(),
               ),
               trackHeight: 16.0,
+              trackShape: CustomTrackShape(),
               activeTrackColor: Colors.white),
           child: Expanded(
             child: Slider(
@@ -79,6 +80,54 @@ class _MySliderState extends State<MySlider> {
         ),
       ],
     );
+  }
+}
+
+class CustomTrackShape extends RoundedRectSliderTrackShape {
+  @override
+  void paint(
+    PaintingContext context,
+    Offset offset, {
+    double additionalActiveTrackHeight = 2.0,
+    required Animation<double> enableAnimation,
+    bool? isDiscrete,
+    bool? isEnabled,
+    required RenderBox parentBox,
+    Offset? secondaryOffset,
+    required SliderThemeData sliderTheme,
+    required TextDirection textDirection,
+    required Offset thumbCenter,
+  }) {
+    final Canvas canvas = context.canvas;
+    final Paint paint = Paint()
+      ..color = Colors.transparent
+      ..style = PaintingStyle.fill;
+
+    // Draw the default track first
+    super.paint(
+      context,
+      offset,
+      additionalActiveTrackHeight: additionalActiveTrackHeight,
+      enableAnimation: enableAnimation,
+      isDiscrete: isDiscrete!,
+      isEnabled: isEnabled!,
+      parentBox: parentBox,
+      secondaryOffset: secondaryOffset,
+      sliderTheme: sliderTheme,
+      textDirection: textDirection,
+      thumbCenter: thumbCenter,
+    );
+
+    // Draw tick marks
+    final double trackHeight = sliderTheme.trackHeight ?? 2.0;
+    final double tickMarkRadius = trackHeight * 0.5;
+    final double trackLength = parentBox.size.width - offset.dx * 2;
+
+    // Draw the middle tick mark
+    final double middleTickX = offset.dx + trackLength * 0.5;
+    final Offset middleTickCenter = Offset(middleTickX, thumbCenter.dy);
+
+    canvas.drawCircle(middleTickCenter, tickMarkRadius, paint);
   }
 }
 

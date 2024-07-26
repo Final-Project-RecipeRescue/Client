@@ -5,6 +5,7 @@ import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/constants/dotenv_constants.dart';
 import 'package:reciperescue_client/models/user_model.dart';
 
+import '../models/meal_model.dart';
 import 'homepage_controller.dart';
 
 enum FilterDate {
@@ -185,5 +186,9 @@ class AnalyticsController extends GetxController {
 
   List<UserModel> getHouseholdUsers() {
     return Get.find<HomePageController>().currentHousehold.value.participants;
+  }
+
+  Map<DateTime, Map<String, Map<String, List<Meal>>>> getHouseholdMeals() {
+    return Get.find<HomePageController>().currentHousehold.value.meals;
   }
 }

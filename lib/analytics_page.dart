@@ -7,6 +7,7 @@ import 'package:reciperescue_client/components/MyDropdown.dart';
 import 'package:reciperescue_client/controllers/analytics_controller.dart';
 
 import 'colors/colors.dart';
+import 'components/meals_table.dart';
 import 'components/rank_pollution_table.dart';
 import 'components/toggle_buttons.dart';
 import 'controllers/homepage_controller.dart';
@@ -20,49 +21,64 @@ class AnalyticsPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Obx(() {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                MyToggleButtons(
-                    () => controller.fetchData(controller.selectedFilter)),
-                GasPollutionTable(
-                  users: controller.getHouseholdUsers(),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'CO2 per 100g',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: primary,
-                      ),
-                    ),
-                    const Spacer(),
-                    MyDropdown(
-                      selectedValue: controller.selectedFilter.description,
-                      items:
-                          FilterDate.values.map((e) => e.description).toList(),
-                      onChanged: (value) {
-                        if (value != controller.selectedFilter.description) {
-                          controller
-                              .fetchData(FilterDate.fromDescription(value!));
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height / 4,
-                  width: MediaQuery.of(context).size.width,
-                  child: controller.isLoading.value
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  MyToggleButtons(
+                      () => controller.fetchData(controller.selectedFilter)),
+                  controller.isLoading.value
                       ? Lottie.asset('assets/images/loading_animation.json')
-                      : MyBarChart(
-                          controller.co2Values, controller.selectedFilter),
-                )
-              ],
+                      : Column(
+                          children: [
+                            MyDropdown(
+                              selectedValue:
+                                  controller.selectedFilter.description,
+                              items: FilterDate.values
+                                  .map((e) => e.description)
+                                  .toList(),
+                              onChanged: (value) {
+                                if (value !=
+                                    controller.selectedFilter.description) {
+                                  controller.fetchData(
+                                      FilterDate.fromDescription(value!));
+                                }
+                              },
+                            ),
+                            controller.selectedFilterDataDomain ==
+                                    FilterDataDomain.household
+                                ? GasPollutionTable(
+                                    users: controller.getHouseholdUsers(),
+                                  )
+                                : HouseholdMealsTable(
+                                    filterDate: controller.selectedFilter,
+                                    mealMap: controller.getHouseholdMeals(),
+                                  ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'CO2 per 100g',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: primary,
+                                  ),
+                                ),
+                                const Spacer(),
+                              ],
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height / 4,
+                              width: MediaQuery.of(context).size.width,
+                              child: MyBarChart(controller.co2Values,
+                                  controller.selectedFilter),
+                            ),
+                          ],
+                        )
+                ],
+              ),
             ),
           );
         }),

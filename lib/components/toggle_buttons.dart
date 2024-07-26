@@ -36,45 +36,48 @@ class _MyToggleButtonsState extends State<MyToggleButtons> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey, width: 2.0),
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          TextButton(
-            onPressed: controller.isLoading.value ? null : toggleButton1,
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size(MediaQuery.of(context).size.width / 4,
-                  MediaQuery.of(context).size.height / 20),
-              backgroundColor: isPersonal ? primary : Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+    return AbsorbPointer(
+      absorbing: controller.isLoading.value,
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey, width: 2.0),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TextButton(
+              onPressed: toggleButton1,
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(MediaQuery.of(context).size.width / 4,
+                    MediaQuery.of(context).size.height / 20),
+                backgroundColor: isPersonal ? primary : Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                'Personal',
+                style: TextStyle(color: isPersonal ? Colors.white : primary),
               ),
             ),
-            child: Text(
-              'Personal',
-              style: TextStyle(color: isPersonal ? Colors.white : primary),
-            ),
-          ),
-          TextButton(
-            onPressed: controller.isLoading.value ? null : toggleButton2,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: isHousehold ? primary : Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+            TextButton(
+              onPressed: toggleButton2,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isHousehold ? primary : Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                'Household',
+                style: TextStyle(color: isHousehold ? Colors.white : primary),
               ),
             ),
-            child: Text(
-              'Household',
-              style: TextStyle(color: isHousehold ? Colors.white : primary),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
