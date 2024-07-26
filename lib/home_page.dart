@@ -1,6 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -45,9 +46,25 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
-                        'Welcome, ${currentUser.email}',
-                        style: GoogleFonts.poppins(fontSize: 18),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        child: RichText(
+                            text: TextSpan(
+                                text: 'Hello, \n',
+                                style: GoogleFonts.poppins(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.normal,
+                                    color: primary),
+                                children: <TextSpan>[
+                              TextSpan(
+                                text: hController.user.value.firstName,
+                                style: GoogleFonts.poppins(
+                                    fontSize: 48,
+                                    fontWeight: FontWeight.normal,
+                                    color: primary),
+                              )
+                            ])),
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(

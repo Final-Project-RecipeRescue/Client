@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reciperescue_client/colors/colors.dart';
 import '../models/user_model.dart';
 
 class GasPollutionTable extends StatelessWidget {
@@ -19,6 +20,7 @@ class GasPollutionTable extends StatelessWidget {
       margin: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.0),
+        border: Border.all(color: myGrey, width: 2.0),
         color: Colors.white,
         boxShadow: const [
           BoxShadow(
