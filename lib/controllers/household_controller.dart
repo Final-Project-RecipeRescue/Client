@@ -24,7 +24,7 @@ class HouseholdController extends GetxController {
       QuestionnaireController questionnaireController) async {
     try {
       final Uri url = Uri.parse(
-          '${DotenvConstants.baseUrl}/users_household/createNewHousehold?user_mail=${Authenticate().currentUser!.email}&household_name=${nameNewHousehold.value.text}');
+          '${DotenvConstants.baseUrl}/usersandhouseholdmanagement/createNewHousehold?user_mail=${Authenticate().currentUser!.email}&household_name=${nameNewHousehold.value.text}');
 
       List<IngredientHousehold> ingredients =
           questionnaireController.ingredients.value;

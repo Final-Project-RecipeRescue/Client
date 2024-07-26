@@ -58,7 +58,8 @@ class QuestionnaireController extends GetxController {
 
   Future<bool> createUser() async {
     // Define the URL to which you want to send the POST request
-    late String url = '${DotenvConstants.baseUrl}/users_household/add_user';
+    late String url =
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/addUser';
     print("first_name: ${firstName.value.text}");
     print("last_name: ${lastName.value.text}");
     print("email: ${Authenticate().currentUser!.email}");

@@ -22,14 +22,12 @@ class InitializerController extends GetxController {
         '${DotenvConstants.baseUrl}/ingredients/getAllSystemIngredients');
     List<IngredientSystem> fetchedIngredients = [];
     var response = await http.get(url);
-    print('System ingredients are : ${response.body}');
     List<dynamic> dataIngredients = jsonDecode(response.body);
     for (int i = 0; i < dataIngredients.length; i++) {
       IngredientSystem r = IngredientSystem.fromJson(dataIngredients[i]);
       fetchedIngredients.add(r);
     }
     systemIngredients(fetchedIngredients);
-    print(systemIngredients);
   }
 
   @override

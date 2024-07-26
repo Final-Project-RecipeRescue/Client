@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class MyDropdown extends StatelessWidget {
   final String selectedValue;
-  final List<String> items;
+  final Iterable<String> items;
   final ValueChanged<String?> onChanged;
 
   const MyDropdown({

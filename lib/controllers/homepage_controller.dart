@@ -20,7 +20,13 @@ class HomePageController extends GetxController {
   final selectedHousehold = ''.obs;
   int _selectedIngredientsIndex = 0;
   String _recipesFetchErrorMsg = '';
-  late Household currentHousehold;
+  var currentHousehold = Household(
+    householdId: 'default',
+    householdName: 'default',
+    participants: [],
+    ingredients: {},
+    meals: {},
+  ).obs;
   TextEditingController ingredientUnitController = TextEditingController();
   TextEditingController ingredientAmountController = TextEditingController();
 
@@ -44,7 +50,7 @@ class HomePageController extends GetxController {
     List<RecipesUiModel> tempRecipes = [];
 
     var urlWithoutMissedIngredients = Uri.parse(
-        '${DotenvConstants.baseUrl}/users_household/get_all_recipes_that_household_can_make?user_email=${Authenticate().currentUser!.email}&household_id=${currentHousehold.householdId}');
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getAllRecipesThatHouseholdCanMake?user_email=${Authenticate().currentUser!.email}&household_id=${currentHousehold.value.householdId}');
     var urlWithMissedIngredients = Uri.parse(
         '${DotenvConstants.baseUrl}/recipes/getRecipesByIngredients?ingredients=$concatenatedIngredients');
 
@@ -124,18 +130,19 @@ class HomePageController extends GetxController {
   }
 
   Future<void> fetchHousehold(String? userEmail, String householdId) async {
+    isLoading.value = true;
     final url = Uri.parse(
-        '${DotenvConstants.baseUrl}/users_household/get_household_user_by_id?user_email=$userEmail&household_id=$householdId');
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getHouseholdAndUsersDataById?user_email=$userEmail&household_id=$householdId');
 
     try {
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
+        print('here ${response.body}');
+        currentHousehold.value = Household.fromJson(data);
 
-        currentHousehold = Household.fromJson(data);
-
-        refresh();
+        update();
       } else {
         print('Failed to load household: ${response.statusCode}');
       }
@@ -146,7 +153,7 @@ class HomePageController extends GetxController {
 
   Future<void> fetchUserInfo() async {
     final Uri url = Uri.parse(
-        '${DotenvConstants.baseUrl}/users_household/get_user?user_email=${Authenticate().currentUser!.email}');
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getUser?user_email=${Authenticate().currentUser!.email}');
 
     try {
       final response = await http.get(url);
@@ -169,7 +176,7 @@ class HomePageController extends GetxController {
     selectedHousehold(householdId);
 
     final Uri url = Uri.parse(
-        '${DotenvConstants.baseUrl}/users_household/get_all_ingredients_in_household?user_email=${user.value.email}&household_id=$selectedHousehold');
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getAllIngredientsInHousehold?user_email=${user.value.email}&household_id=$selectedHousehold');
 
     try {
       final response = await http.get(url);
@@ -198,7 +205,7 @@ class HomePageController extends GetxController {
     // Ingredient ingredientToRemove = ingredients.value[index];
     IngredientHousehold ingredientToRemove = ingredient;
     final Uri url = Uri.parse(
-        '${DotenvConstants.baseUrl}/users_household/remove_ingredient_from_household?user_email=${user.value.email}&household_id=$selectedHousehold');
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/removeIngredientFromHousehold?user_email=${user.value.email}&household_id=$selectedHousehold');
 
     final Map<String, dynamic> requestBody = {
       "ingredient_id": ingredientToRemove.ingredientId,
@@ -206,6 +213,8 @@ class HomePageController extends GetxController {
       "amount": ingredientToRemove.amount,
       "unit": ingredientToRemove.unit
     };
+
+    print(requestBody.toString());
 
     final http.Response response = await http.delete(
       url,
@@ -241,7 +250,7 @@ class HomePageController extends GetxController {
 
   Future<void> addIngredientToDB(Ingredient ingredient) async {
     final Uri url = Uri.parse(
-        '${DotenvConstants.baseUrl}/users_household/add_ingredient_to_household_by_ingredient_name?user_email=${user.value.email}&household_id=$selectedHousehold');
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/addIngredientToHouseholdByIngredientName?user_email=${user.value.email}&household_id=$selectedHousehold');
 
     final http.Response response = await http.post(
       url,
