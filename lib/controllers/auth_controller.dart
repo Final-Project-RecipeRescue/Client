@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:reciperescue_client/dashboard.dart';
 import 'package:reciperescue_client/first_time.dart';
 import 'package:reciperescue_client/authentication/auth.dart';
-import 'package:reciperescue_client/home_page.dart';
 import 'package:reciperescue_client/login_register_page.dart';
 import 'package:http/http.dart' as http;
 
@@ -75,7 +74,7 @@ class AuthController extends GetxController {
 
   Future<Map<String, dynamic>> getUser() async {
     final url = Uri.parse(
-        '${DotenvConstants.baseUrl}/users_household/get_user?user_email=${_user.value?.email.toString()}');
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getUser?user_email=${_user.value?.email.toString()}');
     final response = await http.get(url);
     print(response.body);
     if (response.statusCode == 200 || response.statusCode == 404) {

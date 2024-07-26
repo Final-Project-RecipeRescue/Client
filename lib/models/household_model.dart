@@ -1,11 +1,12 @@
 import 'ingredient_model.dart';
 import 'meal_model.dart';
+import 'user_model.dart'; // Import the UserModel class
 
 class Household {
   final String householdId;
   final String householdName;
   final String? householdImage;
-  final List<String> participants;
+  final List<UserModel> participants; // Change the type to List<UserModel>
   final Map<String, List<IngredientHousehold>> ingredients;
   final Map<DateTime, Map<String, Map<String, List<Meal>>>> meals;
 
@@ -25,19 +26,6 @@ class Household {
           value.map((item) => IngredientHousehold.fromJson(item)));
     });
 
-    // Map<DateTime, Map<String, Map<String, List<Meal>>>> meals = {};
-    // json['meals'].forEach((date, mealTypes) {
-    //   Map<String, Map<String, List<Meal>>> mealMap = {};
-    //   mealTypes.forEach((mealType, dishes) {
-    //     mealMap[mealType] = {};
-    //     dishes.forEach((dishId, mealDetails) {
-    //       mealMap[mealType]?[dishId] =
-    //           List<Meal>.from(mealDetails.map((item) => Meal.fromJson(item)));
-    //     });
-    //   });
-    //   meals[DateTime.parse(date)] = mealMap;
-    // });
-
     Map<DateTime, Map<String, Map<String, List<Meal>>>> meals = {};
     json['meals'].forEach((date, mealTypes) {
       var mealsDate = DateTime.parse(date);
@@ -50,12 +38,12 @@ class Household {
         });
       });
     });
-
     return Household(
       householdId: json['household_id'],
       householdName: json['household_name'],
       householdImage: json['household_image'],
-      participants: List<String>.from(json['participants']),
+      participants: List<UserModel>.from(
+          json['participants'].map((item) => UserModel.fromJson(item))),
       ingredients: ingredients,
       meals: meals,
     );
@@ -84,7 +72,7 @@ class Household {
       'household_id': householdId,
       'household_name': householdName,
       'household_image': householdImage,
-      'participants': participants,
+      'participants': participants.map((item) => item.toJson()).toList(),
       'ingredients': ingredientsJson,
       'meals': mealsJson,
     };

@@ -51,7 +51,7 @@ class _MySliderState extends State<MySlider> {
                 thumbLabel: _getLabel(),
               ),
               trackHeight: 16.0,
-              activeTrackColor: primary),
+              activeTrackColor: Colors.white),
           child: Expanded(
             child: Slider(
               value: _currentValue,

@@ -107,21 +107,22 @@ class _RecipeInstructionsState extends State<RecipeInstructions> {
                     scrollDirection: Axis.horizontal,
                     itemCount: widget.controller.household.participants.length,
                     itemBuilder: (context, index) {
-                      List<String> participants =
-                          widget.controller.household.participants;
+                      List<UserModel> participants =
+                          widget.controller.household.participants.toList();
                       return SizedBox(
                         height: 20,
                         width: 80,
                         child: UserEgg(
                           user: UserModel(
-                              firstName: participants[index], lastName: 'b'),
+                              firstName: participants[index].firstName,
+                              lastName: participants[index].lastName),
                           onSelect: () {
-                            addParticipant(participants[index]);
+                            addParticipant(participants[index].email!);
                             _incrementDishes();
                             print(selectedParticipants);
                           },
                           onDeselect: () {
-                            removePaticipant(participants[index]);
+                            removePaticipant(participants[index].email!);
                             _decrementDishes;
                             print(selectedParticipants);
                           },

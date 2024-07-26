@@ -47,7 +47,7 @@ class _MyToggleButtonsState extends State<MyToggleButtons> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           TextButton(
-            onPressed: toggleButton1,
+            onPressed: controller.isLoading.value ? null : toggleButton1,
             style: ElevatedButton.styleFrom(
               minimumSize: Size(MediaQuery.of(context).size.width / 4,
                   MediaQuery.of(context).size.height / 20),
@@ -62,7 +62,7 @@ class _MyToggleButtonsState extends State<MyToggleButtons> {
             ),
           ),
           TextButton(
-            onPressed: toggleButton2,
+            onPressed: controller.isLoading.value ? null : toggleButton2,
             style: ElevatedButton.styleFrom(
               backgroundColor: isHousehold ? primary : Colors.white,
               shape: RoundedRectangleBorder(

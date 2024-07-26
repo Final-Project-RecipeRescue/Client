@@ -27,7 +27,6 @@ class _UserEggState extends State<UserEgg> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          // RecipeInstructionsController controller = Get.find();
           _isSelected = !_isSelected;
           if (_isSelected) {
             widget.onSelect();
@@ -50,10 +49,11 @@ class _UserEggState extends State<UserEgg> {
             bottomRight: Radius.circular(50),
           ),
         ),
-        child: Stack(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              margin: EdgeInsets.only(top: 12),
+              margin: EdgeInsets.symmetric(vertical: 3),
               child: Align(
                 alignment: Alignment.topCenter,
                 child: CircleAvatar(
@@ -66,16 +66,11 @@ class _UserEggState extends State<UserEgg> {
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: Text(
-                  maxLines: 2,
-                  '${widget.user.firstName} ${widget.user.lastName}',
-                  style: const TextStyle(fontSize: 14),
-                ),
-              ),
+            Text(
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              '${widget.user.firstName} ${widget.user.lastName}',
+              style: const TextStyle(fontSize: 12),
             ),
           ],
         ),

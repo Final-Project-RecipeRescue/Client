@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/constants/dotenv_constants.dart';
+import 'package:reciperescue_client/models/user_model.dart';
 
 import 'homepage_controller.dart';
 
@@ -112,12 +113,12 @@ class AnalyticsController extends GetxController {
       final body = {
         "startDate": {
           "year": monthStart.year,
-          "mount": monthStart.month,
+          "month": monthStart.month,
           "day": monthStart.day
         },
         "endDate": {
           "year": monthEnd.year,
-          "mount": monthEnd.month,
+          "month": monthEnd.month,
           "day": monthEnd.day
         }
       };
@@ -145,8 +146,8 @@ class AnalyticsController extends GetxController {
         date.isBefore(newEndDate);
         date = date.add(const Duration(days: 1))) {
       final body = {
-        "startDate": {"year": date.year, "mount": date.month, "day": date.day},
-        "endDate": {"year": date.year, "mount": date.month, "day": date.day + 1}
+        "startDate": {"year": date.year, "month": date.month, "day": date.day},
+        "endDate": {"year": date.year, "month": date.month, "day": date.day + 1}
       };
       print(body);
       http.Response response = await _doPostGasPollution(body);
@@ -172,13 +173,17 @@ class AnalyticsController extends GetxController {
       Map<String, Map<String, int>> body) async {
     String url;
     url = _selectedFilterDataDomain.value == FilterDataDomain.personal
-        ? '${DotenvConstants.baseUrl}/users_household/get_gas_pollution_of_user_in_range_dates?user_email=${Authenticate().currentUser?.email}'
-        : '${DotenvConstants.baseUrl}/users_household/get_gas_pollution_of_household_in_range_dates?user_email=${Authenticate().currentUser?.email}&household_id=${Get.find<HomePageController>().currentHousehold.householdId}';
+        ? '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getGasPollutionOfUserInRangeDates?user_email=${Authenticate().currentUser?.email}'
+        : '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getGasPollutionOfHouseholdInRangeDates?user_email=${Authenticate().currentUser?.email}&household_id=${Get.find<HomePageController>().currentHousehold.value.householdId}';
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(body),
     );
     return response;
+  }
+
+  List<UserModel> getHouseholdUsers() {
+    return Get.find<HomePageController>().currentHousehold.value.participants;
   }
 }
