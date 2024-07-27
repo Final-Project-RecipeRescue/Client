@@ -8,7 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/components/MyDropdown.dart';
-import 'package:reciperescue_client/components/mySlider.dart';
 import 'package:reciperescue_client/components/recipe_home_page.dart';
 import 'package:reciperescue_client/components/recipe_instruction.dart';
 import 'package:reciperescue_client/components/show_recipe_details.dart';
@@ -18,6 +17,8 @@ import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 import 'package:reciperescue_client/login_register_page.dart';
 import 'package:lottie/lottie.dart';
 import 'package:reciperescue_client/routes/routes.dart';
+
+import 'components/MySlider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -49,22 +50,22 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         alignment: Alignment.centerLeft,
                         margin: const EdgeInsets.symmetric(horizontal: 16),
-                        child: RichText(
-                            text: TextSpan(
-                                text: 'Hello, \n',
-                                style: GoogleFonts.poppins(
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.normal,
-                                    color: primary),
-                                children: <TextSpan>[
-                              TextSpan(
-                                text: hController.user.value.firstName,
-                                style: GoogleFonts.poppins(
-                                    fontSize: 48,
-                                    fontWeight: FontWeight.normal,
-                                    color: primary),
-                              )
-                            ])),
+                        child: Obx(() => RichText(
+                                text: TextSpan(
+                                    text: 'Hello, \n',
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.normal,
+                                        color: primary),
+                                    children: <TextSpan>[
+                                  TextSpan(
+                                    text: hController.user.value.firstName,
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 48,
+                                        fontWeight: FontWeight.normal,
+                                        color: primary),
+                                  )
+                                ]))),
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
@@ -90,8 +91,11 @@ class _HomePageState extends State<HomePage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16.0, vertical: 8.0),
-                        child: const MySlider(
-                            startValue: "Pollution", endValue: "Date\nExpired"),
+                        child: MySlider(
+                          startValue: "Pollution",
+                          endValue: "Date\nExpired",
+                          items: hController.recipes.value,
+                        ),
                       ),
                       Obx(
                         () => hController.isLoading.value

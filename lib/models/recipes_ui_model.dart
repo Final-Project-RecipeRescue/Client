@@ -10,7 +10,7 @@ class RecipesUiModel {
   final String imageUrl;
   final int? likes;
   final List<dynamic> ingredients;
-  final Map<String, int> sumGasPollution;
+  final double sumGasPollution;
 
   RecipesUiModel(
       {required this.id,
@@ -34,17 +34,13 @@ class RecipesUiModel {
   }
 
   factory RecipesUiModel.fromMap(Map<String, dynamic> map) {
-    final Map<String, int> parsedSumGasPollution =
-        (map['sumGasPollution'] as Map<String, dynamic>).map(
-      (key, value) => MapEntry(key, (value as num).toDouble().round()),
-    );
     RecipesUiModel recipe = RecipesUiModel(
         id: map['recipe_id'] as int,
         title: map['recipe_name'] as String,
         imageUrl: map['image_url'] ?? 'https://picsum.photos/250?image=9',
         likes: map['likes'] as int? ?? 0,
         ingredients: map['ingredients'] as List<dynamic>,
-        sumGasPollution: parsedSumGasPollution);
+        sumGasPollution: (map['sumGasPollution']['CO2'] as num).toDouble());
     return recipe;
   }
 

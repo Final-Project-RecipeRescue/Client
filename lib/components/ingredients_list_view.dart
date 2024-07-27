@@ -2,10 +2,6 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:reciperescue_client/colors/colors.dart';
-import 'package:reciperescue_client/components/ingredient_details.dart';
-import 'package:reciperescue_client/components/show_recipe_details.dart';
 
 import '../models/ingredient_model.dart';
 

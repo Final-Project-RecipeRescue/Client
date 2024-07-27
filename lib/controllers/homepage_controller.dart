@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -77,6 +78,7 @@ class HomePageController extends GetxController {
             return;
           }
         }
+        print('recipe ${dataRecipes[0]}');
 
         for (var recipeData in dataRecipes) {
           RecipesUiModel recipe = RecipesUiModel.fromMap(recipeData);
@@ -164,7 +166,7 @@ class HomePageController extends GetxController {
       }
       final Map<String, dynamic> data = jsonDecode(response.body);
       user.value = UserModel.fromJson(data);
-      update();
+      refresh();
     } catch (e) {
       print('Error: $e');
     }

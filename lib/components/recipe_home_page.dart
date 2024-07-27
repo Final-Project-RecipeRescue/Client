@@ -78,7 +78,7 @@ class Recipe extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    '${recipeModel.sumGasPollution['CO2'].toString()} gCO2',
+                    '${recipeModel.sumGasPollution.round().toString()} gCO2',
                     style: GoogleFonts.poppins(
                         fontWeight: FontWeight.bold, color: Colors.white),
                   ),
