@@ -19,6 +19,7 @@ class AnalyticsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final AnalyticsController controller = Get.put(AnalyticsController());
     return Scaffold(
+      backgroundColor: myGrey[100],
       body: SafeArea(
         child: Obx(() {
           return SingleChildScrollView(

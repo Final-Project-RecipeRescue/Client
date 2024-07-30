@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'dart:ffi';
 
 class RecipesUiModel {
   final int id;
@@ -10,7 +9,8 @@ class RecipesUiModel {
   final String imageUrl;
   final int? likes;
   final List<dynamic> ingredients;
-  final Map<String, int> sumGasPollution;
+  final double sumGasPollution;
+  final int closestExpirationDays;
 
   RecipesUiModel(
       {required this.id,
@@ -20,7 +20,8 @@ class RecipesUiModel {
       required this.ingredients,
       required this.imageUrl,
       this.likes,
-      required this.sumGasPollution});
+      required this.sumGasPollution,
+      required this.closestExpirationDays});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -29,22 +30,20 @@ class RecipesUiModel {
       'image_url': imageUrl,
       'likes': likes,
       'ingredients': ingredients,
-      'sumGasPollution': sumGasPollution
+      'sumGasPollution': sumGasPollution,
+      'closest_expiration_days': closestExpirationDays
     };
   }
 
   factory RecipesUiModel.fromMap(Map<String, dynamic> map) {
-    final Map<String, int> parsedSumGasPollution =
-        (map['sumGasPollution'] as Map<String, dynamic>).map(
-      (key, value) => MapEntry(key, (value as num).toDouble().round()),
-    );
     RecipesUiModel recipe = RecipesUiModel(
         id: map['recipe_id'] as int,
         title: map['recipe_name'] as String,
         imageUrl: map['image_url'] ?? 'https://picsum.photos/250?image=9',
         likes: map['likes'] as int? ?? 0,
         ingredients: map['ingredients'] as List<dynamic>,
-        sumGasPollution: parsedSumGasPollution);
+        sumGasPollution: (map['sumGasPollution']['CO2'] as num).toDouble(),
+        closestExpirationDays: (map['closest_expiration_days'] as num).toInt());
     return recipe;
   }
 
@@ -55,6 +54,6 @@ class RecipesUiModel {
 
   @override
   String toString() {
-    return 'RecipesUiModel{id: $id, title: $title, image: $imageUrl, likes: $likes}, ingredients: $ingredients';
+    return 'RecipesUiModel{id: $id, title: $title, image: $imageUrl, likes: $likes}, ingredients: $ingredients, closest expiration date: $closestExpirationDays';
   }
 }

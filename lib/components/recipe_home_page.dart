@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -78,7 +76,7 @@ class Recipe extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    '${recipeModel.sumGasPollution['CO2'].toString()} gCO2',
+                    '${recipeModel.sumGasPollution.round().toString()} gCO2',
                     style: GoogleFonts.poppins(
                         fontWeight: FontWeight.bold, color: Colors.white),
                   ),

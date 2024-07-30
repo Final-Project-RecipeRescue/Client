@@ -68,6 +68,7 @@ class HouseholdMealsTable extends StatelessWidget {
       margin: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.0),
+        border: Border.all(color: Colors.grey, width: 2.0),
         color: Colors.white,
         boxShadow: const [
           BoxShadow(
