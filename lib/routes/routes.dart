@@ -11,6 +11,9 @@ import 'package:reciperescue_client/login_register_page.dart';
 import 'package:reciperescue_client/manage_ingredients_page.dart';
 import 'package:reciperescue_client/models/recipes_ui_model.dart';
 
+import '../ingredients_page.dart';
+import '../profile_page.dart';
+
 class Routes {
   static String home = "/";
   static String newHousehold = "/newHousehold";
@@ -28,10 +31,10 @@ class Routes {
   static String getAnalytics() => analytics;
 
   static Widget getHomePage() => const HomePage();
-  static Widget getProfilePage() => const Text("profile");
+  static Widget getProfilePage() => ProfilePage();
   static Widget getManageIngredientsPage() => const ManageIngredientsPage();
   static Widget getAnalyticsPage() => AnalyticsPage();
-  static Widget getSearchRecipesPage() => const Text("search recipes");
+  static Widget getSearchIngredientsPage() => IngredientsPage();
   static Widget getRecipeInstructionsPage(RecipesUiModel value) =>
       RecipeInstructions(value);
   static Widget getJoinOrCreateHouseholdPage() =>
@@ -62,7 +65,7 @@ class Routes {
     getProfilePage(),
     getManageIngredientsPage(),
     getHomePage(),
-    getSearchRecipesPage(),
+    getSearchIngredientsPage(),
     getAnalyticsPage(),
     getJoinOrCreateHouseholdPage(),
   ];

@@ -6,12 +6,18 @@ class MySlider extends StatefulWidget {
   final String startValue;
   final String endValue;
   final List<dynamic> items;
+  final void Function() onSwipeStart;
+  final void Function() onSwipeEnd;
+  final void Function() onSwipeMiddle;
 
   const MySlider({
     super.key,
     required this.startValue,
     required this.endValue,
     required this.items,
+    required this.onSwipeStart,
+    required this.onSwipeEnd,
+    required this.onSwipeMiddle,
   });
 
   @override
@@ -67,7 +73,18 @@ class _MySliderState extends State<MySlider> {
                 });
               },
               onChangeEnd: (double value) {
-                // TODO send requests to the server for the recipes sorting
+                switch (value) {
+                  case 0.0:
+                    widget.onSwipeStart();
+                    break;
+                  case 1.0:
+                    widget.onSwipeMiddle();
+                    break;
+                  case 2.0:
+                    widget.onSwipeEnd();
+                    break;
+                  default:
+                }
               },
             ),
           ),

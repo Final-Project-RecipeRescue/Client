@@ -10,7 +10,7 @@ class UserModel {
   final double sumOfGasPollution;
 
   UserModel({
-    this.firstName = "User",
+    this.firstName = "",
     this.lastName = "lastName",
     this.email,
     this.country,

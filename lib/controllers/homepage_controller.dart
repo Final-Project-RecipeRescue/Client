@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -15,9 +14,11 @@ class HomePageController extends GetxController {
   final RxBool isLoading = RxBool(false);
   final RxBool hasError = RxBool(false);
   final Rx<List<RecipesUiModel>> recipes = Rx([]);
+  late List<RecipesUiModel> recipesSortedByMix;
   final Rx<List<IngredientHousehold>> ingredients = Rx([]);
   var itemCount = 0.obs;
   late Rx<UserModel> user = Rx(UserModel());
+  final Rx<HomepageSortType> selectedSort = Rx(HomepageSortType.byMix);
   final selectedHousehold = ''.obs;
   int _selectedIngredientsIndex = 0;
   String _recipesFetchErrorMsg = '';
@@ -59,6 +60,8 @@ class HomePageController extends GetxController {
     if (tempRecipes.isEmpty && !hasError.value) {
       await _fetchData(urlWithMissedIngredients, tempRecipes);
     }
+    recipesSortedByMix = recipes.value;
+    print(recipesSortedByMix.toString());
   }
 
   Future<void> _fetchData(Uri url, List<RecipesUiModel> tempRecipes) async {
@@ -284,5 +287,46 @@ class HomePageController extends GetxController {
     }
     // TODO Update also the firebase
     update();
+  }
+
+  Future<void> sort(HomepageSortType sortType) async {
+    List<RecipesUiModel> sortedList = List.from(recipes.value);
+    selectedSort.value = sortType;
+    print(selectedSort.value);
+    switch (sortType) {
+      case HomepageSortType.byPollution:
+        sortedList
+            .sort((a, b) => b.sumGasPollution.compareTo(a.sumGasPollution));
+        break;
+      case HomepageSortType.byMix:
+        sortedList = recipesSortedByMix;
+        break;
+      case HomepageSortType.byDateExpiration:
+        sortedList.sort((a, b) =>
+            a.closestExpirationDays.compareTo(b.closestExpirationDays));
+        break;
+      default:
+    }
+    recipes.value = sortedList;
+    update();
+  }
+}
+
+enum HomepageSortType {
+  byPollution('Pollution'),
+  byMix('Mix'),
+  byDateExpiration('DateExpiration');
+
+  final String description;
+
+  const HomepageSortType(this.description);
+
+  static HomepageSortType fromDescription(String sortType) {
+    for (HomepageSortType st in HomepageSortType.values) {
+      if (st.description == sortType) {
+        return st;
+      }
+    }
+    throw Exception('Invalid description for enum HomepageSortType');
   }
 }

@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'dart:ffi';
 
 class RecipesUiModel {
   final int id;
@@ -11,6 +10,7 @@ class RecipesUiModel {
   final int? likes;
   final List<dynamic> ingredients;
   final double sumGasPollution;
+  final int closestExpirationDays;
 
   RecipesUiModel(
       {required this.id,
@@ -20,7 +20,8 @@ class RecipesUiModel {
       required this.ingredients,
       required this.imageUrl,
       this.likes,
-      required this.sumGasPollution});
+      required this.sumGasPollution,
+      required this.closestExpirationDays});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -29,7 +30,8 @@ class RecipesUiModel {
       'image_url': imageUrl,
       'likes': likes,
       'ingredients': ingredients,
-      'sumGasPollution': sumGasPollution
+      'sumGasPollution': sumGasPollution,
+      'closest_expiration_days': closestExpirationDays
     };
   }
 
@@ -40,7 +42,8 @@ class RecipesUiModel {
         imageUrl: map['image_url'] ?? 'https://picsum.photos/250?image=9',
         likes: map['likes'] as int? ?? 0,
         ingredients: map['ingredients'] as List<dynamic>,
-        sumGasPollution: (map['sumGasPollution']['CO2'] as num).toDouble());
+        sumGasPollution: (map['sumGasPollution']['CO2'] as num).toDouble(),
+        closestExpirationDays: (map['closest_expiration_days'] as num).toInt());
     return recipe;
   }
 
@@ -51,6 +54,6 @@ class RecipesUiModel {
 
   @override
   String toString() {
-    return 'RecipesUiModel{id: $id, title: $title, image: $imageUrl, likes: $likes}, ingredients: $ingredients';
+    return 'RecipesUiModel{id: $id, title: $title, image: $imageUrl, likes: $likes}, ingredients: $ingredients, closest expiration date: $closestExpirationDays';
   }
 }
