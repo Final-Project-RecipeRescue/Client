@@ -56,7 +56,10 @@ class _IngredientsPageState extends State<IngredientsPage> {
                 itemCount: filteredIngredients.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(filteredIngredients[index].name),
+                    title: Text(
+                      filteredIngredients[index].name,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                   );
                 },
               ),

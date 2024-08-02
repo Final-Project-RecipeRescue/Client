@@ -2,7 +2,6 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-
 import '../models/ingredient_model.dart';
 
 class IngredientListView extends StatelessWidget {
@@ -39,14 +38,20 @@ class IngredientListView extends StatelessWidget {
                             title: Row(
                               children: [
                                 Expanded(
-                                    // child: SingleChildScrollView(
-                                    child: Text(ingredients[index].name)),
-                                // ),
-                                // Add ItemCount widget if necessary
+                                  // child: SingleChildScrollView(
+                                  child: Text(ingredients[index].name,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium),
+                                ),
+                                Text(
+                                  ingredients[index].purchaseDate ?? '',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                )
                               ],
                             ),
                             trailing: Text(
-                                '${ingredients[index].amount} ${ingredients[index].unit}'),
+                                '${ingredients[index].amount.round()} ${ingredients[index].unit}'),
                             onTap: () {
                               //   showIngredientDialog(context, index, () {
                               //     onDelete(index);

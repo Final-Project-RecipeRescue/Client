@@ -19,7 +19,18 @@ class Household {
     required this.meals,
   });
 
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Household && other.householdId == householdId;
+  }
+
+  @override
+  int get hashCode => householdId.hashCode;
+
   factory Household.fromJson(Map<String, dynamic> json) {
+    print('im a json $json');
     Map<String, List<IngredientHousehold>> ingredients = {};
     json['ingredients'].forEach((key, value) {
       ingredients[key] = List<IngredientHousehold>.from(

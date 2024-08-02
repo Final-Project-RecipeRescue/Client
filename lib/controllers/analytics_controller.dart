@@ -175,7 +175,7 @@ class AnalyticsController extends GetxController {
     String url;
     url = _selectedFilterDataDomain.value == FilterDataDomain.personal
         ? '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getGasPollutionOfUserInRangeDates?user_email=${Authenticate().currentUser?.email}'
-        : '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getGasPollutionOfHouseholdInRangeDates?user_email=${Authenticate().currentUser?.email}&household_id=${Get.find<HomePageController>().currentHousehold.value.householdId}';
+        : '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getGasPollutionOfHouseholdInRangeDates?user_email=${Authenticate().currentUser?.email}&household_id=${Get.find<HomePageController>().currentHousehold.householdId}';
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
@@ -185,10 +185,10 @@ class AnalyticsController extends GetxController {
   }
 
   List<UserModel> getHouseholdUsers() {
-    return Get.find<HomePageController>().currentHousehold.value.participants;
+    return Get.find<HomePageController>().currentHousehold.participants;
   }
 
   Map<DateTime, Map<String, Map<String, List<Meal>>>> getHouseholdMeals() {
-    return Get.find<HomePageController>().currentHousehold.value.meals;
+    return Get.find<HomePageController>().currentHousehold.meals;
   }
 }

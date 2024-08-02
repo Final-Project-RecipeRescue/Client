@@ -24,7 +24,7 @@ class IngredientDetails extends StatelessWidget {
         children: [
           Text(
             ingredient.name,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 8),
           TextFormField(

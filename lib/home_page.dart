@@ -16,6 +16,7 @@ import 'package:reciperescue_client/controllers/homepage_controller.dart';
 import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 import 'package:reciperescue_client/login_register_page.dart';
 import 'package:lottie/lottie.dart';
+import 'package:reciperescue_client/models/household_model.dart';
 import 'package:reciperescue_client/routes/routes.dart';
 
 import 'components/MySlider.dart';
@@ -69,15 +70,21 @@ class _HomePageState extends State<HomePage> {
                       ),
                       const SizedBox(height: 20),
                       Obx(() => MyDropdown(
-                            selectedValue: hController.selectedHousehold.value,
-                            items: hController.user.value.households,
+                            selectedValue:
+                                hController.currentHousehold.householdName,
+                            items: hController.userHouseholdsList.value
+                                .map((e) => e.householdName),
                             onChanged: (value) async {
-                              if (value !=
-                                  hController.selectedHousehold.value) {
-                                await hController.fetchHousehold(
-                                    Authenticate().currentUser?.email, value!);
-                                await hController
-                                    .fetchHouseholdsIngredients(value);
+                              Household chosenHousehold =
+                                  hController.getHousehold(value);
+                              print(chosenHousehold);
+                              if (chosenHousehold !=
+                                  hController.currentHousehold) {
+                                hController.currentHousehold = chosenHousehold;
+                                // await hController.fetchHouseholds(
+                                //     Authenticate().currentUser?.email);
+                                await hController.fetchHouseholdsIngredients(
+                                    chosenHousehold.householdId);
                                 await hController.fetchHouseholdRecipes();
                               }
                             },
