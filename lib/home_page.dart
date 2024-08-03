@@ -46,49 +46,116 @@ class _HomePageState extends State<HomePage> {
                 return Container(
                   color: myGrey[100],
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        margin: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Obx(() => RichText(
-                                text: TextSpan(
-                                    text: 'Hello, \n',
-                                    style: GoogleFonts.poppins(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.normal,
-                                        color: primary),
-                                    children: <TextSpan>[
-                                  TextSpan(
-                                    text: hController.user.value.firstName,
-                                    style: GoogleFonts.poppins(
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.normal,
-                                        color: primary),
-                                  )
-                                ]))),
+                      Stack(
+                        children: [
+                          Container(
+                            height: MediaQuery.of(context).size.height / 8,
+                            decoration: BoxDecoration(
+                              color: primary,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(
+                                      0.5), // Shadow color with transparency
+                                  spreadRadius: 0, // No spread
+                                  blurRadius: 10, // Soft blur effect
+                                  offset: const Offset(0,
+                                      4), // Vertical offset to create a shadow at the bottom
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Column(
+                              children: [
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.center,
+                                //   children: [
+                                //     Image.asset(
+                                //       'assets/images/logo.png', // Your logo file
+                                //       height: 40,
+                                //       color: Colors.white,
+                                //     ),
+                                //     const SizedBox(width: 10),
+                                //     Text(
+                                //       'RecipeRescue',
+                                //       style: GoogleFonts.poppins(
+                                //         fontSize: 24,
+                                //         fontWeight: FontWeight.bold,
+                                //         color: Colors.white,
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
+                                const SizedBox(height: 5),
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Obx(() => RichText(
+                                          text: TextSpan(
+                                              text: 'Hello, \n',
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.white),
+                                              children: <TextSpan>[
+                                            TextSpan(
+                                              text: hController
+                                                  .user.value.firstName,
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 32,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.white),
+                                            )
+                                          ]))),
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Text(
+                                      'Household display:',
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width /
+                                          15,
+                                    ),
+                                    Obx(() => MyDropdown(
+                                          selectedValue: hController
+                                              .currentHousehold.householdName,
+                                          items: hController
+                                              .userHouseholdsList.value
+                                              .map((e) => e.householdName),
+                                          onChanged: (value) async {
+                                            Household chosenHousehold =
+                                                hController.getHousehold(value);
+                                            print(chosenHousehold);
+                                            if (chosenHousehold !=
+                                                hController.currentHousehold) {
+                                              hController.currentHousehold =
+                                                  chosenHousehold;
+                                              // await hController.fetchHouseholds(
+                                              //     Authenticate().currentUser?.email);
+                                              await hController
+                                                  .fetchHouseholdsIngredients(
+                                                      chosenHousehold
+                                                          .householdId);
+                                              await hController
+                                                  .fetchHouseholdRecipes();
+                                            }
+                                          },
+                                        )),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 20),
-                      Obx(() => MyDropdown(
-                            selectedValue:
-                                hController.currentHousehold.householdName,
-                            items: hController.userHouseholdsList.value
-                                .map((e) => e.householdName),
-                            onChanged: (value) async {
-                              Household chosenHousehold =
-                                  hController.getHousehold(value);
-                              print(chosenHousehold);
-                              if (chosenHousehold !=
-                                  hController.currentHousehold) {
-                                hController.currentHousehold = chosenHousehold;
-                                // await hController.fetchHouseholds(
-                                //     Authenticate().currentUser?.email);
-                                await hController.fetchHouseholdsIngredients(
-                                    chosenHousehold.householdId);
-                                await hController.fetchHouseholdRecipes();
-                              }
-                            },
-                          )),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16.0, vertical: 8.0),

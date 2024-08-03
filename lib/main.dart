@@ -62,8 +62,8 @@ class MyApp extends StatelessWidget {
               primarySwatch: primary,
               textTheme: TextTheme(
                 bodyLarge: GoogleFonts.poppins(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.normal,
                   color: Colors.black,
                 ),
                 bodyMedium: GoogleFonts.poppins(

@@ -74,7 +74,7 @@ class AnalyticsController extends GetxController {
   }
 
   Future<List<double>> fetchData(FilterDate filterDate) async {
-    print('${_selectedFilter}   ${_selectedFilterDataDomain}');
+    print('$_selectedFilter   $_selectedFilterDataDomain');
     isLoading.value = true;
     _selectedFilter.value = filterDate;
     co2Values.clear();
@@ -146,13 +146,16 @@ class AnalyticsController extends GetxController {
     for (DateTime date = startDate.add(const Duration(days: 1));
         date.isBefore(newEndDate);
         date = date.add(const Duration(days: 1))) {
+      DateTime tempNextDay = date.add(const Duration(days: 1));
       final body = {
         "startDate": {"year": date.year, "month": date.month, "day": date.day},
-        "endDate": {"year": date.year, "month": date.month, "day": date.day + 1}
+        "endDate": {
+          "year": tempNextDay.year,
+          "month": tempNextDay.month,
+          "day": tempNextDay.day
+        }
       };
-      print(body);
       http.Response response = await _doPostGasPollution(body);
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         num co2Value = 0.0;
@@ -188,7 +191,10 @@ class AnalyticsController extends GetxController {
     return Get.find<HomePageController>().currentHousehold.participants;
   }
 
-  Map<DateTime, Map<String, Map<String, List<Meal>>>> getHouseholdMeals() {
-    return Get.find<HomePageController>().currentHousehold.meals;
+  Map<DateTime, Map<String, Map<String, List<Meal>>>> updateHouseholdMeals() {
+    return Get.find<HomePageController>()
+        .getHousehold(
+            Get.find<HomePageController>().currentHousehold.householdName)
+        .meals;
   }
 }

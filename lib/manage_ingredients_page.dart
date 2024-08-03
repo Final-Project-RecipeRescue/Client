@@ -1,6 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/components/MyDropdown.dart';
 import 'package:reciperescue_client/components/autocomplete_textfield.dart';
@@ -30,79 +31,79 @@ class _ManageIngredientsPageState extends State<ManageIngredientsPage> {
       body:
           //   Obx(
           // () =>
-          Column(
-        children: [
-          // MyDropdown(
-          //     selectedValue: hController.currentHousehold.householdName,
-          //     items: hController.userHouseholdsList.value
-          //         .map((e) => e.householdName),
-          //     onChanged: (householdName) {
-          //       Household chosenHousehold =
-          //           hController.getHousehold(householdName);
-          //       print(chosenHousehold);
-          //       if (hController.currentHousehold != chosenHousehold) {
-          //         hController
-          //             .fetchHouseholdsIngredients(chosenHousehold.householdId);
-          //       }
-          //     }),
-          GetBuilder<InitializerController>(builder: (controller) {
-            return TextfieldAutocomplete<Ingredient>(
-              items: controller.systemIngredients,
-              onSubmitted: (Ingredient ingredient) {
-                IngredientHousehold ingredientHousehold = IngredientHousehold(
-                    ingredientId: ingredient.ingredientId,
-                    name: ingredient.name,
-                    amount: 1.0,
-                    unit: 'g');
-                showIngredientDialog(context, ingredientHousehold, () {}, () {
-                  // if (hController.ingredients.value.contains(ingredient)) {
-                  //   hController.modifyIngredientValues(
-                  //       ingredientHousehold, false);
-                  // } else {
-                  hController.addIngredient(
-                      ingredientHousehold.ingredientId,
-                      ingredientHousehold.name,
-                      ingredientHousehold.amount,
-                      ingredientHousehold.unit);
-                  // }
-                });
-              },
-            );
-          }),
-          Expanded(
-            child: GetBuilder<HomePageController>(builder: (controller) {
-              return Obx(() => IngredientListView(
-                    itemCount: controller.ingredients.value.length,
-                    ingredients: controller.ingredients.value,
-                    // onDelete: (index) {
-                    //   hController.selectedIngredientsIndex = index;
-                    //   controller.removeIngredient(index);
-                    // },
-                    onClick: (index) {
-                      hController.selectedIngredientsIndex = index;
-                      IngredientHousehold focusedIngredient =
-                          hController.ingredients.value[index];
-                      showIngredientDialog(context, focusedIngredient, () {
-                        hController.removeIngredient(focusedIngredient);
-                      }, () {
-                        if (hController.ingredients.value
-                            .contains(focusedIngredient)) {
-                          hController.modifyIngredientValues(
-                              focusedIngredient, true);
-                        } else {
-                          hController.addIngredient(
-                              focusedIngredient.ingredientId,
-                              focusedIngredient.name,
-                              focusedIngredient.amount,
-                              focusedIngredient.unit);
-                        }
-                      });
-                    },
-                    isDeleteLogo: false,
-                  ));
+          Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Obx(() => Text(
+                    "🍴 ${hController.currentHousehold.householdName}'s Ingredients",
+                    style: GoogleFonts.poppins(
+                      fontSize: 24,
+                      fontWeight: FontWeight.normal,
+                      color: primary,
+                    ),
+                    textAlign: TextAlign.start,
+                  )),
+            ),
+            GetBuilder<InitializerController>(builder: (controller) {
+              return TextfieldAutocomplete<Ingredient>(
+                hint: "Add ingredients",
+                items: controller.systemIngredients,
+                onSubmitted: (Ingredient ingredient) {
+                  IngredientHousehold ingredientHousehold = IngredientHousehold(
+                      ingredientId: ingredient.ingredientId,
+                      name: ingredient.name,
+                      amount: 1.0,
+                      unit: 'g');
+                  showIngredientDialog(context, ingredientHousehold, () {}, () {
+                    hController.addIngredient(
+                        ingredientHousehold.ingredientId,
+                        ingredientHousehold.name,
+                        ingredientHousehold.amount,
+                        ingredientHousehold.unit);
+                    // }
+                  });
+                },
+              );
             }),
-          )
-        ],
+            Expanded(
+              child: GetBuilder<HomePageController>(builder: (controller) {
+                return Obx(() => IngredientListView(
+                      itemCount: controller.ingredients.value.length,
+                      ingredients: controller.ingredients.value,
+                      // onDelete: (index) {
+                      //   hController.selectedIngredientsIndex = index;
+                      //   controller.removeIngredient(index);
+                      // },
+                      onClick: (index) {
+                        hController.selectedIngredientsIndex = index;
+                        IngredientHousehold focusedIngredient =
+                            hController.ingredients.value[index];
+                        showIngredientDialog(context, focusedIngredient, () {
+                          hController.removeIngredient(focusedIngredient);
+                        }, () {
+                          if (hController.ingredients.value
+                              .contains(focusedIngredient)) {
+                            hController.modifyIngredientValues(
+                                focusedIngredient, true);
+                          } else {
+                            hController.addIngredient(
+                                focusedIngredient.ingredientId,
+                                focusedIngredient.name,
+                                focusedIngredient.amount,
+                                focusedIngredient.unit);
+                          }
+                        });
+                      },
+                      isDeleteLogo: false,
+                    ));
+              }),
+            )
+          ],
+        ),
       ),
       // )
     );

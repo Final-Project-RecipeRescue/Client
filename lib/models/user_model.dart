@@ -24,7 +24,6 @@ class UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     final meals = Map<String, dynamic>.from(json['meals'] ?? {});
     //final userHouseholds = Map<String, dynamic>.from(json['households'] ?? {});
-    print('object $json');
     return UserModel(
       firstName: json['first_name'] as String,
       lastName: json['last_name'] as String,
@@ -34,7 +33,7 @@ class UserModel {
       image: json['image'] as String?,
       householdsIds: List<String>.from(json['households_ids'] ?? []),
       meals: meals,
-      sumOfGasPollution: json['sum_gas_pollution']['CO2'],
+      sumOfGasPollution: (json['sum_gas_pollution']['CO2'] as num).toDouble(),
     );
   }
 

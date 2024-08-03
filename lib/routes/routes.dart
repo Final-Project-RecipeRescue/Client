@@ -33,8 +33,8 @@ class Routes {
   static Widget getHomePage() => const HomePage();
   static Widget getProfilePage() => ProfilePage();
   static Widget getManageIngredientsPage() => const ManageIngredientsPage();
-  static Widget getAnalyticsPage() => AnalyticsPage();
   static Widget getSearchIngredientsPage() => IngredientsPage();
+  static Widget getAnalyticsPage() => const AnalyticsPage();
   static Widget getRecipeInstructionsPage(RecipesUiModel value) =>
       RecipeInstructions(value);
   static Widget getJoinOrCreateHouseholdPage() =>

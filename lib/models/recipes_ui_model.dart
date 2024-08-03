@@ -42,8 +42,9 @@ class RecipesUiModel {
         imageUrl: map['image_url'] ?? 'https://picsum.photos/250?image=9',
         likes: map['likes'] as int? ?? 0,
         ingredients: map['ingredients'] as List<dynamic>,
-        sumGasPollution: (map['sumGasPollution']['CO2'] as num).toDouble(),
-        closestExpirationDays: (map['closest_expiration_days'] as num).toInt());
+        sumGasPollution: (map['sumGasPollution']['CO2'] ?? 0 as num).toDouble(),
+        closestExpirationDays:
+            (map['closest_expiration_days'] ?? 0 as num).toInt());
     return recipe;
   }
 
@@ -54,6 +55,6 @@ class RecipesUiModel {
 
   @override
   String toString() {
-    return 'RecipesUiModel{id: $id, title: $title, image: $imageUrl, likes: $likes}, ingredients: $ingredients, closest expiration date: $closestExpirationDays';
+    return 'RecipesUiModel{id: $id, title: $title, image: $imageUrl, likes: $likes}, ingredients: $ingredients,sum gas pollution CO2: $sumGasPollution closest expiration date: $closestExpirationDays';
   }
 }
