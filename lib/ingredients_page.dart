@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'components/autocomplete_textfield.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:reciperescue_client/components/text_field.dart';
+import 'colors/colors.dart';
+import 'components/ingredient_card.dart';
 import 'controllers/initializer_controller.dart';
 import 'models/ingredient_model.dart';
 
@@ -18,7 +20,6 @@ class _IngredientsPageState extends State<IngredientsPage> {
   @override
   void initState() {
     super.initState();
-
     filteredIngredients = allIngredients;
   }
 
@@ -39,25 +40,29 @@ class _IngredientsPageState extends State<IngredientsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ingredients Autocomplete'),
+        title: Text(
+          '📋 Ingredients Information',
+          style: GoogleFonts.poppins(
+            fontSize: 24,
+            fontWeight: FontWeight.normal,
+            color: primary,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextfieldAutocomplete<IngredientSystem>(
-              items: allIngredients,
-              onSubmitted: (ingredient) {
-                Get.snackbar('Selected Ingredient', ingredient.name);
-              },
+            MyTextField(
+              hintText: 'Search ingredients',
+              onChanged: (value) => _filterIngredients(value),
             ),
+            const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
                 itemCount: filteredIngredients.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(filteredIngredients[index].name),
-                  );
+                  return IngredientCard(ingredient: filteredIngredients[index]);
                 },
               ),
             ),

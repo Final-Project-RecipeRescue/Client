@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/controllers/dashboard_controller.dart';
 import 'package:reciperescue_client/controllers/homepage_controller.dart';
 import 'colors/colors.dart';
@@ -13,13 +14,33 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  DashboardController controller = Get.put(DashboardController());
-  HomePageController hController = Get.put(HomePageController());
-
   @override
   Widget build(BuildContext context) {
+    Get.put(DashboardController());
     return GetBuilder<DashboardController>(builder: (controller) {
       return Scaffold(
+        appBar: AppBar(
+          backgroundColor: primary,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/logo.png', // Your logo file
+                height: 40,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'RecipeRescue',
+                style: GoogleFonts.poppins(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
         body: SafeArea(
             child: IndexedStack(
           index: controller.tabIndex.value,

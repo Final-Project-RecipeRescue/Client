@@ -5,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/models/recipes_ui_model.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class Recipe extends StatelessWidget {
   final RecipesUiModel recipeModel;

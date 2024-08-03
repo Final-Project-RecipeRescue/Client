@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:reciperescue_client/authentication/auth.dart';
+import 'package:reciperescue_client/controllers/homepage_controller.dart';
 import 'package:reciperescue_client/controllers/household_controller.dart';
 import 'package:reciperescue_client/controllers/initializer_controller.dart';
 import 'package:reciperescue_client/dashboard.dart';
@@ -36,7 +38,7 @@ class QuestionnaireController extends GetxController {
 
   // TextEditingController firstIngredients = TextEditingController();
 
-  late UserModel userModel;
+  late Rx<UserModel> user = Rx(UserModel());
 
   var itemCount = 0.obs;
   final Rx<List<IngredientHousehold>> ingredients =
@@ -89,12 +91,13 @@ class QuestionnaireController extends GetxController {
 
       if (response.statusCode == 200) {
         print(response.body);
-        userModel = UserModel(
+        user.value = UserModel(
             firstName: firstName.text,
             lastName: lastName.text,
             email: Authenticate().currentUser!.email,
             country: countryValue.value,
             state: stateValue.value);
+        Get.put(HomePageController()).user = user;
         return true;
       } else {
         return false;

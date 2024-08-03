@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/controllers/auth_controller.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -59,6 +60,19 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               primarySwatch: primary,
+              textTheme: TextTheme(
+                bodyLarge: GoogleFonts.poppins(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.black,
+                ),
+                bodyMedium: GoogleFonts.poppins(
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.black,
+                ),
+                // Define other styles as needed
+              ),
               brightness: Brightness.light,
               colorScheme: const ColorScheme.light(
                 primary: primary,

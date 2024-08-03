@@ -1,12 +1,14 @@
+import 'package:get/get.dart';
+import 'package:reciperescue_client/models/user_model.dart';
+
 import 'ingredient_model.dart';
 import 'meal_model.dart';
-import 'user_model.dart'; // Import the UserModel class
 
 class Household {
   final String householdId;
   final String householdName;
   final String? householdImage;
-  final List<UserModel> participants; // Change the type to List<UserModel>
+  final List<UserModel> participants;
   final Map<String, List<IngredientHousehold>> ingredients;
   final Map<DateTime, Map<String, Map<String, List<Meal>>>> meals;
 
@@ -16,8 +18,18 @@ class Household {
     this.householdImage,
     required this.participants,
     required this.ingredients,
-    required this.meals,
-  });
+    required Map<DateTime, Map<String, Map<String, List<Meal>>>> meals,
+  }) : meals = meals.obs;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Household && other.householdId == householdId;
+  }
+
+  @override
+  int get hashCode => householdId.hashCode;
 
   factory Household.fromJson(Map<String, dynamic> json) {
     Map<String, List<IngredientHousehold>> ingredients = {};
@@ -38,6 +50,7 @@ class Household {
         });
       });
     });
+
     return Household(
       householdId: json['household_id'],
       householdName: json['household_name'],
@@ -52,7 +65,7 @@ class Household {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> ingredientsJson = {};
     ingredients.forEach((key, value) {
-      ingredientsJson[key] = value.map((item) => item.toJson()).toList();
+      ingredientsJson[key] = value.map((item) => item.toString()).toList();
     });
 
     Map<String, dynamic> mealsJson = {};
@@ -61,7 +74,8 @@ class Household {
       mealTypes.forEach((mealType, dishes) {
         Map<String, dynamic> dishJson = {};
         dishes.forEach((dishId, mealDetails) {
-          dishJson[dishId] = mealDetails.map((item) => item.toJson()).toList();
+          dishJson[dishId] =
+              mealDetails.map((item) => item.toString()).toList();
         });
         mealTypeJson[mealType] = dishJson;
       });
@@ -72,7 +86,7 @@ class Household {
       'household_id': householdId,
       'household_name': householdName,
       'household_image': householdImage,
-      'participants': participants.map((item) => item.toJson()).toList(),
+      'participants': participants.map((item) => item.toString()).toList(),
       'ingredients': ingredientsJson,
       'meals': mealsJson,
     };

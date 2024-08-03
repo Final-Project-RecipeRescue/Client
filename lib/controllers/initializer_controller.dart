@@ -27,6 +27,7 @@ class InitializerController extends GetxController {
       IngredientSystem r = IngredientSystem.fromJson(dataIngredients[i]);
       fetchedIngredients.add(r);
     }
+    print(response.body);
     systemIngredients(fetchedIngredients);
   }
 

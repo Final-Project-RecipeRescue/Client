@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../controllers/analytics_controller.dart';
@@ -8,7 +9,8 @@ class HouseholdMealsTable extends StatelessWidget {
   final Map<DateTime, Map<String, Map<String, List<Meal>>>> mealMap;
   final FilterDate filterDate;
 
-  HouseholdMealsTable({required this.mealMap, required this.filterDate});
+  const HouseholdMealsTable(
+      {super.key, required this.mealMap, required this.filterDate});
 
   @override
   Widget build(BuildContext context) {
@@ -26,42 +28,51 @@ class HouseholdMealsTable extends StatelessWidget {
         break;
     }
 
-    mealMap.forEach((date, mealTypes) {
-      if (date.isAfter(filterDateStart)) {
-        mealTypes.forEach((mealType, mealsById) {
-          mealsById.forEach((mealId, meals) {
-            meals.forEach((meal) {
-              rows.add(DataRow(cells: [
-                DataCell(Text(
-                  '${date.day}/${date.month}/${date.year}',
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.black,
-                  ),
-                )),
-                DataCell(Text(
-                  mealType,
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.black,
-                  ),
-                )),
-                DataCell(Text(
-                  meal.co2Score.toStringAsFixed(2),
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.black,
-                  ),
-                )),
-              ]));
-            });
-          });
+    // Collect all relevant meal entries
+    List<MapEntry<DateTime, Map<String, Map<String, List<Meal>>>>> entries =
+        mealMap.entries
+            .where((entry) => entry.key.isAfter(filterDateStart))
+            .toList();
+
+    entries.sort((a, b) => b.key.compareTo(a.key));
+
+    for (var entry in entries) {
+      DateTime date = entry.key;
+      Map<String, Map<String, List<Meal>>> mealTypes = entry.value;
+
+      mealTypes.forEach((mealType, mealsById) {
+        mealsById.forEach((mealId, meals) {
+          for (var meal in meals) {
+            rows.add(DataRow(cells: [
+              DataCell(Text(
+                '${date.day}/${date.month}/${date.year}',
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.black,
+                ),
+              )),
+              DataCell(Text(
+                mealType,
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.black,
+                ),
+              )),
+              DataCell(Text(
+                meal.co2Score.toStringAsFixed(2),
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.black,
+                ),
+              )),
+            ]));
+          }
         });
-      }
-    });
+      });
+    }
 
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -126,7 +137,6 @@ class HouseholdMealsTable extends StatelessWidget {
                 ],
               ),
             ),
-            // ),
           ],
         ),
       ),

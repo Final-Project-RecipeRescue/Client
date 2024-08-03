@@ -27,16 +27,21 @@ abstract class Ingredient {
 }
 
 class IngredientSystem extends Ingredient {
-  IngredientSystem({
-    required String ingredientId,
-    required String name,
-  }) : super(ingredientId: ingredientId, name: name);
+  int sumGasPollution;
+  int daysToExpire;
+  IngredientSystem(
+      {required String ingredientId,
+      required String name,
+      required this.sumGasPollution,
+      required this.daysToExpire})
+      : super(ingredientId: ingredientId, name: name);
 
   factory IngredientSystem.fromJson(Map<String, dynamic> json) {
     return IngredientSystem(
-      ingredientId: json['ingredient_id'] as String,
-      name: json['name'] as String,
-    );
+        ingredientId: json['ingredient_id'] as String,
+        name: json['name'] as String,
+        sumGasPollution: json['gCO2e_per_100g'] as int,
+        daysToExpire: json['days_to_expire'] as int);
   }
 
   @override
@@ -44,12 +49,14 @@ class IngredientSystem extends Ingredient {
     return {
       'ingredient_id': ingredientId,
       'name': name,
+      'gCO2e_per_100g': sumGasPollution,
+      'days_to_expire': daysToExpire
     };
   }
 
   @override
   String toString() {
-    return 'IngredientSystem{ingredientId: $ingredientId, name: $name}';
+    return 'IngredientSystem{ingredientId: $ingredientId, name: $name, sum gas pollution: $sumGasPollution, days to expire: $daysToExpire}';
   }
 }
 
@@ -59,12 +66,12 @@ class IngredientHousehold extends Ingredient {
   String? purchaseDate;
 
   IngredientHousehold({
-    required String ingredientId,
-    required String name,
+    required super.ingredientId,
+    required super.name,
     required this.amount,
     required this.unit,
     this.purchaseDate,
-  }) : super(ingredientId: ingredientId, name: name);
+  });
 
   factory IngredientHousehold.fromJson(Map<String, dynamic> json) {
     return IngredientHousehold(

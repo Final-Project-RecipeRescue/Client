@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:reciperescue_client/components/autocomplete_textfield.dart';
 
 class MyTextField extends StatelessWidget {
   final TextEditingController? controller;
   final String hintText;
   final bool? readOnly;
-  late String? initialValue;
-  late void Function()? onEditingComplete;
+  final String? initialValue;
+  final void Function()? onEditingComplete;
+  final void Function(String)? onChanged;
 
-  MyTextField(
-      {super.key,
-      this.controller,
-      this.hintText = 'Enter text',
-      this.initialValue,
-      this.readOnly,
-      this.onEditingComplete});
+  const MyTextField({
+    super.key,
+    this.controller,
+    this.hintText = 'Enter text',
+    this.initialValue,
+    this.readOnly,
+    this.onEditingComplete,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,7 @@ class MyTextField extends StatelessWidget {
       ),
       child: TextFormField(
         onEditingComplete: onEditingComplete,
+        onChanged: onChanged,
         initialValue: initialValue,
         readOnly: readOnly ?? false,
         controller: controller,

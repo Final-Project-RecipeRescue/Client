@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:reciperescue_client/authentication/auth.dart';
+import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/models/ingredient_model.dart';
+import 'package:reciperescue_client/models/meal_model.dart';
 import 'package:reciperescue_client/models/user_model.dart';
 
 import '../constants/dotenv_constants.dart';
@@ -16,15 +18,16 @@ class HomePageController extends GetxController {
   final Rx<List<RecipesUiModel>> recipes = Rx([]);
   late List<RecipesUiModel> recipesSortedByMix;
   final Rx<List<IngredientHousehold>> ingredients = Rx([]);
+  final Rx<List<Household>> userHouseholdsList = Rx([]);
   var itemCount = 0.obs;
   late Rx<UserModel> user = Rx(UserModel());
   final Rx<HomepageSortType> selectedSort = Rx(HomepageSortType.byMix);
   final selectedHousehold = ''.obs;
   int _selectedIngredientsIndex = 0;
   String _recipesFetchErrorMsg = '';
-  var currentHousehold = Household(
-    householdId: 'default',
-    householdName: 'default',
+  final Rx<Household> _currentHousehold = Household(
+    householdId: '',
+    householdName: '',
     participants: [],
     ingredients: {},
     meals: {},
@@ -46,25 +49,36 @@ class HomePageController extends GetxController {
     update();
   }
 
+  Household get currentHousehold => _currentHousehold.value;
+
+  set currentHousehold(Household household) {
+    _currentHousehold.value = household;
+    ingredients.value = currentHousehold.ingredients.values
+        .expand((ingredientList) => ingredientList)
+        .toList();
+    update();
+  }
+
   Future<void> fetchHouseholdRecipes() async {
     String concatenatedIngredients =
         ingredients.value.map((e) => e.name).join(',');
     List<RecipesUiModel> tempRecipes = [];
-
+    print('household id: ${currentHousehold.householdId}');
     var urlWithoutMissedIngredients = Uri.parse(
-        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getAllRecipesThatHouseholdCanMake?user_email=${Authenticate().currentUser!.email}&household_id=${currentHousehold.value.householdId}');
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getAllRecipesThatHouseholdCanMake?user_email=${Authenticate().currentUser!.email}&household_id=${currentHousehold.householdId}');
     var urlWithMissedIngredients = Uri.parse(
         '${DotenvConstants.baseUrl}/recipes/getRecipesByIngredients?ingredients=$concatenatedIngredients');
 
-    await _fetchData(urlWithoutMissedIngredients, tempRecipes);
-    if (tempRecipes.isEmpty && !hasError.value) {
-      await _fetchData(urlWithMissedIngredients, tempRecipes);
+    await _fetchData(urlWithoutMissedIngredients);
+    if (recipes.value.isEmpty && !hasError.value) {
+      await _fetchData(urlWithMissedIngredients);
     }
     recipesSortedByMix = recipes.value;
     print(recipesSortedByMix.toString());
   }
 
-  Future<void> _fetchData(Uri url, List<RecipesUiModel> tempRecipes) async {
+  Future<void> _fetchData(Uri url) async {
+    List<RecipesUiModel> tempRecipes = [];
     try {
       isLoading.value = true;
       hasError.value = false;
@@ -81,7 +95,7 @@ class HomePageController extends GetxController {
             return;
           }
         }
-        print('recipe ${dataRecipes[0]}');
+        print('recipes ${dataRecipes}');
 
         for (var recipeData in dataRecipes) {
           RecipesUiModel recipe = RecipesUiModel.fromMap(recipeData);
@@ -112,12 +126,13 @@ class HomePageController extends GetxController {
     print("on init fetchUserInfo in ${elapsedUserInfo}ms");
 
     now = DateTime.now();
-    await fetchHousehold(user.value.email, user.value.households[0]);
+    await fetchHouseholds(Authenticate().currentUser!.email);
+    currentHousehold = userHouseholdsList.value[0];
     var elapsedHousehold = DateTime.now().difference(now).inMilliseconds;
     print("on init fetchHousehold in ${elapsedHousehold}ms");
 
     now = DateTime.now();
-    await fetchHouseholdsIngredients(user.value.households[0]);
+    await fetchHouseholdsIngredients(currentHousehold.householdId);
     var elapsedIngredients = DateTime.now().difference(now).inMilliseconds;
     print("on init fetchHouseholdsIngredients in ${elapsedIngredients}ms");
 
@@ -134,25 +149,32 @@ class HomePageController extends GetxController {
     update();
   }
 
-  Future<void> fetchHousehold(String? userEmail, String householdId) async {
+  Future<void> fetchHouseholds(String? userEmail) async {
     isLoading.value = true;
     final url = Uri.parse(
-        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getHouseholdAndUsersDataById?user_email=$userEmail&household_id=$householdId');
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getAllHouseholdsByUserEmail?user_email=$userEmail');
 
     try {
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        print('here ${response.body}');
-        currentHousehold.value = Household.fromJson(data);
+        print('Response data: ${response.body}');
+
+        final List<Household> households = data.entries.map((entry) {
+          return Household.fromJson(entry.value);
+        }).toList();
+
+        userHouseholdsList.value = households;
 
         update();
       } else {
-        print('Failed to load household: ${response.statusCode}');
+        print('Failed to load households: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching household: $e');
+      print('Error fetching households: $e');
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -178,10 +200,10 @@ class HomePageController extends GetxController {
   Future<void> fetchHouseholdsIngredients(String householdId) async {
     isLoading(true);
     hasError(false);
-    selectedHousehold(householdId);
+    // selectedHousehold(householdId);
 
     final Uri url = Uri.parse(
-        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getAllIngredientsInHousehold?user_email=${user.value.email}&household_id=$selectedHousehold');
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getAllIngredientsInHousehold?user_email=${user.value.email}&household_id=${currentHousehold.householdId}');
 
     try {
       final response = await http.get(url);
@@ -255,7 +277,7 @@ class HomePageController extends GetxController {
 
   Future<void> addIngredientToDB(Ingredient ingredient) async {
     final Uri url = Uri.parse(
-        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/addIngredientToHouseholdByIngredientName?user_email=${user.value.email}&household_id=$selectedHousehold');
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/addIngredientToHouseholdByIngredientName?user_email=${user.value.email}&household_id=${currentHousehold.householdId}');
 
     final http.Response response = await http.post(
       url,
@@ -270,13 +292,23 @@ class HomePageController extends GetxController {
       // Request was successful
       print('Request successful: ${response.body}');
     } else {
-      // Request failed
+      ingredients.value.remove(ingredient);
+      update();
+      Get.snackbar('Success', 'Ingredient added successfully',
+          duration: const Duration(seconds: 3),
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: primary);
+      Get.snackbar('Error', response.body.toString(),
+          duration: const Duration(seconds: 3),
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: primary[900]);
       print('Request failed with status: ${response.statusCode}');
       print('Response body: ${response.body}');
     }
   }
 
   void modifyIngredientValues(IngredientHousehold ingredient, bool isNewValue) {
+    updateIngredientInDB(ingredient.toJson());
     int index =
         ingredients.value.indexWhere((element) => element == ingredient);
     if (isNewValue) {
@@ -285,8 +317,54 @@ class HomePageController extends GetxController {
       ingredients.value[index].amount =
           ingredients.value[index].amount + ingredient.amount;
     }
-    // TODO Update also the firebase
     update();
+  }
+
+  Future<void> updateIngredientInDB(Map<String, dynamic> ingredientJson) async {
+    try {
+      final Uri url = Uri.parse(
+          '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/updateIngredientInHousehold?user_email=${Authenticate().currentUser!.email}&household_id=${currentHousehold.householdId}');
+
+      Map<String, dynamic> data = {
+        "ingredient_data": {
+          "ingredient_id": ingredientJson['ingredient_id'].toString(),
+          "name": ingredientJson['name'],
+          "amount": ingredientJson['amount'],
+          "unit": ingredientJson['unit']
+        },
+        "date": {
+          "year": DateTime.now().year,
+          "month": DateTime.now().month,
+          "day": DateTime.now().day
+        }
+      };
+
+      // Send the HTTP POST request
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(data),
+      );
+
+      // Check the response status
+      if (response.statusCode == 200) {
+        Get.snackbar(
+            'Success', 'Ingredient updated successfully in the database.',
+            duration: const Duration(seconds: 3),
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: primary);
+      } else {
+        Get.snackbar('Error', 'Failed to update ingredient',
+            duration: const Duration(seconds: 3),
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: primary[900]);
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Error updating ingredient',
+          duration: const Duration(seconds: 3),
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: primary[900]);
+    }
   }
 
   Future<void> sort(HomepageSortType sortType) async {
@@ -305,10 +383,15 @@ class HomePageController extends GetxController {
         sortedList.sort((a, b) =>
             a.closestExpirationDays.compareTo(b.closestExpirationDays));
         break;
-      default:
     }
     recipes.value = sortedList;
     update();
+  }
+
+  Household getHousehold(String? value) {
+    return userHouseholdsList.value
+        .where((element) => element.householdName == value)
+        .first;
   }
 }
 

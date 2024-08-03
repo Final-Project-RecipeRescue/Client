@@ -30,43 +30,44 @@ class _AddFirstIngredientsState extends State<AddFirstIngredients> {
         height: MediaQuery.of(context).size.height / 1.5,
         child: GetBuilder<QuestionnaireController>(builder: (controller) {
           return Column(children: [
-            Text(
-              "What's Already in ${hController.newHouseholdName.value}'s Kitchen?",
-              style: GoogleFonts.poppins(
-                textStyle: TextStyle(color: myGrey[900]),
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Obx(() => Text(
+                  "What's Already in ${hController.newHouseholdName.value}'s Kitchen?",
+                  style: GoogleFonts.poppins(
+                    textStyle: TextStyle(color: myGrey[900]),
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )),
             const SizedBox(
               height: 20,
             ),
             // GetBuilder<InitializerController>(builder: (controller) {
             //   return
             TextfieldAutocomplete<Ingredient>(
-                items: Get.find<InitializerController>().systemIngredients,
-                onSubmitted: (Ingredient ingredient) {
-                  IngredientHousehold ingredientHousehold = IngredientHousehold(
-                      ingredientId: ingredient.ingredientId,
-                      name: ingredient.name,
-                      amount: 1.0,
-                      unit: 'g');
-                  showIngredientDialog(context, ingredientHousehold, () {}, () {
-                    if (qController.ingredients.value.contains(ingredient)) {
-                      print('object');
-                      qController.modifyIngredientValues(
-                          ingredientHousehold, false);
-                    } else {
-                      qController.addIngredient(
-                          ingredientHousehold.ingredientId,
-                          ingredientHousehold.name,
-                          ingredientHousehold.amount,
-                          ingredientHousehold.unit);
-                    }
-                  });
-                  // },
-                  // );
-                }),
+              items: Get.find<InitializerController>().systemIngredients,
+              onSubmitted: (Ingredient ingredient) {
+                IngredientHousehold ingredientHousehold = IngredientHousehold(
+                    ingredientId: ingredient.ingredientId,
+                    name: ingredient.name,
+                    amount: 1.0,
+                    unit: 'g');
+                showIngredientDialog(context, ingredientHousehold, () {}, () {
+                  if (qController.ingredients.value.contains(ingredient)) {
+                    qController.modifyIngredientValues(
+                        ingredientHousehold, false);
+                  } else {
+                    qController.addIngredient(
+                        ingredientHousehold.ingredientId,
+                        ingredientHousehold.name,
+                        ingredientHousehold.amount,
+                        ingredientHousehold.unit);
+                  }
+                });
+                // },
+                // );
+              },
+              hint: 'Search ingredients',
+            ),
             const SizedBox(
               height: 40,
             ),

@@ -3,13 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/components/recipe_image.dart';
 import 'package:reciperescue_client/components/user_egg.dart';
+import 'package:reciperescue_client/controllers/analytics_controller.dart';
 import 'package:reciperescue_client/controllers/homepage_controller.dart';
 import 'package:reciperescue_client/controllers/recipe_instructions_controller.dart';
 import 'package:reciperescue_client/models/recipes_ui_model.dart';
 import 'package:reciperescue_client/models/user_model.dart';
+
+import '../controllers/household_controller.dart';
 
 class RecipeInstructions extends StatefulWidget {
   final RecipesUiModel value;
@@ -146,6 +150,10 @@ class _RecipeInstructionsState extends State<RecipeInstructions> {
                                   5), // Duration the Snackbar will be shown
                         ),
                       );
+                      Get.find<HomePageController>()
+                          .fetchHouseholds(Authenticate().currentUser?.email);
+                      Get.find<AnalyticsController>().fetchData(
+                          Get.find<AnalyticsController>().selectedFilter);
                       Navigator.pop(context);
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(

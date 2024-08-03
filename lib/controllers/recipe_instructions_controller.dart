@@ -31,7 +31,7 @@ class RecipeInstructionsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    household = Get.find<HomePageController>().currentHousehold.value;
+    household = Get.find<HomePageController>().currentHousehold;
     fetchInstruction(recipe.id);
   }
 

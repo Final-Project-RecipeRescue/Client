@@ -9,6 +9,8 @@ import 'components/text_field.dart';
 class CreateHousehold extends StatelessWidget {
   HouseholdController controller = Get.find<HouseholdController>();
 
+  CreateHousehold({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(
