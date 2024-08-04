@@ -232,7 +232,7 @@ class HomePageController extends GetxController {
     // Ingredient ingredientToRemove = ingredients.value[index];
     IngredientHousehold ingredientToRemove = ingredient;
     final Uri url = Uri.parse(
-        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/removeIngredientFromHousehold?user_email=${user.value.email}&household_id=$selectedHousehold');
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/removeIngredientFromHousehold?user_email=${user.value.email}&household_id=${currentHousehold.householdId}');
 
     final Map<String, dynamic> requestBody = {
       "ingredient_id": ingredientToRemove.ingredientId,
