@@ -31,7 +31,7 @@ class _AddFirstIngredientsState extends State<AddFirstIngredients> {
         child: GetBuilder<QuestionnaireController>(builder: (controller) {
           return Column(children: [
             Obx(() => Text(
-                  "What's Already in ${hController.newHouseholdName.value}'s Kitchen?",
+                  "What's already in ${hController.newHouseholdName.value}'s kitchen?",
                   style: GoogleFonts.poppins(
                     textStyle: TextStyle(color: myGrey[900]),
                     fontSize: 26,
