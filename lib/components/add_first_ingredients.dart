@@ -56,11 +56,13 @@ class _AddFirstIngredientsState extends State<AddFirstIngredients> {
                     qController.modifyIngredientValues(
                         ingredientHousehold, false);
                   } else {
-                    qController.addIngredient(
-                        ingredientHousehold.ingredientId,
-                        ingredientHousehold.name,
-                        ingredientHousehold.amount,
-                        ingredientHousehold.unit);
+                    if (ingredientHousehold.amount != 0) {
+                      qController.addIngredient(
+                          ingredientHousehold.ingredientId,
+                          ingredientHousehold.name,
+                          ingredientHousehold.amount,
+                          ingredientHousehold.unit);
+                    }
                   }
                 });
                 // },

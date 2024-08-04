@@ -90,11 +90,13 @@ class _ManageIngredientsPageState extends State<ManageIngredientsPage> {
                             hController.modifyIngredientValues(
                                 focusedIngredient, true);
                           } else {
-                            hController.addIngredient(
-                                focusedIngredient.ingredientId,
-                                focusedIngredient.name,
-                                focusedIngredient.amount,
-                                focusedIngredient.unit);
+                            if (focusedIngredient.amount != 0) {
+                              hController.addIngredient(
+                                  focusedIngredient.ingredientId,
+                                  focusedIngredient.name,
+                                  focusedIngredient.amount,
+                                  focusedIngredient.unit);
+                            }
                           }
                         });
                       },
