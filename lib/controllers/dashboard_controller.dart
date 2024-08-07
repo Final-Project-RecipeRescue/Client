@@ -9,11 +9,11 @@ class DashboardController extends GetxController {
     update();
   }
 
-  fetchRecipesOnHomePage() {
+  Future<void> Function() fetchRecipesOnHomePage = () async {
     HomePageController controller = Get.find();
     print('initing home controller');
-    controller.fetchHouseholdRecipes();
-  }
+    await controller.fetchHouseholdRecipes();
+  };
 
   void fetchHouseholdIngredients() {
     HomePageController controller = Get.find();

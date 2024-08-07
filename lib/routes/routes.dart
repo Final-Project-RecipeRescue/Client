@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:reciperescue_client/analytics_page.dart';
 import 'package:reciperescue_client/components/create_or_join_household.dart';
 import 'package:reciperescue_client/components/custom_button.dart';
 import 'package:reciperescue_client/components/recipe_instruction.dart';
@@ -9,6 +10,9 @@ import 'package:reciperescue_client/home_page.dart';
 import 'package:reciperescue_client/login_register_page.dart';
 import 'package:reciperescue_client/manage_ingredients_page.dart';
 import 'package:reciperescue_client/models/recipes_ui_model.dart';
+
+import '../ingredients_page.dart';
+import '../profile_page.dart';
 
 class Routes {
   static String home = "/";
@@ -27,10 +31,10 @@ class Routes {
   static String getAnalytics() => analytics;
 
   static Widget getHomePage() => const HomePage();
-  static Widget getProfilePage() => const Text("profile");
+  static Widget getProfilePage() => ProfilePage();
   static Widget getManageIngredientsPage() => const ManageIngredientsPage();
-  static Widget getAnalyticsPage() => const Text("analytics");
-  static Widget getSearchRecipesPage() => const Text("search recipes");
+  static Widget getSearchIngredientsPage() => IngredientsPage();
+  static Widget getAnalyticsPage() => const AnalyticsPage();
   static Widget getRecipeInstructionsPage(RecipesUiModel value) =>
       RecipeInstructions(value);
   static Widget getJoinOrCreateHouseholdPage() =>
@@ -61,7 +65,7 @@ class Routes {
     getProfilePage(),
     getManageIngredientsPage(),
     getHomePage(),
-    getSearchRecipesPage(),
+    getSearchIngredientsPage(),
     getAnalyticsPage(),
     getJoinOrCreateHouseholdPage(),
   ];

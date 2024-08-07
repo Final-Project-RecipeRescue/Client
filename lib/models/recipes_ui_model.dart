@@ -9,6 +9,8 @@ class RecipesUiModel {
   final String imageUrl;
   final int? likes;
   final List<dynamic> ingredients;
+  final double sumGasPollution;
+  final int closestExpirationDays;
 
   RecipesUiModel(
       {required this.id,
@@ -17,7 +19,9 @@ class RecipesUiModel {
       // required this.preparationTime,
       required this.ingredients,
       required this.imageUrl,
-      this.likes});
+      this.likes,
+      required this.sumGasPollution,
+      required this.closestExpirationDays});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -25,7 +29,9 @@ class RecipesUiModel {
       'title': title,
       'image_url': imageUrl,
       'likes': likes,
-      'ingredients': ingredients
+      'ingredients': ingredients,
+      'sumGasPollution': sumGasPollution,
+      'closest_expiration_days': closestExpirationDays
     };
   }
 
@@ -35,7 +41,10 @@ class RecipesUiModel {
         title: map['recipe_name'] as String,
         imageUrl: map['image_url'] ?? 'https://picsum.photos/250?image=9',
         likes: map['likes'] as int? ?? 0,
-        ingredients: map['ingredients'] as List<dynamic>);
+        ingredients: map['ingredients'] as List<dynamic>,
+        sumGasPollution: (map['sumGasPollution']['CO2'] ?? 0 as num).toDouble(),
+        closestExpirationDays:
+            (map['closest_expiration_days'] ?? 0 as num).toInt());
     return recipe;
   }
 
@@ -46,6 +55,6 @@ class RecipesUiModel {
 
   @override
   String toString() {
-    return 'RecipesUiModel{id: $id, title: $title, image: $imageUrl, likes: $likes}, ingredients: $ingredients';
+    return 'RecipesUiModel{id: $id, title: $title, image: $imageUrl, likes: $likes}, ingredients: $ingredients,sum gas pollution CO2: $sumGasPollution closest expiration date: $closestExpirationDays';
   }
 }

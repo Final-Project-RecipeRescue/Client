@@ -1,6 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,11 +11,15 @@ import 'package:reciperescue_client/components/MyDropdown.dart';
 import 'package:reciperescue_client/components/recipe_home_page.dart';
 import 'package:reciperescue_client/components/recipe_instruction.dart';
 import 'package:reciperescue_client/components/show_recipe_details.dart';
+import 'package:reciperescue_client/controllers/dashboard_controller.dart';
 import 'package:reciperescue_client/controllers/homepage_controller.dart';
 import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 import 'package:reciperescue_client/login_register_page.dart';
 import 'package:lottie/lottie.dart';
+import 'package:reciperescue_client/models/household_model.dart';
 import 'package:reciperescue_client/routes/routes.dart';
+
+import 'components/MySlider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -41,67 +46,151 @@ class _HomePageState extends State<HomePage> {
                 return Container(
                   color: myGrey[100],
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
-                        'Welcome, ${currentUser.email}',
-                        style: const TextStyle(fontSize: 18),
+                      Stack(
+                        children: [
+                          Container(
+                            height: MediaQuery.of(context).size.height / 8,
+                            decoration: BoxDecoration(
+                              color: primary,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(
+                                      0.5), // Shadow color with transparency
+                                  spreadRadius: 0, // No spread
+                                  blurRadius: 10, // Soft blur effect
+                                  offset: const Offset(0,
+                                      4), // Vertical offset to create a shadow at the bottom
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Column(
+                              children: [
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.center,
+                                //   children: [
+                                //     Image.asset(
+                                //       'assets/images/logo.png', // Your logo file
+                                //       height: 40,
+                                //       color: Colors.white,
+                                //     ),
+                                //     const SizedBox(width: 10),
+                                //     Text(
+                                //       'RecipeRescue',
+                                //       style: GoogleFonts.poppins(
+                                //         fontSize: 24,
+                                //         fontWeight: FontWeight.bold,
+                                //         color: Colors.white,
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
+                                const SizedBox(height: 5),
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Obx(() => RichText(
+                                          text: TextSpan(
+                                              text: 'Hello, \n',
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.white),
+                                              children: <TextSpan>[
+                                            TextSpan(
+                                              text: hController
+                                                  .user.value.firstName,
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 32,
+                                                  fontWeight: FontWeight.normal,
+                                                  color: Colors.white),
+                                            )
+                                          ]))),
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Text(
+                                      'Household display:',
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width /
+                                          15,
+                                    ),
+                                    Obx(() => MyDropdown(
+                                          selectedValue: hController
+                                              .currentHousehold.householdName,
+                                          items: hController
+                                              .userHouseholdsList.value
+                                              .map((e) => e.householdName),
+                                          onChanged: (value) async {
+                                            Household chosenHousehold =
+                                                hController.getHousehold(value);
+                                            print(chosenHousehold);
+                                            if (chosenHousehold !=
+                                                hController.currentHousehold) {
+                                              hController.currentHousehold =
+                                                  chosenHousehold;
+                                              // await hController.fetchHouseholds(
+                                              //     Authenticate().currentUser?.email);
+                                              await hController
+                                                  .fetchHouseholdsIngredients(
+                                                      chosenHousehold
+                                                          .householdId);
+                                              await hController
+                                                  .fetchHouseholdRecipes();
+                                            }
+                                          },
+                                        )),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          auth.signOut();
-                        },
-                        child: const Text('Sign Out'),
-                      ),
-                      Obx(() => MyDropdown(
-                            selectedValue: hController.selectedHousehold.value,
-                            items: hController.user.value.households,
-                            onChanged: (value) async {
-                              if (value !=
-                                  hController.selectedHousehold.value) {
-                                await hController
-                                    .fetchHouseholdsIngredients(value!);
-                                await hController.fetchHouseholdRecipes();
-                              }
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 8.0),
+                        child: MySlider(
+                            startValue: "Pollution",
+                            endValue: "Date\nExpired",
+                            items: hController.recipes.value,
+                            onSwipeStart: () {
+                              hController.sort(HomepageSortType.byPollution);
                             },
-                          )),
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Row(
-                          children: [
-                            Text(
-                              'sort by',
-                              style: GoogleFonts.poppins(),
-                            ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              'Alphabetical',
-                              style: GoogleFonts.poppins(
-                                  textStyle: const TextStyle(color: primary)),
-                            ),
-                            const Spacer(),
-                            SvgPicture.asset(
-                              'assets/images/sort_icon.svg',
-                              semanticsLabel: 'sort',
-                              height: 24,
-                              width: 24,
-                            )
-                          ],
-                        ),
+                            onSwipeMiddle: () {
+                              hController.sort(HomepageSortType.byMix);
+                            },
+                            onSwipeEnd: () {
+                              hController
+                                  .sort(HomepageSortType.byDateExpiration);
+                            }),
                       ),
                       Obx(
                         () => hController.isLoading.value
-                            ? Center(
-                                child: Lottie.asset(
-                                    'assets/images/loading_animation.json'))
+                            ? Expanded(
+                                child: Center(
+                                    child: Lottie.asset(
+                                        'assets/images/loading_animation.json')),
+                              )
                             : hController.hasError.value
                                 ? Text(hController.recipesFetchErrorMsg)
-                                : SizedBox(
-                                    height: MediaQuery.of(context).size.height /
-                                        1.5,
+                                : Expanded(
+                                    child: RefreshIndicator(
+                                    onRefresh: () async {
+                                      await Get.find<DashboardController>()
+                                          .fetchRecipesOnHomePage();
+                                      return hController
+                                          .sort(hController.selectedSort.value);
+                                    },
                                     child: ListView.builder(
                                         itemCount:
                                             hController.recipes.value.length,
@@ -118,7 +207,8 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                   onTap: () => _buildDialog(
                                                       context, index))
-                                            ]))),
+                                            ])),
+                                  )),
                       )
                     ],
                   ),
@@ -136,7 +226,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _buildDialog(context, int index) {
-    print(hController.recipes.value[index].toString());
     return AwesomeDialog(
             context: context,
             animType: AnimType.scale,

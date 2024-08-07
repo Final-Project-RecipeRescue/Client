@@ -1,15 +1,17 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:reciperescue_client/controllers/initializer_controller.dart';
-import 'package:reciperescue_client/controllers/questionnaire_controller.dart';
 import 'package:reciperescue_client/models/ingredient_model.dart';
 
 class TextfieldAutocomplete<T> extends StatefulWidget {
   final Iterable<Ingredient> items;
+  final String hint;
   final void Function(Ingredient) onSubmitted;
-  const TextfieldAutocomplete(
-      {super.key, required this.items, required this.onSubmitted});
+
+  const TextfieldAutocomplete({
+    Key? key,
+    required this.items,
+    required this.onSubmitted,
+    required this.hint,
+  }) : super(key: key);
 
   @override
   State<TextfieldAutocomplete<T>> createState() =>
@@ -61,12 +63,14 @@ class _TextfieldAutocompleteState<T> extends State<TextfieldAutocomplete<T>> {
               }
             },
             focusNode: focusNode,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
+              hintText: widget.hint,
               contentPadding: EdgeInsets.symmetric(horizontal: 20),
               border: InputBorder.none,
             ),
             style: const TextStyle(
-                decoration: TextDecoration.none), // Remove underline from text
+              decoration: TextDecoration.none,
+            ),
           );
         },
       ),

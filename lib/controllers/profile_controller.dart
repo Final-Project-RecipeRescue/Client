@@ -1,62 +1,264 @@
-// import 'dart:convert';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:reciperescue_client/controllers/homepage_controller.dart';
+import '../constants/dotenv_constants.dart';
+import '../authentication/auth.dart';
+import '../models/user_model.dart';
+import '../models/household_model.dart';
 
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// import 'package:http/http.dart' as http;
-// import 'package:reciperescue_client/models/ingredient_model.dart';
-// import '../authentication/auth.dart';
-// import '../constants/dotenv_constants.dart';
-// import 'questionnaire_controller.dart';
+// HTTP Methods
+const String HTTP_METHOD_GET = 'GET';
+const String HTTP_METHOD_POST = 'POST';
+const String HTTP_METHOD_PUT = 'PUT';
+const String HTTP_METHOD_DELETE = 'DELETE';
 
-// class HouseholdController extends GetxController {
-//   final isJoinExistingHousehold = Rx(true);
-//   var householdId = "".obs;
-//   var newHouseholdName = "".obs;
+Future<http.Response?> performHttpRequest(
+    String url, Map<String, dynamic> parameters, String method,
+    [Map<String, dynamic>? body] // Optional body parameter
+    ) async {
+  try {
+    Uri uri = Uri.parse(url).replace(queryParameters: parameters);
+    http.Response response;
 
-//   TextEditingController existingHousehold = TextEditingController();
-//   TextEditingController nameNewHousehold = TextEditingController();
+    switch (method) {
+      case HTTP_METHOD_GET:
+        response = await http.get(uri);
+        break;
+      case HTTP_METHOD_POST:
+        response = await http.post(uri, body: jsonEncode(body), headers: {
+          'Content-Type': 'application/json',
+        });
+        break;
+      case HTTP_METHOD_PUT:
+        response = await http.put(uri, body: jsonEncode(body), headers: {
+          'Content-Type': 'application/json',
+        });
+        break;
+      case HTTP_METHOD_DELETE:
+        response = await http.delete(uri, headers: {
+          'Content-Type': 'application/json',
+        });
+        break;
+      default:
+        throw Exception('Unsupported HTTP method: $method');
+    }
 
-//   void updateHouseholdName() {
-//     newHouseholdName.value = nameNewHousehold.text;
-//   }
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      print('Request successful');
+      print('Response body: ${response.body}');
+      return response;
+    } else {
+      print('Request failed with status: ${response.statusCode}');
+      return null;
+    }
+  } catch (e) {
+    print('Error during HTTP request: $e');
+    return null;
+  }
+}
 
-//   Future<bool> createHousehold() async {
-//     try {
-//       final Uri url = Uri.parse(
-//           '${DotenvConstants.baseUrl}/users_household/createNewHousehold?user_mail=${Authenticate().currentUser!.email}&household_name=${nameNewHousehold.value.text}');
+class ProfileController extends GetxController {
+  final Rx<UserModel> user = Rx(UserModel());
+  var isEditMode = false.obs;
+  var firstName = ''.obs;
+  var lastName = ''.obs;
+  var email = ''.obs;
+  var country = ''.obs;
+  var state = ''.obs;
+  var households = <String>[].obs;
+  final Rx<List<Household>> userHouseholdsList = Rx([]);
+  var userImage = ''.obs;
+  var countryController = TextEditingController();
+  var stateController = TextEditingController();
+  var firstNameController = TextEditingController();
+  var lastNameController = TextEditingController();
+  var newHouseholdController = TextEditingController();
+  var loading = false.obs;
 
-//       List<Ingredient> ingredients =
-//           Get.find<QuestionnaireController>().ingredients.value;
-//       print("ingredients here: $ingredients");
-//       List<Map<String, dynamic>> householdIngredients =
-//           ingredients.map((ingredient) {
-//         return {
-//           'IngredientName': ingredient.name,
-//           'IngredientAmount': ingredient.amount ?? 1,
-//         };
-//       }).toList();
+  void toggleEditMode() {
+    isEditMode.value = !isEditMode.value;
+  }
 
-//       Map<String, dynamic> requestBody = {'ingredients': householdIngredients};
+  void setUserImage(String path) {
+    userImage.value = path;
+  }
 
-//       String requestBodyJson = jsonEncode(requestBody);
+  Future<void> saveProfile() async {
+    final url =
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/updatePersonalUserInfo';
+    final parameters = <String, dynamic>{};
+    final body = <String, dynamic>{
+      'first_name': firstNameController.text,
+      'last_name': lastNameController.text,
+      'email': email.value,
+      'country': countryController.text,
+      'state': stateController.text,
+    };
 
-//       final response = await http.post(
-//         url,
-//         headers: <String, String>{
-//           'Content-Type': 'application/json; charset=UTF-8',
-//         },
-//         body: requestBodyJson,
-//       );
+    try {
+      loading.value = true;
+      final response =
+          await performHttpRequest(url, parameters, HTTP_METHOD_PUT, body);
 
-//       if (response.statusCode == 200) {
-//         print(response.body);
-//         return true;
-//       } else {
-//         return false;
-//       }
-//     } catch (error) {
-//       print('Error making POST request: $error');
-//       return false;
-//     }
-//   }
-// }
+      if (response != null && response.statusCode == 200) {
+        print('Profile updated successfully.');
+        firstName.value = firstNameController.text;
+        lastName.value = lastNameController.text;
+        country.value = countryController.text;
+        state.value = stateController.text;
+      } else {
+        print('Failed to update profile: ${response?.statusCode}');
+      }
+    } catch (e) {
+      print('Error saving profile: $e');
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  Future<void> addHousehold(String householdId) async {
+    if (householdId.isNotEmpty) {
+      final url =
+          '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/addUserToHousehold';
+      final parameters = {
+        'user_email': email.value,
+        'household_id': householdId,
+      };
+
+      try {
+        loading.value = true;
+        final response =
+            await performHttpRequest(url, parameters, HTTP_METHOD_POST);
+
+        if (response != null && response.statusCode == 200) {
+          fetchHouseholds(email.value);
+          print('Household added successfully.');
+        } else {
+          print('Failed to add household: ${response?.statusCode}');
+        }
+      } catch (e) {
+        print('Error adding household: $e');
+      } finally {
+        loading.value = false;
+      }
+    } else {
+      print('Household ID cannot be empty.');
+    }
+  }
+
+  Future<void> removeHousehold(int index) async {
+    if (index < 0 || index >= userHouseholdsList.value.length) {
+      print('Invalid index: $index');
+      return;
+    }
+
+    final Household householdToRemove = userHouseholdsList.value[index];
+    final url =
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/removeUserFromHousehold';
+    final parameters = {
+      'user_email': email.value,
+      'household_id': householdToRemove.householdId,
+    };
+
+    try {
+      loading.value = true;
+      final response =
+          await performHttpRequest(url, parameters, HTTP_METHOD_DELETE);
+
+      if (response != null && response.statusCode == 200) {
+        print('Household removed successfully.');
+        households.remove(householdToRemove.householdName);
+        userHouseholdsList.value.remove(householdToRemove);
+      } else {
+        print('Failed to remove household: ${response?.statusCode}');
+      }
+    } catch (e) {
+      print('Error removing household: $e');
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  Future<void> fetchUserInfo() async {
+    final Uri url = Uri.parse(
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getUser?user_email=${Authenticate().currentUser!.email}');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode != 200) {
+        print(
+            'Failed to fetch user information. Status code: ${response.statusCode}');
+      }
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      user.value = UserModel.fromJson(data);
+      refresh();
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> fetchHouseholds(String? userEmail) async {
+    final url = Uri.parse(
+        '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/getAllHouseholdsByUserEmail?user_email=$userEmail');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        print('Response data: ${response.body}');
+
+        final List<Household> fetchedHouseholds = data.entries.map((entry) {
+          return Household.fromJson(entry.value);
+        }).toList();
+
+        userHouseholdsList.value = fetchedHouseholds;
+        households.value = fetchedHouseholds
+            .map((household) => household.householdName)
+            .toList();
+        update();
+      } else {
+        print('Failed to load households: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching households: $e');
+    }
+  }
+
+  @override
+  Future<void> onReady() async {
+    // loading.value = true;
+    super.onReady();
+    await initializeProfile();
+  }
+
+  Future<void> initializeProfile() async {
+    HomePageController homePageController = Get.find<HomePageController>();
+    homePageController.user.listen((user) {
+      this.user.value = user;
+      // firstName.value = user.firstName;
+      // lastName.value = user.lastName;
+      // country.value = user.country ?? '';
+      // state.value = user.state ?? '';
+      email.value = Authenticate().currentUser!.email ?? '';
+      firstNameController.text = user.firstName;
+      lastNameController.text = user.lastName;
+      countryController.text = user.country!;
+      stateController.text = user.state ?? '';
+      refresh();
+      // loading.value = false;
+    });
+
+    homePageController.userHouseholdsList.listen((householdsList) {
+      userHouseholdsList.value = homePageController.userHouseholdsList.value;
+      households.value =
+          userHouseholdsList.value.map((data) => data.householdName).toList();
+      refresh();
+      // loading.value = false;
+    });
+    // await fetchHouseholds(email.value);
+  }
+}

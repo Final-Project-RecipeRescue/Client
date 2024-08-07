@@ -18,13 +18,14 @@ class HouseholdController extends GetxController {
 
   void updateHouseholdName() {
     newHouseholdName.value = nameNewHousehold.text;
+    refresh();
   }
 
   Future<bool> createHousehold(
       QuestionnaireController questionnaireController) async {
     try {
       final Uri url = Uri.parse(
-          '${DotenvConstants.baseUrl}/users_household/createNewHousehold?user_mail=${Authenticate().currentUser!.email}&household_name=${nameNewHousehold.value.text}');
+          '${DotenvConstants.baseUrl}/usersAndHouseholdManagement/createNewHousehold?user_email=${Authenticate().currentUser!.email}&household_name=${nameNewHousehold.value.text}');
 
       List<IngredientHousehold> ingredients =
           questionnaireController.ingredients.value;
@@ -35,7 +36,7 @@ class HouseholdController extends GetxController {
         return {
           'ingredient_id': ingredient.ingredientId,
           'name': ingredient.name,
-          'amount': ingredient.amount ?? 1,
+          'amount': ingredient.amount,
           'unit': ''
         };
       }).toList();

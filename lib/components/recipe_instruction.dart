@@ -1,16 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reciperescue_client/authentication/auth.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/components/recipe_image.dart';
 import 'package:reciperescue_client/components/user_egg.dart';
+import 'package:reciperescue_client/controllers/analytics_controller.dart';
 import 'package:reciperescue_client/controllers/homepage_controller.dart';
 import 'package:reciperescue_client/controllers/recipe_instructions_controller.dart';
 import 'package:reciperescue_client/models/recipes_ui_model.dart';
 import 'package:reciperescue_client/models/user_model.dart';
+
+import '../controllers/household_controller.dart';
 
 class RecipeInstructions extends StatefulWidget {
   final RecipesUiModel value;
@@ -25,20 +28,23 @@ class RecipeInstructions extends StatefulWidget {
 }
 
 class _RecipeInstructionsState extends State<RecipeInstructions> {
-  final dishCount = 0.obs;
+  int dishCount = 0;
+  Set<String> selectedParticipants = {};
 
   void _incrementDishes() {
-    dishCount.value++;
+    setState(() {
+      dishCount++;
+    });
   }
 
   void _decrementDishes() {
-    dishCount.value--;
+    setState(() {
+      dishCount--;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    RecipeInstructionsController controller = Get.find();
-
     return Scaffold(
       body: Obx(
         () => SafeArea(
@@ -103,27 +109,64 @@ class _RecipeInstructionsState extends State<RecipeInstructions> {
                   width: MediaQuery.sizeOf(context).width,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: controller.household.participants.length,
+                    itemCount: widget.controller.household.participants.length,
                     itemBuilder: (context, index) {
-                      List<String> participants =
-                          controller.household.participants;
+                      List<UserModel> participants =
+                          widget.controller.household.participants.toList();
                       return SizedBox(
                         height: 20,
                         width: 80,
                         child: UserEgg(
                           user: UserModel(
-                              firstName: participants[index], lastName: 'b'),
-                          onSelect: _incrementDishes,
-                          onDeselect: _decrementDishes,
+                              firstName: participants[index].firstName,
+                              lastName: participants[index].lastName),
+                          onSelect: () {
+                            addParticipant(participants[index].email!);
+                            _incrementDishes();
+                            print(selectedParticipants);
+                          },
+                          onDeselect: () {
+                            removePaticipant(participants[index].email!);
+                            _decrementDishes;
+                            print(selectedParticipants);
+                          },
                         ),
                       );
                     },
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    controller.substractRecipeIngredients(
-                        widget.value.id, dishCount.value.toDouble());
+                  onPressed: () async {
+                    if (await widget.controller.substractRecipeIngredients(
+                        widget.value.id,
+                        selectedParticipants.length.toDouble(),
+                        selectedParticipants.toList())) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Bon Apetit!'),
+                          backgroundColor: primary[300],
+                          duration: const Duration(
+                              seconds:
+                                  5), // Duration the Snackbar will be shown
+                        ),
+                      );
+                      Get.find<HomePageController>()
+                          .fetchHouseholds(Authenticate().currentUser?.email);
+                      Get.find<AnalyticsController>().fetchData(
+                          Get.find<AnalyticsController>().selectedFilter);
+                      Navigator.pop(context);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content:
+                              const Text('You need at least one participant!'),
+                          backgroundColor: primary[900],
+                          duration: const Duration(
+                              seconds:
+                                  5), // Duration the Snackbar will be shown
+                        ),
+                      );
+                    }
                   },
                   child: const Text('Let`s Cook!'),
                 ),
@@ -133,5 +176,13 @@ class _RecipeInstructionsState extends State<RecipeInstructions> {
         ),
       ),
     );
+  }
+
+  void addParticipant(String participant) {
+    selectedParticipants.add(participant);
+  }
+
+  void removePaticipant(String participant) {
+    selectedParticipants.remove(participant);
   }
 }
