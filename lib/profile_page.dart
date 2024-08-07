@@ -25,15 +25,24 @@ class ProfilePage extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Obx(() {
-          if (controller.isEditMode.value) {
-            return EditProfileForm(controller: controller);
-          } else {
-            return ViewProfile(controller: controller, auth: auth);
-          }
-        }),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Obx(() {
+              if (controller.loading.value) {
+                return Center(
+                    child:
+                        CircularProgressIndicator()); // Show loading indicator
+              }
+              if (controller.isEditMode.value) {
+                return EditProfileForm(controller: controller);
+              } else {
+                return ViewProfile(controller: controller, auth: auth);
+              }
+            }),
+          );
+        },
       ),
     );
   }
@@ -46,23 +55,35 @@ class EditProfileForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ProfileImageSection(controller: controller),
-            SizedBox(height: 16),
-            ChangeImageButton(controller: controller),
-            SizedBox(height: 16),
-            PersonalInfoSection(controller: controller),
-            SizedBox(height: 16),
-            SaveButton(controller: controller),
-            SizedBox(height: 16),
-            HouseholdsSection(controller: controller),
-          ],
-        ),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double padding =
+            constraints.maxWidth * 0.05; // Adjust padding based on screen width
+        double spacing = constraints.maxHeight *
+            0.02; // Adjust spacing based on screen height
+
+        return Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: padding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ProfileImageSection(controller: controller),
+                  SizedBox(height: spacing),
+                  ChangeImageButton(controller: controller),
+                  SizedBox(height: spacing),
+                  PersonalInfoSection(controller: controller),
+                  SizedBox(height: spacing),
+                  SaveButton(controller: controller),
+                  SizedBox(height: spacing),
+                  HouseholdsSection(controller: controller),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -76,38 +97,42 @@ class ProfileImageSection extends StatelessWidget {
   Widget build(BuildContext context) {
     const defaultImagePath = 'assets/images/user.png';
 
-    return Obx(() {
-      return Column(
-        children: [
-          Stack(
-            alignment: Alignment.bottomRight,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double avatarRadius = constraints.maxWidth * 0.25;
+        double iconSize = constraints.maxWidth * 0.08;
+
+        return Obx(() {
+          return Column(
             children: [
-              CircleAvatar(
-                radius: 100,
-                backgroundImage: controller.userImage.value.isNotEmpty
-                    ? FileImage(File(
-                        controller.userImage.value)) // Convert String to File
-                    : AssetImage(defaultImagePath) as ImageProvider,
-              ),
-              if (controller
-                  .isEditMode.value) // Show the remove icon only in edit mode
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: IconButton(
-                    icon:
-                        Icon(Icons.remove_circle, color: Colors.red, size: 30),
-                    onPressed: () {
-                      controller.setUserImage(
-                          ""); // Set to empty string to reset to default image
-                    },
+              Stack(
+                alignment: Alignment.bottomRight,
+                children: [
+                  CircleAvatar(
+                    radius: avatarRadius,
+                    backgroundImage: controller.userImage.value.isNotEmpty
+                        ? FileImage(File(controller.userImage.value))
+                        : AssetImage(defaultImagePath) as ImageProvider,
                   ),
-                ),
+                  if (controller.isEditMode.value)
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: IconButton(
+                        icon: Icon(Icons.remove_circle,
+                            color: Colors.red, size: iconSize),
+                        onPressed: () {
+                          controller.setUserImage("");
+                        },
+                      ),
+                    ),
+                ],
+              ),
             ],
-          ),
-        ],
-      );
-    });
+          );
+        });
+      },
+    );
   }
 }
 
@@ -330,6 +355,8 @@ class ShadowedTextField extends StatelessWidget {
         decoration: InputDecoration(
           labelText: label,
           border: OutlineInputBorder(),
+          filled: true,
+          fillColor: Colors.white,
         ),
       ),
     );
@@ -345,7 +372,6 @@ class ShadowedTextBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
@@ -355,21 +381,16 @@ class ShadowedTextBox extends StatelessWidget {
             offset: Offset(0, 3),
           ),
         ],
-        borderRadius: BorderRadius.circular(8.0),
-        color: Colors.white,
       ),
-      padding: EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          Text(
-            '$label: ',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            value,
-            style: TextStyle(fontSize: 18),
-          ),
-        ],
+      child: TextField(
+        enabled: false,
+        controller: TextEditingController(text: value),
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(),
+          filled: true,
+          fillColor: Colors.white,
+        ),
       ),
     );
   }
