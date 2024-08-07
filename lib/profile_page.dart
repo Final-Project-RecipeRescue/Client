@@ -1,6 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
+import 'package:reciperescue_client/components/household_component.dart';
+import 'package:reciperescue_client/components/logout_button.dart';
+import 'package:reciperescue_client/components/text_field.dart';
 import 'package:reciperescue_client/controllers/homepage_controller.dart';
 import 'package:reciperescue_client/controllers/profile_controller.dart';
 import 'authentication/auth.dart';
@@ -17,8 +21,13 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: LogoutButton(onLogout: auth.signOut),
+          ),
+          Spacer(),
           IconButton(
-            icon: Icon(Icons.edit),
+            icon: const Icon(Icons.edit),
             onPressed: () {
               controller.toggleEditMode();
             },
@@ -32,8 +41,8 @@ class ProfilePage extends StatelessWidget {
             child: Obx(() {
               if (controller.loading.value) {
                 return Center(
-                    child:
-                        CircularProgressIndicator()); // Show loading indicator
+                    child: Lottie.asset(
+                        "assets/images/loading_animation.json")); // Show loading indicator
               }
               if (controller.isEditMode.value) {
                 return EditProfileForm(controller: controller);
@@ -51,16 +60,14 @@ class ProfilePage extends StatelessWidget {
 class EditProfileForm extends StatelessWidget {
   final ProfileController controller;
 
-  EditProfileForm({required this.controller});
+  const EditProfileForm({required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        double padding =
-            constraints.maxWidth * 0.05; // Adjust padding based on screen width
-        double spacing = constraints.maxHeight *
-            0.02; // Adjust spacing based on screen height
+        double padding = constraints.maxWidth * 0.05;
+        double spacing = constraints.maxHeight * 0.02;
 
         return Center(
           child: SingleChildScrollView(
@@ -91,11 +98,11 @@ class EditProfileForm extends StatelessWidget {
 class ProfileImageSection extends StatelessWidget {
   final ProfileController controller;
 
-  ProfileImageSection({required this.controller});
+  const ProfileImageSection({required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    const defaultImagePath = 'assets/images/user.png';
+    const defaultImagePath = 'assets/images/logo.png';
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -112,7 +119,7 @@ class ProfileImageSection extends StatelessWidget {
                     radius: avatarRadius,
                     backgroundImage: controller.userImage.value.isNotEmpty
                         ? FileImage(File(controller.userImage.value))
-                        : AssetImage(defaultImagePath) as ImageProvider,
+                        : const AssetImage(defaultImagePath) as ImageProvider,
                   ),
                   if (controller.isEditMode.value)
                     Positioned(
@@ -139,65 +146,74 @@ class ProfileImageSection extends StatelessWidget {
 class PersonalInfoSection extends StatelessWidget {
   final ProfileController controller;
 
-  PersonalInfoSection({required this.controller});
+  const PersonalInfoSection({required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    final firstNameLabel = 'First Name';
-    final lastNameLabel = 'Last Name';
-    final countryLabel = 'Country';
-    final stateLabel = 'State';
-    final emailLabel = 'Email';
+    const firstNameLabel = 'First Name';
+    const lastNameLabel = 'Last Name';
+    const countryLabel = 'Country';
+    const stateLabel = 'State';
+    const emailLabel = 'Email';
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (controller.isEditMode.value) ...[
-          ShadowedTextField(
-              controller: controller.firstNameController,
-              label: firstNameLabel),
-          SizedBox(height: 16),
-          ShadowedTextField(
-              controller: controller.lastNameController, label: lastNameLabel),
-          SizedBox(height: 16),
-          ShadowedTextField(
-              controller: controller.countryController, label: countryLabel),
-          SizedBox(height: 16),
-          ShadowedTextField(
-              controller: controller.stateController, label: stateLabel),
-        ] else ...[
-          ShadowedTextBox(
-              label: firstNameLabel, value: controller.firstName.value),
-          SizedBox(height: 16),
-          ShadowedTextBox(
-              label: lastNameLabel, value: controller.lastName.value),
-          SizedBox(height: 16),
-          ShadowedTextBox(label: emailLabel, value: controller.email.value),
-          SizedBox(height: 16),
-          ShadowedTextBox(label: countryLabel, value: controller.country.value),
-          SizedBox(height: 16),
-          ShadowedTextBox(label: stateLabel, value: controller.state.value),
-        ],
-      ],
-    );
+    return Obx(() => Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (controller.isEditMode.value) ...[
+              MyTextField(
+                controller: controller.firstNameController,
+                hintText: firstNameLabel,
+              ),
+              const SizedBox(height: 16),
+              MyTextField(
+                controller: controller.lastNameController,
+                hintText: lastNameLabel,
+              ),
+              const SizedBox(height: 16),
+              MyTextField(
+                controller: controller.countryController,
+                hintText: countryLabel,
+              ),
+              const SizedBox(height: 16),
+              MyTextField(
+                controller: controller.stateController,
+                hintText: stateLabel,
+              ),
+            ] else ...[
+              Text(
+                "${controller.user.value.firstName} ${controller.user.value.lastName}",
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              Text(
+                controller.user.value.email!,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ), // const SizedBox(height: 16),
+              Text(
+                "Location: ${controller.user.value.state!},${controller.user.value.country!}",
+                style: Theme.of(context).textTheme.bodyLarge,
+              ), // MyTextField(hintText: countryLabel, value: controller.country.value),
+              const SizedBox(height: 16),
+            ],
+          ],
+        ));
   }
 }
 
 class HouseholdsSection extends StatelessWidget {
   final ProfileController controller;
 
-  HouseholdsSection({required this.controller});
+  const HouseholdsSection({required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           "Households:",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Container(
           height: 200,
           decoration: BoxDecoration(
@@ -209,34 +225,27 @@ class HouseholdsSection extends StatelessWidget {
               child: Column(
                 children: [
                   for (var i = 0; i < controller.households.length; i++)
-                    ListTile(
-                      title: ShadowedTextBox(
-                          label: 'Household', value: controller.households[i]),
-                      trailing: controller.isEditMode.value
-                          ? IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () {
-                                controller.removeHousehold(i);
-                              },
-                            )
-                          : null,
-                    ),
+                    HouseholdComponent(
+                        householdName: controller.households[i],
+                        onExit: () {
+                          controller.removeHousehold(i);
+                        })
                 ],
               ),
             );
           }),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         if (controller.isEditMode.value) ...[
           Row(
             children: [
               Expanded(
-                child: ShadowedTextField(
+                child: MyTextField(
                     controller: controller.newHouseholdController,
-                    label: 'New Household ID'),
+                    hintText: 'New Household ID'),
               ),
               IconButton(
-                icon: Icon(Icons.add),
+                icon: const Icon(Icons.add),
                 onPressed: () {
                   controller
                       .addHousehold(controller.newHouseholdController.text);
@@ -254,7 +263,7 @@ class HouseholdsSection extends StatelessWidget {
 class ChangeImageButton extends StatelessWidget {
   final ProfileController controller;
 
-  ChangeImageButton({required this.controller});
+  const ChangeImageButton({required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -266,7 +275,7 @@ class ChangeImageButton extends StatelessWidget {
           controller.setUserImage(pickedFile.path);
         }
       },
-      child: Text('Change Image'),
+      child: const Text('Change Image'),
     );
   }
 }
@@ -274,7 +283,7 @@ class ChangeImageButton extends StatelessWidget {
 class SaveButton extends StatelessWidget {
   final ProfileController controller;
 
-  SaveButton({required this.controller});
+  const SaveButton({required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -283,7 +292,7 @@ class SaveButton extends StatelessWidget {
         controller.saveProfile();
         controller.toggleEditMode();
       },
-      child: Text('Save User Data'),
+      child: const Text('Save User Data'),
     );
   }
 }
@@ -292,7 +301,7 @@ class ViewProfile extends StatelessWidget {
   final ProfileController controller;
   final Authenticate auth;
 
-  ViewProfile({required this.controller, required this.auth});
+  const ViewProfile({required this.controller, required this.auth});
 
   @override
   Widget build(BuildContext context) {
@@ -302,12 +311,12 @@ class ViewProfile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ProfileImageSection(controller: controller),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             PersonalInfoSection(controller: controller),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             HouseholdsSection(controller: controller),
-            SizedBox(height: 16),
-            SignOutButton(auth: auth),
+            const SizedBox(height: 16),
+            // SignOutButton(auth: auth),
           ],
         ),
       ),
@@ -318,80 +327,80 @@ class ViewProfile extends StatelessWidget {
 class SignOutButton extends StatelessWidget {
   final Authenticate auth;
 
-  SignOutButton({required this.auth});
+  const SignOutButton({required this.auth});
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
+    return LogoutButton(
+      onLogout: () {
         auth.signOut();
       },
-      child: const Text('Sign Out'),
     );
   }
 }
 
-class ShadowedTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String label;
+// class ShadowedTextField extends StatelessWidget {
+//   final TextEditingController controller;
+//   final String label;
 
-  ShadowedTextField({required this.controller, required this.label});
+//   const ShadowedTextField(
+//       {super.key, required this.controller, required this.label});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(),
-          filled: true,
-          fillColor: Colors.white,
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       decoration: BoxDecoration(
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.grey.withOpacity(0.5),
+//             spreadRadius: 2,
+//             blurRadius: 5,
+//             offset: const Offset(0, 3),
+//           ),
+//         ],
+//       ),
+//       child: MyTextField(
+//         controller: controller,
+//         decoration: InputDecoration(
+//           labelText: label,
+//           border: const OutlineInputBorder(),
+//           filled: true,
+//           fillColor: Colors.white,
+//         ),
+//       ),
+//     );
+//   }
+// }
 
-class ShadowedTextBox extends StatelessWidget {
-  final String label;
-  final String value;
+// class ShadowedTextBox extends StatelessWidget {
+//   final String label;
+//   final String value;
 
-  ShadowedTextBox({required this.label, required this.value});
+//   const ShadowedTextBox({required this.label, required this.value});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: TextField(
-        enabled: false,
-        controller: TextEditingController(text: value),
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(),
-          filled: true,
-          fillColor: Colors.white,
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       decoration: BoxDecoration(
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.grey.withOpacity(0.5),
+//             spreadRadius: 2,
+//             blurRadius: 5,
+//             offset: const Offset(0, 3),
+//           ),
+//         ],
+//       ),
+//       child: TextField(
+//         enabled: false,
+//         controller: TextEditingController(text: value),
+//         decoration: InputDecoration(
+//           labelText: label,
+//           border: const OutlineInputBorder(),
+//           filled: true,
+//           fillColor: Colors.white,
+//         ),
+//       ),
+//     );
+//   }
+// }

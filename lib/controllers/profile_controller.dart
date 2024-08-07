@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:reciperescue_client/controllers/homepage_controller.dart';
 import '../constants/dotenv_constants.dart';
 import '../authentication/auth.dart';
 import '../models/user_model.dart';
@@ -59,7 +60,7 @@ Future<http.Response?> performHttpRequest(
 }
 
 class ProfileController extends GetxController {
-  late Rx<UserModel> user = Rx(UserModel());
+  final Rx<UserModel> user = Rx(UserModel());
   var isEditMode = false.obs;
   var firstName = ''.obs;
   var lastName = ''.obs;
@@ -68,13 +69,13 @@ class ProfileController extends GetxController {
   var state = ''.obs;
   var households = <String>[].obs;
   final Rx<List<Household>> userHouseholdsList = Rx([]);
-  var userImage = ''.obs; // Initialize as an empty string
+  var userImage = ''.obs;
   var countryController = TextEditingController();
   var stateController = TextEditingController();
   var firstNameController = TextEditingController();
   var lastNameController = TextEditingController();
   var newHouseholdController = TextEditingController();
-  var loading = true.obs; // Ensure loading is true initially
+  var loading = false.obs;
 
   void toggleEditMode() {
     isEditMode.value = !isEditMode.value;
@@ -228,27 +229,36 @@ class ProfileController extends GetxController {
   }
 
   @override
-  Future<void> onInit() async {
-    loading.value = true;
-    super.onInit();
+  Future<void> onReady() async {
+    // loading.value = true;
+    super.onReady();
     await initializeProfile();
   }
 
   Future<void> initializeProfile() async {
-    try {
-      await fetchUserInfo();
-      firstName.value = user.value.firstName;
-      lastName.value = user.value.lastName;
+    HomePageController homePageController = Get.find<HomePageController>();
+    homePageController.user.listen((user) {
+      this.user.value = user;
+      // firstName.value = user.firstName;
+      // lastName.value = user.lastName;
+      // country.value = user.country ?? '';
+      // state.value = user.state ?? '';
       email.value = Authenticate().currentUser!.email ?? '';
-      country.value = user.value.country ?? '';
-      state.value = user.value.state ?? '';
-      await fetchHouseholds(email.value);
-      firstNameController.text = firstName.value;
-      lastNameController.text = lastName.value;
-      countryController.text = country.value;
-      stateController.text = state.value;
-    } finally {
-      loading.value = false; // Set loading to false once initialization is done
-    }
+      firstNameController.text = user.firstName;
+      lastNameController.text = user.lastName;
+      countryController.text = user.country!;
+      stateController.text = user.state ?? '';
+      refresh();
+      // loading.value = false;
+    });
+
+    homePageController.userHouseholdsList.listen((householdsList) {
+      userHouseholdsList.value = homePageController.userHouseholdsList.value;
+      households.value =
+          userHouseholdsList.value.map((data) => data.householdName).toList();
+      refresh();
+      // loading.value = false;
+    });
+    // await fetchHouseholds(email.value);
   }
 }
