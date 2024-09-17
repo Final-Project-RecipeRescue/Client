@@ -14,7 +14,7 @@ class ProfilePage extends StatelessWidget {
   ProfilePage({super.key});
   final Authenticate auth = Authenticate();
   final ProfileController controller = Get.put(ProfileController());
-  final HomePageController hController = Get.find();
+  final HomePageController hController = Get.put(HomePageController());
 
   @override
   Widget build(BuildContext context) {
@@ -180,18 +180,18 @@ class PersonalInfoSection extends StatelessWidget {
                 hintText: stateLabel,
               ),
             ] else ...[
-              Text(
-                "${controller.user.value.firstName} ${controller.user.value.lastName}",
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              Text(
-                controller.user.value.email!,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ), // const SizedBox(height: 16),
-              Text(
-                "Location: ${controller.user.value.state!},${controller.user.value.country!}",
-                style: Theme.of(context).textTheme.bodyLarge,
-              ), // MyTextField(hintText: countryLabel, value: controller.country.value),
+              Obx(() => Text(
+                    "${controller.user.value.firstName} ${controller.user.value.lastName}",
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  )),
+              Obx(() => Text(
+                    Get.find<HomePageController>().user.value.email!,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  )), // const SizedBox(height: 16),
+              Obx(() => Text(
+                    "Location: ${controller.user.value.state != null ? "${controller.user.value.state}," : ""} ${controller.user.value.country}",
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  )), // MyTextField(hintText: countryLabel, value: controller.country.value),
               const SizedBox(height: 16),
             ],
           ],

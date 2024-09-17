@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/colors/colors.dart';
 import 'package:reciperescue_client/controllers/auth_controller.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
+// import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:reciperescue_client/controllers/initializer_controller.dart';
 import 'constants/dotenv_constants.dart';
 import 'routes/routes.dart';

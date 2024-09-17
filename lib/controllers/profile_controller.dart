@@ -236,7 +236,7 @@ class ProfileController extends GetxController {
   }
 
   Future<void> initializeProfile() async {
-    HomePageController homePageController = Get.find<HomePageController>();
+    HomePageController homePageController = Get.put(HomePageController());
     homePageController.user.listen((user) {
       this.user.value = user;
       // firstName.value = user.firstName;
