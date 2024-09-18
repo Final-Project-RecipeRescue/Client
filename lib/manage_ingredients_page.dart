@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/colors/colors.dart';
-import 'package:reciperescue_client/components/MyDropdown.dart';
 import 'package:reciperescue_client/components/autocomplete_textfield.dart';
 import 'package:reciperescue_client/components/ingredient_details.dart';
 import 'package:reciperescue_client/components/ingredients_list_view.dart';
@@ -11,7 +10,6 @@ import 'package:reciperescue_client/controllers/homepage_controller.dart';
 import 'package:reciperescue_client/controllers/initializer_controller.dart';
 import 'package:reciperescue_client/controllers/manage_ingredients_controller.dart';
 
-import 'models/household_model.dart';
 import 'models/ingredient_model.dart';
 
 class ManageIngredientsPage extends StatefulWidget {
@@ -22,9 +20,11 @@ class ManageIngredientsPage extends StatefulWidget {
 }
 
 class _ManageIngredientsPageState extends State<ManageIngredientsPage> {
-  HomePageController hController = Get.find<HomePageController>();
+  HomePageController hController = Get.put(HomePageController());
+
   ManageIngredientsController miController =
       Get.put(ManageIngredientsController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

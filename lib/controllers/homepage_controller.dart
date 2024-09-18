@@ -192,6 +192,7 @@ class HomePageController extends GetxController {
       final Map<String, dynamic> data = jsonDecode(response.body);
       user.value = UserModel.fromJson(data);
       refresh();
+      update();
     } catch (e) {
       print('Error: $e');
     }

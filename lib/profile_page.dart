@@ -45,9 +45,51 @@ class ProfilePage extends StatelessWidget {
                         "assets/images/loading_animation.json")); // Show loading indicator
               }
               if (controller.isEditMode.value) {
-                return EditProfileForm(controller: controller);
+                return LayoutBuilder(
+                  builder: (context, constraints) {
+                    double padding = constraints.maxWidth * 0.05;
+                    double spacing = constraints.maxHeight * 0.02;
+
+                    return Center(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: padding),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ProfileImageSection(controller: controller),
+                              SizedBox(height: spacing),
+                              ChangeImageButton(controller: controller),
+                              SizedBox(height: spacing),
+                              PersonalInfoSection(controller: controller),
+                              SizedBox(height: spacing),
+                              SaveButton(controller: controller),
+                              SizedBox(height: spacing),
+                              HouseholdsSection(controller: controller),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
               } else {
-                return ViewProfile(controller: controller, auth: auth);
+                return Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ProfileImageSection(controller: controller),
+                        const SizedBox(height: 16),
+                        PersonalInfoSection(controller: controller),
+                        const SizedBox(height: 16),
+                        HouseholdsSection(controller: controller),
+                        const SizedBox(height: 16),
+                        // SignOutButton(auth: auth),
+                      ],
+                    ),
+                  ),
+                );
               }
             }),
           );
@@ -155,47 +197,47 @@ class PersonalInfoSection extends StatelessWidget {
     const countryLabel = 'Country';
     const stateLabel = 'State';
     const emailLabel = 'Email';
-
-    return Obx(() => Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (controller.isEditMode.value) ...[
-              MyTextField(
-                controller: controller.firstNameController,
-                hintText: firstNameLabel,
-              ),
-              const SizedBox(height: 16),
-              MyTextField(
-                controller: controller.lastNameController,
-                hintText: lastNameLabel,
-              ),
-              const SizedBox(height: 16),
-              MyTextField(
-                controller: controller.countryController,
-                hintText: countryLabel,
-              ),
-              const SizedBox(height: 16),
-              MyTextField(
-                controller: controller.stateController,
-                hintText: stateLabel,
-              ),
-            ] else ...[
-              Obx(() => Text(
-                    "${controller.user.value.firstName} ${controller.user.value.lastName}",
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  )),
-              Obx(() => Text(
-                    Get.find<HomePageController>().user.value.email!,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  )), // const SizedBox(height: 16),
-              Obx(() => Text(
-                    "Location: ${controller.user.value.state != null ? "${controller.user.value.state}," : ""} ${controller.user.value.country}",
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  )), // MyTextField(hintText: countryLabel, value: controller.country.value),
-              const SizedBox(height: 16),
-            ],
-          ],
-        ));
+    HomePageController hController = Get.find();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        if (controller.isEditMode.value) ...[
+          MyTextField(
+            controller: controller.firstNameController,
+            hintText: firstNameLabel,
+          ),
+          const SizedBox(height: 16),
+          MyTextField(
+            controller: controller.lastNameController,
+            hintText: lastNameLabel,
+          ),
+          const SizedBox(height: 16),
+          MyTextField(
+            controller: controller.countryController,
+            hintText: countryLabel,
+          ),
+          const SizedBox(height: 16),
+          MyTextField(
+            controller: controller.stateController,
+            hintText: stateLabel,
+          ),
+        ] else ...[
+          Obx(() => Text(
+                "${hController.user.value.firstName} ${hController.user.value.lastName}",
+                style: Theme.of(context).textTheme.bodyLarge,
+              )),
+          Text(
+            Authenticate().currentUser!.email ?? "",
+            style: Theme.of(context).textTheme.bodyLarge,
+          ), // const SizedBox(height: 16),
+          Obx(() => Text(
+                "Location: ${hController.user.value.state != null ? "${hController.user.value.state}," : ""} ${hController.user.value.country}",
+                style: Theme.of(context).textTheme.bodyLarge,
+              )), // MyTextField(hintText: countryLabel, value: controller.country.value),
+          const SizedBox(height: 16),
+        ],
+      ],
+    );
   }
 }
 
@@ -206,6 +248,7 @@ class HouseholdsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    HomePageController hController = Get.find();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -224,9 +267,12 @@ class HouseholdsSection extends StatelessWidget {
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  for (var i = 0; i < controller.households.length; i++)
+                  for (var i = 0;
+                      i < hController.userHouseholdsList.value.length;
+                      i++)
                     HouseholdComponent(
-                        householdName: controller.households[i],
+                        householdName: hController
+                            .userHouseholdsList.value[i].householdName,
                         onExit: () {
                           controller.removeHousehold(i);
                         })

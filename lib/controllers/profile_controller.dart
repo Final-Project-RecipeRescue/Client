@@ -237,7 +237,15 @@ class ProfileController extends GetxController {
 
   Future<void> initializeProfile() async {
     HomePageController homePageController = Get.put(HomePageController());
+    UserModel user = HomePageController().user.value;
+    email.value = Authenticate().currentUser!.email ?? '';
+    firstNameController.text = user.firstName;
+    lastNameController.text = user.lastName;
+    countryController.text = user.country ?? "Israel";
+    stateController.text = user.state ?? '';
+    refresh();
     homePageController.user.listen((user) {
+      print("heree");
       this.user.value = user;
       // firstName.value = user.firstName;
       // lastName.value = user.lastName;

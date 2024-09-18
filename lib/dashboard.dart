@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reciperescue_client/controllers/dashboard_controller.dart';
-import 'package:reciperescue_client/controllers/homepage_controller.dart';
 import 'colors/colors.dart';
 import 'routes/routes.dart';
 
@@ -15,8 +14,13 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     Get.put(DashboardController());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return GetBuilder<DashboardController>(builder: (controller) {
       return Scaffold(
         appBar: AppBar(
@@ -42,10 +46,11 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
         body: SafeArea(
-            child: IndexedStack(
-          index: controller.tabIndex.value,
-          children: Routes.dashboardPages,
-        )),
+          child: IndexedStack(
+            index: controller.tabIndex.value,
+            children: Routes.dashboardPages,
+          ),
+        ),
         bottomNavigationBar: BottomNavigationBar(
           unselectedItemColor: myGrey,
           items: const <BottomNavigationBarItem>[
