@@ -70,19 +70,26 @@ class GasPollutionTable extends StatelessWidget {
                   return DataRow(cells: [
                     DataCell(Text(
                       (index + 1).toString(),
+                      overflow: TextOverflow.clip,
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
                     )), // Place
-                    DataCell(Text('${user.firstName} ${user.lastName}',
+                    DataCell(Text(
+                        user.firstName.length + user.lastName.length > 20
+                            ? '${'${user.firstName} ${user.lastName}'.substring(0, 20)}...'
+                            : '${user.firstName} ${user.lastName}',
+                        overflow: TextOverflow.fade,
+                        maxLines: 1,
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.normal,
                           color: Colors.black,
                         ))), // Name
                     DataCell(Text(user.sumOfGasPollution.toStringAsFixed(2),
+                        overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.normal,

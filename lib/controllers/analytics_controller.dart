@@ -80,8 +80,8 @@ class AnalyticsController extends GetxController {
     co2Values.clear();
     final DateTime today = DateTime.now();
     DateTime startDate;
-    DateTime endDate = today
-        .add(const Duration(days: 1)); // End date is exclusive, so add one day
+    DateTime endDate = today.add(
+        const Duration(days: 1)); // End date is exclusive, so added one day
 
     switch (filterDate) {
       case FilterDate.lastSixMonths:
